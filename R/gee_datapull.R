@@ -26,6 +26,7 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_band = "avg_rad",
                          scale = 100,
                          gee_desc = "nighttimelight_cmr",
+                         gee_stat = "mean",
                          gdrive_folder = "/SAEplus",
                          ldrive_dsn = "data/cmr_nighttimelight"){
 
@@ -40,6 +41,10 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                      repos = "http://cran.us.r-project.org")
   }
 
+  invisible(sapply(usepkgs, library, character.only = TRUE))
+
+  ee_Initialize(email = email)
+
   agebs <- ee$FeatureCollection(gee_polygons)
   agebs_boundary <- ee$FeatureCollection(gee_boundary)
 
@@ -49,13 +54,24 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
     select(gee_band)
 
   ## compute zonal stats function
-  s5p_mean <- s5p_collect$mean()
+  if(gee_stat == "mean"){
+    s5p_mean <- s5p_collect$mean()
 
-  s5p_agebs <- s5p_mean$reduceRegions(
-    collection =  agebs,
-    reducer = ee$Reducer$mean(),
-    scale = scale
-  )
+    s5p_agebs <- s5p_mean$reduceRegions(
+      collection =  agebs,
+      reducer = ee$Reducer$mean(),
+      scale = scale
+    )
+  } else if(gee_stat == "sum"){
+    s5p_mean <- s5p_collect$mean()
+
+    s5p_agebs <- s5p_mean$reduceRegions(
+      collection = agebs,
+      reducer = ee$Reducer$sum(),
+      scale = scale
+    )
+  } else {return("gee_stat must be specified as sum or mean, please specify accordingly")}
+
 
   task <- ee_table_to_drive(
     collection = s5p_agebs,
