@@ -7,7 +7,7 @@ wpopbuilding_vcheck <- function(){
 
   url <- "ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/"
   ## below are the packages needed for the function to run
-  usepkgs <- c("RCurl", "data.table")
+  usepkgs <- c("RCurl", "data.table", "countrycode")
 
   missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
 
