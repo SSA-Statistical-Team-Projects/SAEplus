@@ -38,7 +38,7 @@ gengrid <- function(dsn = "data-raw",
 
   shp <- sf::st_read(dsn = dsn,
                  layer= layer)
-  pop <- raster::raster(paste("data-raw", raster_tif, sep = "/"))
+  pop <- raster::raster(paste(dsn, raster_tif, sep = "/"))
 
   #generate baseline raster
   resolution <- grid_size/111
