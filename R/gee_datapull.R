@@ -16,6 +16,8 @@
 #'
 #' @return shapefiles to local drive
 #'
+#' @import rgee reticulate
+#'
 #' @export
 
 
@@ -46,6 +48,8 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
   # }
   #
   # invisible(sapply(usepkgs, library, character.only = TRUE))
+
+  requireNamespace(c("rgee", "reticulate"), quietly = TRUE)
 
   ee_Initialize(email = email)
 
