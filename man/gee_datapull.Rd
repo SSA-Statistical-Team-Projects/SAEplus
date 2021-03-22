@@ -44,6 +44,9 @@ see (https://developers.google.com/earth-engine/datasets/) for full name}
 
 \item{ldrive_dsn}{Full file path (including shapefile name) for local storage of resulting shapefile}
 }
+\value{
+shapefiles to local drive
+}
 \description{
 Pull spatial data from google earth engine (GEE) for a given region on any feature in the google earth engine database
 }

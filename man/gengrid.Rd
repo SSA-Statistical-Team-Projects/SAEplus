@@ -38,3 +38,6 @@ list object aggregated zonal statistic, polygon data and summary statistics on p
 \description{
 Polygonize a raster and compute zonal statistics at polygon and full shape-file level
 }
+\examples{
+
+}

@@ -8,8 +8,13 @@
 #' @param grid_size the diagonal length of the polygon in km
 #' @param crs the co-ordinate reference system to be used
 #' @param drop_zero if TRUE, gengrid will keep only zonal statistics that are different from zero
+#'
 #' @return list object aggregated zonal statistic, polygon data and summary statistics on polygon data
 #' @examples
+#'
+#' @export
+#'
+#' @import data.table sf raster dplyr spex exactextractr tmap
 
 
 gengrid <- function(dsn = "data-raw",
@@ -22,19 +27,6 @@ gengrid <- function(dsn = "data-raw",
                     drop_Zero = T
                     ){
 
-  ## below are the packages needed for the function to run
-  usepkgs <- c( "sf","raster","tidyr","dplyr","spex", "stars",
-                "exactextractr","tmap", "rgdal", "data.table")
-
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE))
 
   shp <- sf::st_read(dsn = dsn,
                  layer= layer)

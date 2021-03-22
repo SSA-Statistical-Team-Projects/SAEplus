@@ -2,15 +2,47 @@ Package: SAEplus
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Who wrote it
+Author: person("Ifeanyi", "Edochie", email = "iedochie@worldbank.org", role = c("aut", "cre"))
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: This package is developed to pull geospatial data from other sources into R to make readily
+  available to World Bank staff
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/SSA-Statistical-Team-Projects/SAEplus
 BugReports: https://github.com/SSA-Statistical-Team-Projects/SAEplus/issues
-Depends: 
+Depends:
     R (>= 2.10)
 RoxygenNote: 7.1.1
+Imports:
+    data.table,
+    RCurl,
+    countrycode,
+    cli,
+    compiler,
+    dplyr,
+    rlang,
+    assertthat,
+    sf,
+    rgee,
+    reticulate,
+    raster,
+    tidyr,
+    spex,
+    stars,
+    exactextractr,
+    tmap,
+    rgdal,
+    lwgeom,
+    osmextract,
+    dtplyr,
+    haven,
+    tidygraph,
+    igraph,
+    tibble,
+    ggplot2,
+    units,
+    rgrass7,
+    link2GI,
+    nabor
+ByteCompile: true

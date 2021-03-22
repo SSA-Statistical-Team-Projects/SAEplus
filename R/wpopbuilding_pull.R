@@ -7,24 +7,17 @@
 #'
 #' @details For more information on documentation please run wpopbuilding_pull(iso = "XXX", wpversion, ldrive_dsn). This should
 #' download the documentation complete with data file descriptions and citation references
+#'
+#' @export
+#'
+#' @import data.table RCurl
 
 wpopbuilding_pull <- function(iso = "BEN",
                               wpversion = "v2.0",
                               ldrive_dsn = "data-raw"){
 
 
-  ## below are the packages needed for the function to run
-  usepkgs <- c("RCurl", "data.table")
-
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
+  requireNamespace(c("data.table", "RCurl"), quietly = TRUE)
 
   #construct the link to the world pop website with the building links
   url <- paste("ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings", wpversion, "", sep = "/")

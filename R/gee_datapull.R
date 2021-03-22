@@ -13,6 +13,10 @@
 #' @param gee_desc The name to be used to name output in google drive as well as local drive
 #' @param gdrive_folder Google Drive folder name to be created or uses if already existing to store shapefile output
 #' @param ldrive_dsn Full file path (including shapefile name) for local storage of resulting shapefile
+#'
+#' @return shapefiles to local drive
+#'
+#' @export
 
 
 
@@ -31,17 +35,17 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          ldrive_dsn = "data/cmr_nighttimelight"){
 
   ## below are the packages needed for the function to run
-  usepkgs <- c("rgee", "reticulate")
-
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE))
+  # usepkgs <- c("rgee", "reticulate")
+  #
+  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
+  #
+  # if(is.null(missing) == FALSE){
+  #   install.packages(missing,
+  #                    dependencies = TRUE,
+  #                    repos = "http://cran.us.r-project.org")
+  # }
+  #
+  # invisible(sapply(usepkgs, library, character.only = TRUE))
 
   ee_Initialize(email = email)
 

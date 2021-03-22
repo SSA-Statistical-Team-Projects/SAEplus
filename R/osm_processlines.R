@@ -8,6 +8,8 @@
 #' @return A list containing two objects: a dataframe/datatable with original OSM lines data containing feature length
 #' in polygon shapefile (from shapefile_path argument) and a lazy datatable version of the full OSM line data
 #' with point information
+#'
+#' @export
 
 
 
@@ -16,20 +18,20 @@ osm_processlines <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
                              geoid_var = "id",
                              feature_var = "highway"){
 
-  ## below are the packages needed for the function to run
-  usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "tidygraph",
-               "igraph", "tibble", "dplyr", "ggplot2", "units", "tmap", "rgrass7",
-               "link2GI", "nabor")
-
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
+  # ## below are the packages needed for the function to run
+  # usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "tidygraph",
+  #              "igraph", "tibble", "dplyr", "ggplot2", "units", "tmap", "rgrass7",
+  #              "link2GI", "nabor")
+  #
+  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
+  #
+  # if(is.null(missing) == FALSE){
+  #   install.packages(missing,
+  #                    dependencies = TRUE,
+  #                    repos = "http://cran.us.r-project.org")
+  # }
+  #
+  # invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
 
   load(osm_path) #load the OSM lines
 

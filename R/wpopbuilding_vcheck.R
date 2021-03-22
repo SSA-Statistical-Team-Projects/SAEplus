@@ -1,31 +1,29 @@
 #' This function returns a datatable of all available versions of World Pop raster
 #' building data in each country with available
 #'
-#' simply run : wpopbuilding_check() in your console
+#' simply run : wpopbuilding_check() in your console.
+#'
+#' @note ALWAYS GIVE AT LEAST 2 MINUTES BETWEEN SUCCESSIVE RUNS OF THIS FUNCTION. THE PREVENTS SUBSEQUENT REQUESTS ON ITS
+#' SERVER WITHIN THAT TIME INTERVAL, SO YOU WILL GET A <NOT SET> FUNCTION ERROR.
+#'
+#' @return a data.table object with list and versions of building data
+#'
+#' @import data.table
+#' @export
 
 wpopbuilding_vcheck <- function(){
 
+  requireNamespace("data.table", quietly = TRUE)
+
   url <- "ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/"
-  ## below are the packages needed for the function to run
-  usepkgs <- c("RCurl", "data.table", "countrycode")
-
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libraries
 
   #construct the link to the world pop website with the building links
   #list the file names present on the specific version sub-website for world pop building
   find_sublinks <- function(url = "ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/"){
 
-    versions <- getURL(url = url,
-                       ftp.use.epsv = FALSE,
-                       dirlistonly = TRUE)
+    versions <- RCurl::getURL(url = url,
+                              ftp.use.epsv = FALSE,
+                              dirlistonly = TRUE)
     versions <- strsplit(versions, "\r\n")
     versions <- unlist(versions)
 
@@ -41,7 +39,7 @@ wpopbuilding_vcheck <- function(){
     suburl <- paste("ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/", versions, "", sep = "/")
 
     filenames <- find_sublinks(url = suburl)
-    filenames <- as.data.table(filenames)
+    filenames <- data.table::as.data.table(filenames)
     filenames[,country := substr(filenames, 1, 3)]
     filenames[,versionnum := versions]
 
@@ -50,10 +48,7 @@ wpopbuilding_vcheck <- function(){
 
 
 
-  all_filenames <- rbindlist(lapply(bld_vers, find_blddt))
-
-  all_filenames <- all_filenames[(country %in% codelist$iso3c[is.na(codelist$iso3c) == FALSE]),]
-
+  all_filenames <- data.table::rbindlist(lapply(bld_vers, find_blddt))
 
   return(all_filenames)
 

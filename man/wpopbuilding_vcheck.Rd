@@ -7,6 +7,13 @@ building data in each country with available}
 \usage{
 wpopbuilding_vcheck()
 }
+\value{
+a data.table object with list and versions of building data
+}
 \description{
-simply run : wpopbuilding_check() in your console
+simply run : wpopbuilding_check() in your console.
+}
+\note{
+ALWAYS GIVE AT LEAST 2 MINUTES BETWEEN SUCCESSIVE RUNS OF THIS FUNCTION. THE PREVENTS SUBSEQUENT REQUESTS ON ITS
+SERVER WITHIN THAT TIME INTERVAL, SO YOU WILL GET A <NOT SET> FUNCTION ERROR.
 }

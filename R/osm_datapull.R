@@ -5,6 +5,10 @@
 #' @param lines if TRUE, OSM features with lines data will be pulled
 #' @param points if TRUE, OSM features with points data will be pulled
 #' @param multipolygon if TRUE, OSM features will be pulled within polygons
+#'
+#' @return one shapefiles for each of lines, points and/or multipolygon pulls specified as TRUE
+#'
+#' @export
 
 osm_datapull <- function(country = "Cameroon",
                          ldrive = "C:/Users/ifean/Documents/WorldBankWork/SAEPlus_Other",
@@ -13,22 +17,22 @@ osm_datapull <- function(country = "Cameroon",
                          multipolygon = T){
 
   ## below are the packages needed for the function to run
-  usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "haven")
-
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
-
+  # usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "haven")
+  #
+  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
+  #
+  # if(is.null(missing) == FALSE){
+  #   install.packages(missing,
+  #                    dependencies = TRUE,
+  #                    repos = "http://cran.us.r-project.org")
+  # }
+  #
+  # invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
+  requireNamespace("osmextract", quietly = TRUE)
 
   if (lines == TRUE){
 
-    osm_lines <- oe_get(country, stringsAsFactors = TRUE)
+    osm_lines <- osmextract::oe_get(country, stringsAsFactors = TRUE)
     file <- paste(country, "osmlines", sep = "_")
     save (osm_lines, file = paste(ldrive, file, sep = "/"))
 
@@ -36,7 +40,7 @@ osm_datapull <- function(country = "Cameroon",
 
   if(points == TRUE){
 
-    osm_points <- oe_get(country, layer="points", stringsAsFactors = FALSE)
+    osm_points <- osmextract::oe_get(country, layer="points", stringsAsFactors = FALSE)
     file <- paste(country, "osmpoints", sep = "_")
     save (osm_points, file = paste(ldrive, file, sep = "/"))
 
@@ -44,7 +48,7 @@ osm_datapull <- function(country = "Cameroon",
 
   if(multipolygon == TRUE) {
 
-    osm_mp <- oe_get(country, layer="multipolygons", stringsAsFactors = TRUE)
+    osm_mp <- osmextract::oe_get(country, layer="multipolygons", stringsAsFactors = TRUE)
     file <- paste(country, "osmmp", sep = "_")
     save (osm_mp, file = paste(ldrive, file, sep = "/"))
 

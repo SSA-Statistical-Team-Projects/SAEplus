@@ -8,6 +8,10 @@
 #' @return A list containing two objects: a dataframe/datatable with original osm points data containing number of points
 #' in polygon shapefile (from shapefile_path argument) and a lazy datatable version of the full osm points data
 #' with point information
+#'
+#' @export
+#'
+#' @import data.table sf dtplyr
 
 
 osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
@@ -16,24 +20,24 @@ osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
                               feature_var = "highway"){
 
   ## below are the packages needed for the function to run
-  usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "tidygraph",
-               "igraph", "tibble", "dplyr", "ggplot2", "units", "tmap", "rgrass7",
-               "link2GI", "nabor")
+  # usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "tidygraph",
+  #              "igraph", "tibble", "dplyr", "ggplot2", "units", "tmap", "rgrass7",
+  #              "link2GI", "nabor")
+  #
+  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
+  #
+  # if(is.null(missing) == FALSE){
+  #   install.packages(missing,
+  #                    dependencies = TRUE,
+  #                    repos = "http://cran.us.r-project.org")
+  # }
+  #
+  # invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
 
-  missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
 
-  if(is.null(missing) == FALSE){
-    install.packages(missing,
-                     dependencies = TRUE,
-                     repos = "http://cran.us.r-project.org")
-  }
-
-  invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
-
-
-  agebs <- st_read(shapefile_path)
+  agebs <- sf::st_read(shapefile_path)
   load(osm_path)
-  osm_agebs <- lazy_dt(st_intersection(osm_points,st_make_valid(agebs)))
+  osm_agebs <- dtplyr::lazy_dt(st_intersection(osm_points,st_make_valid(agebs)))
 
   # out = group_by(osm_agebs,CVEGEO,highway) %>%
   #   summarize(count=n())
@@ -41,7 +45,7 @@ osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
 
   out.dt <- osm_agebs$parent[,.(count = .N),by = c(geoid_var, feature_var)]
 
-  agebs.dt <- as.data.table(agebs)
+  agebs.dt <- data.table::as.data.table(agebs)
   joined.dt <- out.dt[agebs.dt, on = geoid_var]
 
   return(list(joined.dt, osm_agebs))

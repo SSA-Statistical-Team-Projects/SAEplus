@@ -23,6 +23,9 @@ osm_datapull(
 
 \item{multipolygon}{if TRUE, OSM features will be pulled within polygons}
 }
+\value{
+one shapefiles for each of lines, points and/or multipolygon pulls specified as TRUE
+}
 \description{
 This function pulls specific layer data (lines, multipolygons and points) from the Open Street Maps for countries or regions
 }
