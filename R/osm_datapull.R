@@ -8,6 +8,8 @@
 #'
 #' @return one shapefiles for each of lines, points and/or multipolygon pulls specified as TRUE
 #'
+#' @import osmextract
+#'
 #' @export
 
 osm_datapull <- function(country = "Cameroon",

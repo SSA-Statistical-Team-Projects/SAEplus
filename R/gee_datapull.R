@@ -36,18 +36,6 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gdrive_folder = "/SAEplus",
                          ldrive_dsn = "data/cmr_nighttimelight"){
 
-  ## below are the packages needed for the function to run
-  # usepkgs <- c("rgee", "reticulate")
-  #
-  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-  #
-  # if(is.null(missing) == FALSE){
-  #   install.packages(missing,
-  #                    dependencies = TRUE,
-  #                    repos = "http://cran.us.r-project.org")
-  # }
-  #
-  # invisible(sapply(usepkgs, library, character.only = TRUE))
 
   requireNamespace(c("rgee", "reticulate"), quietly = TRUE)
 

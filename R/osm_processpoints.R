@@ -19,31 +19,13 @@ osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
                               geoid_var = "id",
                               feature_var = "highway"){
 
-  ## below are the packages needed for the function to run
-  # usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "tidygraph",
-  #              "igraph", "tibble", "dplyr", "ggplot2", "units", "tmap", "rgrass7",
-  #              "link2GI", "nabor")
-  #
-  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-  #
-  # if(is.null(missing) == FALSE){
-  #   install.packages(missing,
-  #                    dependencies = TRUE,
-  #                    repos = "http://cran.us.r-project.org")
-  # }
-  #
-  # invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
-
+  requireNamespace(c("data.table", "sf", "dtplyr"), quietly = TRUE)
 
   agebs <- sf::st_read(shapefile_path)
   load(osm_path)
   osm_agebs <- dtplyr::lazy_dt(st_intersection(osm_points,st_make_valid(agebs)))
 
-  # out = group_by(osm_agebs,CVEGEO,highway) %>%
-  #   summarize(count=n())
-
-
-  out.dt <- osm_agebs$parent[,.(count = .N),by = c(geoid_var, feature_var)]
+  out.dt <- osm_agebs$parent[,count := .N,by = c(geoid_var, feature_var)]
 
   agebs.dt <- data.table::as.data.table(agebs)
   joined.dt <- out.dt[agebs.dt, on = geoid_var]
