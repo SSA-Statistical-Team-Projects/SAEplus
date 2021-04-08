@@ -10,6 +10,7 @@ gengrid(
   stats = "sum",
   featname = "population",
   raster_tif = "cmr_ppp_2020_UNadj_constrained.tif",
+  grid_shp = T,
   grid_size = 1,
   crs = "+proj=longlat +datum=WGS84 +no_defs",
   drop_Zero = T
@@ -18,13 +19,15 @@ gengrid(
 \arguments{
 \item{dsn}{stands for data source name (see sf::st_read documentation for more information)}
 
-\item{layer}{layer name (see sf::st_read documentation for more information)}
+\item{layer}{layer name (see sf::st_read documentation for more information), will also accept object}
 
 \item{stats}{zonal statistics to be estimated}
 
 \item{featname}{the feature that the zonal statistic is computed for}
 
 \item{raster_tif}{raster file with tif extension}
+
+\item{grid_shp}{if TRUE, a grid system will be created for the shapefile (shp), grid_size must be specified}
 
 \item{grid_size}{the diagonal length of the polygon in km}
 

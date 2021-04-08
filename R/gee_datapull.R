@@ -46,7 +46,7 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
 
   s5p_collect <- ee$ImageCollection(gee_dataname)$
     filterBounds(agebs_boundary)$
-    filterDate("2018-01-01", "2018-01-31")$
+    filterDate(gee_datestart, gee_dateend)$
     select(gee_band)
 
   ## compute zonal stats function

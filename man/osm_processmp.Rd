@@ -8,7 +8,8 @@ osm_processmp(
   shapefile_path = "data/cmr_polypop_boundary.shp",
   osm_path = "C:/Users/ifean/Documents/WorldBankWork/SAEPlus_Other/Cameroon_osmmp",
   geoid_var = "id",
-  feature_var = c("amenity", "office", "shop")
+  feature_var = c("amenity", "office", "shop"),
+  drop_missing = TRUE
 )
 }
 \arguments{
