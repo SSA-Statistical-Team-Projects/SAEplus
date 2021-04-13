@@ -6,6 +6,7 @@
 #' forms the unit of analysis
 #' @param gee_dataname The specific google earth engine collection dataset name (use default as example)
 #' see (https://developers.google.com/earth-engine/datasets/) for full name
+#' @param gee_image if TRUE, an image rather than an image collection is expected (FALSE by default)
 #' @param gee_datestart The starting date for the specific feature of interest
 #' @param gee_dateend The ending date for the specific feature of interest
 #' @param gee_band The bandname within the gee_dataname selected (see https://developers.google.com/earth-engine/datasets/)
@@ -13,10 +14,11 @@
 #' @param gee_desc The name to be used to name output in google drive as well as local drive
 #' @param gdrive_folder Google Drive folder name to be created or uses if already existing to store shapefile output
 #' @param ldrive_dsn Full file path (including shapefile name) for local storage of resulting shapefile
+#' @param gee_crs Set CRS
 #'
 #' @return shapefiles to local drive
 #'
-#' @import rgee reticulate
+#' @import rgee reticulate googledrive gargle
 #'
 #' @export
 
@@ -34,11 +36,15 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_desc = "nighttimelight_cmr",
                          gee_stat = "mean",
                          gdrive_folder = "/SAEplus",
-                         ldrive_dsn = "data/cmr_nighttimelight"){
+                         ldrive_dsn = "data/cmr_nighttimelight",
+                         gee_crs = 'EPSG:4326'){
 
 
-  requireNamespace(c("rgee", "reticulate"), quietly = TRUE)
+  requireNamespace(c("rgee", "reticulate", "googledrive"), quietly = TRUE)
 
+  ee_users()
+
+  options(gargle_oauth_email = email)
   ee_Initialize(email = email)
 
   agebs <- ee$FeatureCollection(gee_polygons)
@@ -56,17 +62,47 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
     s5p_agebs <- s5p_mean$reduceRegions(
       collection =  agebs,
       reducer = ee$Reducer$mean(),
-      scale = scale
+      scale = scale,
+      crs = gee_crs
     )
   } else if(gee_stat == "sum"){
-    s5p_mean <- s5p_collect$mean()
+    s5p_sum <- s5p_collect$sum()
 
-    s5p_agebs <- s5p_mean$reduceRegions(
+    s5p_agebs <- s5p_sum$reduceRegions(
       collection = agebs,
       reducer = ee$Reducer$sum(),
-      scale = scale
+      scale = scale,
+      crs = gee_crs
     )
-  } else {return("gee_stat must be specified as sum or mean, please specify accordingly")}
+  } else if(gee_stat == "stdDev"){
+    s5p_stddev <- s5p_collect$stdDev()
+
+    s5p_agebs <- s5p_stddev$reduceRegions(
+      collection = agebs,
+      reducer = ee$Reducer$stdDev(),
+      scale = scale,
+      crs = gee_crs
+    )
+  } else if(gee_stat == "median"){
+    s5p_median <- s5p_collect$median()
+
+    s5p_agebs <- s5p_median$reduceRegions(
+      collection = agebs,
+      reducer = ee$Reducer$median(),
+      scale = scale,
+      crs = gee_crs
+    )
+  } else if(gee_stat == "minMax") {
+    s5p_minmax <- s5p_collect$minMax()
+
+    s5p_agebs <- s5p_minmax$reduceRegions(
+      collection = agebs,
+      reducer = ee$Reducer$minMax(),
+      scale = scale,
+      crs = gee_crs
+    )
+
+  }  else {return("gee_stat must be specified as sum or mean, please specify accordingly")}
 
 
   task <- ee_table_to_drive(
