@@ -18,3 +18,7 @@ StripTrailingWhitespace: Yes
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
+
+PythonType: conda
+PythonVersion: 3.9.1
+PythonPath: C:\Users\ifean\miniconda3\envs\rgee\python.exe
