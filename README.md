@@ -12,7 +12,7 @@ platforms such as Google Earth Engine, Open Street Maps, Facebook and
 WorldPop. This package will also provide functions for pre-processing
 these datasets towards small area estimation (SAE). Finally, some of the
 SAE functions within the EMDI package will be updated to speed up the
-SAE process using the data.table package.
+SAE process using the data.table package. 
 
 ## Installation
 
