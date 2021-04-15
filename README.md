@@ -1,29 +1,47 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # SAEplus
-This package uses the existing packages in `R` for small area estimation (SAE) such as `EMDI` to create a system of tools that will also carry out 
-spatial analysis including injesting available remote sensing data and creating other functional for reporting results. 
 
-## Process Overview
-### 1. Construct tile shapefile  
-A. Take boundaries of admin-1 shapefile, construct tile grid within boundary, 2.4 km by 2.4 km tiles  
-B. Use only populated grids (according to facebook population estimation) 
+<!-- badges: start -->
+<!-- badges: end -->
 
-### 2. Obtain geospatial indicators for each tile 
-Building footprint stats from Worldpop 
-GEE suite of indicators 
-Open streetmap 
-Population estimates from Facebook 
+The goal of SAEplus package is to produce a set of R functions and tools
+to pull remote sensing data as well as other geospatial data from
+platforms such as Google Earth Engine, Open Street Maps, Facebook and
+WorldPop. This package will also provide functions for pre-processing
+these datasets towards small area estimation (SAE). Finally, some of the
+SAE functions within the EMDI package will be updated to speed up the
+SAE process using the data.table package.
 
-### 3. Create sample data 
-A. Start with welfare data, merge EA centroids, spatial join with tile shapefile to merge tile ID, merge geospatial indicators 
+## Installation
 
-### 4. Estimate model using sample data 
-A. in sample using glmnet relaxed model (lasso) and store selected variables 
+<!-- You can install the released version of SAEplus from [CRAN](https://CRAN.R-project.org) with: -->
+<!-- ``` r -->
+<!-- install.packages("SAEplus") -->
+<!-- ``` -->
 
-### 5. Create synthetic census 
-A. Generate estimated tile population 
-B. Generate estimate of average household size by representative level of survey (province) 
-C. Divide population by average household size to generate number of households 
-D. Merge selected variables 
-D. Expand the data to include estimated number of households 
+The development version can be installed from
+[GitHub](https://github.com/) with:
 
-### 6. Run EMDI package 
+``` r
+# install.packages("devtools")
+devtools::install_github("SSA-Statistical-Team-Projects/SAEplus")
+```
+
+<!-- ## Example -->
+<!-- This is a basic example which shows you how to solve a common problem: -->
+<!-- ```{r example} -->
+<!-- library(SAEplus) -->
+<!-- ## basic example code -->
+<!-- ``` -->
+<!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: -->
+<!-- ```{r cars} -->
+<!-- summary(cars) -->
+<!-- ``` -->
+<!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>. -->
+<!-- You can also embed plots, for example: -->
+<!-- ```{r pressure, echo = FALSE} -->
+<!-- plot(pressure) -->
+<!-- ``` -->
+<!-- In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN. -->
