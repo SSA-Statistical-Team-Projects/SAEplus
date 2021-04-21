@@ -42,7 +42,7 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
 
   requireNamespace(c("rgee", "reticulate", "googledrive"), quietly = TRUE)
 
-  ee_users()
+  #ee_users()
 
   options(gargle_oauth_email = email)
   ee_Initialize(email = email)
