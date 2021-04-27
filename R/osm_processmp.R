@@ -21,7 +21,6 @@ osm_processmp <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
                           drop_missing = TRUE){
 
 
-  requireNamespace(c("data.table", "sf", "dtplyr", "tidyr"), quietly = TRUE)
   agebs <- sf::st_read(shapefile_path)
   load(osm_path)
 
@@ -36,7 +35,20 @@ osm_processmp <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
 
   joined.dt <- out.dt[agebs.dt, on = geoid_var]
 
-  return(list(joined.dt, osm_agebs))
+  ## flip the data from long to wide
+  arg_form <- paste(paste(geoid_var, collapse = " + "), "~",
+                    paste(feature_var, collapse = " + "))
+
+  wide_join.dt <- dcast(joined.dt, formula = formula(arg_form),
+                        value.var = "count",
+                        fun.aggregate = mean)
+
+  wide_join.dt <- agebs.dt[wide_join.dt, on = geoid_var]
+
+  wide_join.dt <- osm_cleanprocess(dt = wide_join.dt)
+
+  return(list(long_mp.dt = joined.dt,
+              wide_mp.dt = wide_join.dt))
 
 }
 

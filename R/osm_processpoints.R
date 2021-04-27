@@ -19,8 +19,6 @@ osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
                               geoid_var = "id",
                               feature_var = "highway"){
 
-  requireNamespace(c("data.table", "sf", "dtplyr"), quietly = TRUE)
-
   agebs <- sf::st_read(shapefile_path)
   load(osm_path)
   osm_agebs <- dtplyr::lazy_dt(st_intersection(osm_points,st_make_valid(agebs)))
@@ -30,6 +28,19 @@ osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
   agebs.dt <- data.table::as.data.table(agebs)
   joined.dt <- out.dt[agebs.dt, on = geoid_var]
 
-  return(list(joined.dt, osm_agebs))
+  ## flip the data from long to wide
+  arg_form <- paste(paste(geoid_var, collapse = " + "), "~",
+                    paste(feature_var, collapse = " + "))
+
+  wide_join.dt <- dcast(joined.dt, formula = formula(arg_form),
+                        value.var = "count",
+                        fun.aggregate = mean)
+
+  wide_join.dt <- agebs.dt[wide_join.dt, on = geoid_var]
+
+  wide_join.dt <- osm_cleanprocess(dt = wide_join.dt)
+
+  return(list(long_mp.dt = joined.dt,
+              wide_mp.dt = wide_join.dt))
 
 }

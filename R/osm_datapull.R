@@ -12,25 +12,12 @@
 #'
 #' @export
 
+
 osm_datapull <- function(country = "Cameroon",
                          ldrive = "C:/Users/ifean/Documents/WorldBankWork/SAEPlus_Other",
                          lines = T,
                          points = T,
                          multipolygon = T){
-
-  ## below are the packages needed for the function to run
-  # usepkgs <- c("data.table", "sf", "lwgeom", "osmextract", "dtplyr", "haven")
-  #
-  # missing <- usepkgs[!(usepkgs %in% installed.packages()[,"Package"])]
-  #
-  # if(is.null(missing) == FALSE){
-  #   install.packages(missing,
-  #                    dependencies = TRUE,
-  #                    repos = "http://cran.us.r-project.org")
-  # }
-  #
-  # invisible(sapply(usepkgs, library, character.only = TRUE)) #load relevant libaries
-  requireNamespace("osmextract", quietly = TRUE)
 
   if (lines == TRUE){
 

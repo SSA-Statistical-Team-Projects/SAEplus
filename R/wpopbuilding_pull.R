@@ -17,8 +17,6 @@ wpopbuilding_pull <- function(iso = "BEN",
                               ldrive_dsn = "data-raw"){
 
 
-  requireNamespace(c("data.table", "RCurl"), quietly = TRUE)
-
   #construct the link to the world pop website with the building links
   url <- paste("ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings", wpversion, "", sep = "/")
 
