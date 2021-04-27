@@ -16,34 +16,52 @@
 #'
 
 saeplus_selectmodel <- function(dt,
-                                outcomevar = "pc_exp",
-                                var_identifier = c("roaddensity", "count", "length",
-                                                   "pointcount", "bld", "2018", "2019"),
-                                drop_NA_tags = FALSE){
+                                outcomevar = "pcexp",
+                                var_identifier = c("roaddensity", "count_", "length",
+                                                   "_pointcount", "2018", "2019"),
+                                drop_NA_tags = TRUE){
 
   dt <- setDT(dt)
 
   ## prepare the set of variables to used for analysis
-  xset <- colnames(dt)[!(colnames(dt) %in% outcomevar)]
+  #xset <- colnames(dt)[!(colnames(dt) %in% outcomevar]
+  xset <- colnames(dt)
 
-  select_variables <- function(tag){
+  # select_variables <- function(tag){
+  #
+  #   res <- xset[grepl(tag, xset)]
+  #   return(res)
+  #
+  # }
+  #
+  # zset <- unlist(lapply(var_identifier, select_variables))
 
-    res <- xset[grepl(tag, xset)]
-    return(res)
 
+  dset <- ""
+  for (i in 1:6) {
+    zset <- xset[!grepl(var_identifier[i], xset)]
+
+    dset <- c(dset,xset[!(xset %in% unlist(zset))])
   }
 
-  xset <- unlist(lapply(var_identifier, select_variables))
+  xset <- c(dset[2:152],"bld_count", "bld_cvarea","bld_meanarea")
+
+
+  ## select x and y variables
+  xset <- dt[,xset,with=F]
 
   ### drop variables with NA
   if (drop_NA_tags == TRUE){
 
-    xset <- xset[!(grepl("NA", xset))]
+    #xset <- xset[!(grepl("NA", xset))]
+    xset <- xset[,which(unlist(lapply(xset, function(x)!all(is.na(x))))),with=F]
+    xset <- mutate(xset, across(everything(), ~replace_na(.x, 0)))
+
   }
 
-  ### select x and y variables
-  xset <- dt[,xset,with=F]
-  yvar <- dt[,outcomevar]
+  yvar <- dt[,outcomevar,with=F]
+  yvar <- orderNorm(yvar[[1]])$x.t
+
   dt <- cbind(yvar, xset)
 
   ### lasso regression
