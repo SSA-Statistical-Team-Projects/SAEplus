@@ -1,3 +1,8 @@
+#' Pull Images from Google Earth Engine
+#'
+#' This function is a slight variation from gee_datapull() which pulls image collections. This function specifically pulls
+#' images
+#'
 #' @param email A GEE authenticated gmail address
 #' @param gee_polygons A polygon shapefile spanning the region in the gee_boundary file for features will be computed.
 #' forms the unit of analysis

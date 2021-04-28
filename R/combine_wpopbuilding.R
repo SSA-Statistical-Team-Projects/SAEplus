@@ -3,7 +3,11 @@
 #' This function combines the data obtained from World Pop database on buildings with the filenames structured like
 #' XXX_buildings_v2_0_indicator within a specified shapefile
 #'
+#' @param ldrive path to the local drive
+#' @param identifier an identifier for the filnames obtained from WorldPop
+#' @param shp shapefile for the country in question
 #'
+#' @return a datatable/dataframe object
 
 
 combine_wpopbuilding <- function(ldrive = "./../S2S-REMDI/GIN_2021",

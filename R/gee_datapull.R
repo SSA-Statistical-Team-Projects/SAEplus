@@ -18,7 +18,7 @@
 #'
 #' @return shapefiles to local drive
 #'
-#' @import rgee reticulate googledrive gargle
+#' @import rgee reticulate
 #'
 #' @export
 
