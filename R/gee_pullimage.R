@@ -1,18 +1,13 @@
 #' @param email A GEE authenticated gmail address
-#' @param gee_boundary A shapefile with the boundaries for a specific region/country for which data is to be collected
 #' @param gee_polygons A polygon shapefile spanning the region in the gee_boundary file for features will be computed.
 #' forms the unit of analysis
 #' @param gee_dataname The specific google earth engine collection dataset name (use default as example)
 #' see (https://developers.google.com/earth-engine/datasets/) for full name
-#' @param gee_image if TRUE, an image rather than an image collection is expected (FALSE by default)
-#' @param gee_datestart The starting date for the specific feature of interest
-#' @param gee_dateend The ending date for the specific feature of interest
 #' @param gee_band The bandname within the gee_dataname selected (see https://developers.google.com/earth-engine/datasets/)
 #' @param scale Used in mean region reduction for zonal statistics
 #' @param gee_desc The name to be used to name output in google drive as well as local drive
 #' @param gdrive_folder Google Drive folder name to be created or uses if already existing to store shapefile output
 #' @param ldrive_dsn Full file path (including shapefile name) for local storage of resulting shapefile
-#' @param gee_crs Set CRS
 #'
 #' @return shapefiles to local drive
 #'

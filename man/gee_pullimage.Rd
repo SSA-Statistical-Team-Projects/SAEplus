@@ -2,7 +2,7 @@
 % Please edit documentation in R/gee_pullimage.R
 \name{gee_pullimage}
 \alias{gee_pullimage}
-\title{Pull Image Data from Google Earth Engine}
+\title{Pull Images from Google Earth Engine}
 \usage{
 gee_pullimage(
   email = "ifeanyi.edochie@gmail.com",
@@ -16,7 +16,29 @@ gee_pullimage(
   ldrive_dsn = "data/cmr_impervious"
 )
 }
+\arguments{
+\item{email}{A GEE authenticated gmail address}
+
+\item{gee_polygons}{A polygon shapefile spanning the region in the gee_boundary file for features will be computed.
+forms the unit of analysis}
+
+\item{gee_dataname}{The specific google earth engine collection dataset name (use default as example)
+see (https://developers.google.com/earth-engine/datasets/) for full name}
+
+\item{gee_band}{The bandname within the gee_dataname selected (see https://developers.google.com/earth-engine/datasets/)}
+
+\item{scale}{Used in mean region reduction for zonal statistics}
+
+\item{gee_desc}{The name to be used to name output in google drive as well as local drive}
+
+\item{gdrive_folder}{Google Drive folder name to be created or uses if already existing to store shapefile output}
+
+\item{ldrive_dsn}{Full file path (including shapefile name) for local storage of resulting shapefile}
+}
+\value{
+shapefiles to local drive
+}
 \description{
-This function is also sends data pull requests to the GEE server specifically for Image tags as
-different from 'SAEplus::gee_datapull()' which pulls Image Collection tags specifically
+This function is a slight variation from gee_datapull() which pulls image collections. This function specifically pulls
+images
 }

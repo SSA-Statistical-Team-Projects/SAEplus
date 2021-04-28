@@ -2,7 +2,7 @@
 % Please edit documentation in R/osm_processlines.R
 \name{osm_processlines}
 \alias{osm_processlines}
-\title{This function cleans up OSM lines data in preparation for survey to survey imputation analysis}
+\title{This function creates indicators from OSM lines data in preparation for survey to survey imputation analysis}
 \usage{
 osm_processlines(
   shapefile_path = "data/cmr_polypop_boundary.shp",
@@ -21,10 +21,8 @@ osm_processlines(
 \item{feature_var}{specific feature of interest in the osm_path object}
 }
 \value{
-A list containing two objects: a dataframe/datatable with original OSM lines data containing feature length
-in polygon shapefile (from shapefile_path argument) and a lazy datatable version of the full OSM line data
-with point information
+A list containing two objects: OSM lines data.table in both wide and long formats
 }
 \description{
-This function cleans up OSM lines data in preparation for survey to survey imputation analysis
+This function creates indicators from OSM lines data in preparation for survey to survey imputation analysis
 }

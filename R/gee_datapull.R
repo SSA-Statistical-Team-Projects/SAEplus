@@ -40,8 +40,6 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_crs = 'EPSG:4326'){
 
 
-  requireNamespace(c("rgee", "reticulate", "googledrive"), quietly = TRUE)
-
   ee_users()
 
   options(gargle_oauth_email = email)
