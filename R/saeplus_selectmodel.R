@@ -17,54 +17,49 @@
 
 saeplus_selectmodel <- function(dt,
                                 outcomevar = "pcexp",
-                                var_identifier = c("roaddensity", "count_", "length",
-                                                   "_pointcount", "2018", "2019"),
+                                var_identifier = c("roaddensity_", "count_", "length_",
+                                                   "_pointcount", "bld_", "_2018", "_2019"),
                                 drop_NA_tags = TRUE){
 
   dt <- setDT(dt)
 
-  ## prepare the set of variables to used for analysis
-  #xset <- colnames(dt)[!(colnames(dt) %in% outcomevar]
+  # Prepare the set of variables to used for analysis
   xset <- colnames(dt)
 
-  # select_variables <- function(tag){
-  #
-  #   res <- xset[grepl(tag, xset)]
-  #   return(res)
-  #
-  # }
-  #
-  # zset <- unlist(lapply(var_identifier, select_variables))
-
-
+  ## Selection of dependent variables
   dset <- ""
-  for (i in 1:6) {
+  for (i in 1:7) {
     zset <- xset[!grepl(var_identifier[i], xset)]
 
     dset <- c(dset,xset[!(xset %in% unlist(zset))])
   }
 
-  xset <- c(dset[2:152],"bld_count", "bld_cvarea","bld_meanarea")
+  ### To ensure that there are no duplicates in the set of selected variables
+  dset <- dset[!duplicated(dset)]
+
+  xset <- dset[2:length(dset)]
 
 
-  ## select x and y variables
+  # Extract x and y variables from the master set
+
   xset <- dt[,xset,with=F]
 
-  ### drop variables with NA
+  ## drop  variables whose values are all missing
+  ## and replacement of missing values by zero for the remaining variables
   if (drop_NA_tags == TRUE){
-
-    #xset <- xset[!(grepl("NA", xset))]
     xset <- xset[,which(unlist(lapply(xset, function(x)!all(is.na(x))))),with=F]
     xset <- mutate(xset, across(everything(), ~replace_na(.x, 0)))
 
   }
 
   yvar <- dt[,outcomevar,with=F]
+
+  ## Normalize y
   yvar <- orderNorm(yvar[[1]])$x.t
 
   dt <- cbind(yvar, xset)
 
-  ### lasso regression
+  # Lasso regression
   lasso.reg <-  rlasso(yvar ~ . , data = dt, post=TRUE)
   coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
 
