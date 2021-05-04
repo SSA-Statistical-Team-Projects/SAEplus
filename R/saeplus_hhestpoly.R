@@ -12,7 +12,7 @@
 #'
 #' @return data.table/data.frame object with grid level estimates
 #'
-#' @import stats tidyr
+#' @import stats tidyr hutilscpp
 #'
 
 
@@ -34,19 +34,25 @@ saeplus_hhestpoly <- function(geo_dt,
   hh_dt <- st_as_sf(hh_dt, crs = 4326, agr = "constant")
   geo_dt <- st_as_sf(geo_dt, crs = 4326, agr = "constant")
 
+  ### find the centroid in each polygon of geo_dt
+  geo_dt$centroid <- st_centroid(geo_dt)
 
-  geohh_dt <- st_join(geo_dt, hh_dt[,c(admin_var, ind_var, weight_var, "ind_estimate")])
+  #### separate both geometries into lat and lon
+  geo_dt$lat <- st_coordinates(geo_dt$centroid)[,1]
+  geo_dt$lon <- st_coordinates(geo_dt$centroid)[,2]
 
-  geohh_dt <- setDT(geohh_dt)
-  geohh_dt[, polygon_est := get(geo_dt_var)/ind_estimate]
+  hh_dt$lat <- st_coordinates(hh_dt)[,1]
+  hh_dt$lon <- st_coordinates(hh_dt)[,2]
 
-  ids <- colnames(geo_dt)
+  ### find the point in hh_dt that is closest to the points in geo_dt
+  geo_dt$matches <- hutilscpp::match_nrst_haversine(lat = geo_dt$lat,
+                                                    lon = geo_dt$lon,
+                                                    addresses_lat = hh_dt$lat,
+                                                    addresses_lon = hh_dt$lon)[,1]
 
-  ## re-estimate/re-calibrate polygons
-  geohh_dt[,polygon_est := weighted.mean(x = polygon_est, w = get(weight_var), na.rm = TRUE), by = get(ids)]
 
-  ids <- ids[!grepl("geometry", ids)]
-  geohh_dt <- unique(geohh_dt[is.na(get(admin_var)) == FALSE, c(ids, "polygon_est"), with = F])
+
+
 
   return(geohh_dt)
 
