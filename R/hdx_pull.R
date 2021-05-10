@@ -1,0 +1,59 @@
+#' Check and pull data from Humanitarian Data Exchange
+#'
+#' @param iso The standard ISO-3 country code for country of interest
+#' @param identifier Type of data to check
+#' @param location_folder Destination for the downloaded files
+#'
+#'
+#' @export
+#'
+#' @import remotes tidyverse countrycode rhdx
+
+
+
+hdx_pull <- function(iso = "BEN",
+                     identifier = "Relative wealth indicator",
+                     location_folder = "C:/Users/wb571802/Desktop/WORK"){
+
+
+  # remotes::install_github("dickoa/rhdx")
+  # set_rhdx_config(hdx_site = "prod")
+
+  ## Search all dataset with rwi
+  ds <- search_datasets(identifier, rows = 2)
+
+  ## Check for the country
+
+  ### List of all the sets on rwi
+  list_sources <- get_resources(ds[[1]])
+
+  ### Names of sets
+  list_name <- list()
+  for (i in 1:length(list_sources)){
+
+    list_name[[i]] <- list_sources[[i]]$data$name
+
+  }
+
+  list_name <- unlist(list_name)
+
+  ### List of all the countries
+  list_country <- str_sub(list_name,end=-27)
+
+  ### check if the country is in the list
+  country <- countrycode(iso, origin = "iso3c", destination = "country.name.en")
+
+  if((country %in% list_country) == FALSE){
+
+    return("Relative Wealth Index for this country is not available")
+
+  } else {
+
+    n <- which(list_country == country)
+    dt <- get_resource(ds[[1]],n) %>% read_resource(download_folder = location_folder)
+
+    return(dt)
+
+  }
+
+}
