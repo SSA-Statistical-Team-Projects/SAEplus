@@ -40,9 +40,9 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_crs = 'EPSG:4326'){
 
 
-  ee_users()
-
-  options(gargle_oauth_email = email)
+  # ee_users()
+  #
+  # options(gargle_oauth_email = email)
   ee_Initialize(email = email)
 
   agebs <- ee$FeatureCollection(gee_polygons)

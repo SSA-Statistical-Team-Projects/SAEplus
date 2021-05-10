@@ -23,49 +23,52 @@ saeplus_selectmodel <- function(dt,
 
   dt <- setDT(dt)
 
-  # Prepare the set of variables to used for analysis
-  xset <- colnames(dt)
+  ## prepare the set of variables to used for analysis
+  xset <- colnames(dt)[!(colnames(dt) %in% outcomevar)]
+  yvar <- dt[,get(outcomevar)]
+  select_variables <- function(tag){
 
-  ## Selection of dependent variables
-  dset <- ""
-  for (i in 1:7) {
-    zset <- xset[!grepl(var_identifier[i], xset)]
+    res <- xset[grepl(tag, xset)]
+    return(res)
 
-    dset <- c(dset,xset[!(xset %in% unlist(zset))])
   }
 
-  ### To ensure that there are no duplicates in the set of selected variables
-  dset <- dset[!duplicated(dset)]
+  xset <- unlist(lapply(var_identifier, select_variables))
 
-  xset <- dset[2:length(dset)]
-
-
-  # Extract x and y variables from the master set
-
-  xset <- dt[,xset,with=F]
-
-  ## drop  variables whose values are all missing
-  ## and replacement of missing values by zero for the remaining variables
+  ### drop variables with NA
   if (drop_NA_tags == TRUE){
-    xset <- xset[,which(unlist(lapply(xset, function(x)!all(is.na(x))))),with=F]
-    xset <- mutate(xset, across(everything(), ~replace_na(.x, 0)))
+
+    xset <- xset[!(grepl("NA", xset))]
 
   }
-
-  yvar <- dt[,outcomevar,with=F]
 
   ## Normalize y
-  yvar <- orderNorm(yvar[[1]])$x.t
+  yvar <- bestNormalize::orderNorm(yvar)$x.t
+
+  ## replace missing observations with 0
+  replace_missings <- function(X){
+
+    X[is.na(X)] <- 0
+
+    return(X)
+  }
+
+
+  xset <- dt[, xset, with = F]
+  xset <- xset[,apply(.SD, 2, replace_missings)]
+  xset <- as.data.table(xset)
 
   dt <- cbind(yvar, xset)
+  dt <- setDT(dt)
+
+
 
   # Lasso regression
-  lasso.reg <-  rlasso(yvar ~ . , data = dt, post=TRUE)
+  lasso.reg <-  hdm::rlasso(yvar ~ . , data = dt, post=TRUE)
   coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
 
 
-  return(list(regression_results = summary(lasso.reg),
-              coefficients = coefs))
+  return(lasso.reg)
 
 
 
