@@ -7,7 +7,7 @@
 #'
 #' @export
 #'
-#' @import remotes tidyverse countrycode rhdx
+#' @import remotes tidyverse countrycode rhdx stringr
 
 
 
@@ -16,16 +16,16 @@ hdx_pull <- function(iso = "BEN",
                      location_folder = "C:/Users/wb571802/Desktop/WORK"){
 
 
-  # remotes::install_github("dickoa/rhdx")
-  # set_rhdx_config(hdx_site = "prod")
+  remotes::install_github("dickoa/rhdx")
+  rhdx::set_rhdx_config(hdx_site = "prod")
 
   ## Search all dataset with rwi
-  ds <- search_datasets(identifier, rows = 2)
+  ds <- rhdx::search_datasets(identifier, rows = 2)
 
   ## Check for the country
 
   ### List of all the sets on rwi
-  list_sources <- get_resources(ds[[1]])
+  list_sources <- rhdx::get_resources(ds[[1]])
 
   ### Names of sets
   list_name <- list()
@@ -50,7 +50,7 @@ hdx_pull <- function(iso = "BEN",
   } else {
 
     n <- which(list_country == country)
-    dt <- get_resource(ds[[1]],n) %>% read_resource(download_folder = location_folder)
+    dt <- rhdx::get_resource(ds[[1]],n) %>% rhdx::read_resource(download_folder = location_folder)
 
     return(dt)
 
