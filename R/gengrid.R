@@ -15,7 +15,7 @@
 #'
 #' @export
 #'
-#' @import data.table sf raster dplyr spex exactextractr tmap
+#' @import data.table sf raster dplyr spex exactextractr tmap rgeos rgdal
 
 
 gengrid <- function(dsn = "data-raw",
@@ -30,14 +30,14 @@ gengrid <- function(dsn = "data-raw",
                     ){
 
   if (exists(layer) == FALSE){
-    shp <- sf::st_read(dsn = dsn,
-                       layer = layer)
+    shp <- st_read(dsn = dsn,
+                   layer = layer)
   } else {
     shp <- layer
   }
 
   if (exists(layer) == FALSE){
-    pop <- raster::raster(paste(dsn, raster_tif, sep = "/"))
+    pop <- raster(paste(dsn, raster_tif, sep = "/"))
   } else {
     pop <- raster_tif
   }
@@ -46,21 +46,21 @@ gengrid <- function(dsn = "data-raw",
   if (grid_shp == T) {
     #generate baseline raster
     resolution <- grid_size/111
-    base_raster <- raster::raster(xmn= -180, ymn= -90, xmx = 180, ymx = 90,
+    base_raster <- raster(xmn= -180, ymn= -90, xmx = 180, ymx = 90,
                                   resolution = resolution, crs = crs)
-    extent_shp <- raster::extent(shp)
-    base_raster <- raster::crop(base_raster, extent_shp) ##we only care about base raster as long as it within shapefile
+    extent_shp <- extent(shp)
+    base_raster <- crop(base_raster, extent_shp) ##we only care about base raster as long as it within shapefile
     base_raster[is.na(base_raster)] <- 0
-    base_raster <- raster::mask(base_raster, shp)
+    base_raster <- mask(base_raster, shp)
 
     #change raster to polygon
-    br_poly <- spex::polygonize(base_raster)
+    br_poly <- polygonize(base_raster)
     class(br_poly)
-    br_poly <- br_poly %>% dplyr::rename(id = layer)
+    br_poly <- br_poly %>% rename(id = layer)
     br_poly$id <- seq(1:dim(br_poly)[1])
 
     #now compute zonal statistics of population
-    zonal_stats <- exactextractr::exact_extract(pop, br_poly, stats) %>% as.data.table()
+    zonal_stats <- exact_extract(pop, br_poly, stats) %>% as.data.table()
     names(zonal_stats) <- stats
     br_poly <- cbind(br_poly,zonal_stats)
 
@@ -69,9 +69,9 @@ gengrid <- function(dsn = "data-raw",
     }
   } else {
 
-    extent_shp <- raster::extent(shp)
+    extent_shp <- extent(shp)
 
-    zonal_stats <- exactextractr::exact_extract(pop, shp, stats) %>% as.data.table()
+    zonal_stats <- exact_extract(pop, shp, stats) %>% as.data.table()
     names(zonal_stats) <- stats
     br_poly <- cbind(shp, zonal_stats)
 
@@ -81,7 +81,7 @@ gengrid <- function(dsn = "data-raw",
 
   }
 
-  mymap <- tmap::tm_shape(br_poly) +
+  mymap <- tm_shape(br_poly) +
     tm_fill(stats,
             title = raster_tif,
             style="quantile",
@@ -89,7 +89,7 @@ gengrid <- function(dsn = "data-raw",
             palette="PuBu")  +
     tm_borders(col="black", lwd=0, alpha = 0)
 
-  br_dt <- data.table::as.data.table(br_poly[,stats])
+  br_dt <- as.data.table(br_poly[,stats])
 
   ## if a feature name is provided, relabel the variable name in the data to show this
   if(is.null(featname) == FALSE){

@@ -8,6 +8,8 @@
 #' @param shp shapefile for the country in question
 #'
 #' @return a datatable/dataframe object
+#'
+#' @import raster sf
 
 
 combine_wpopbuilding <- function(ldrive = "./../S2S-REMDI/GIN_2021",

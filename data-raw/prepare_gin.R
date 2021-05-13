@@ -1,25 +1,17 @@
-## environment set up
-remove(list = objects()) ## clear all objects in R workspace
 
-options(
-  stringsAsFactors = F, ## tell R to treat text as text, not factors
-  width = 80, ## set the maximum width of outputs as 80 characters
-  scipen = 6, ## discourage R from displaying numbers in scientific notation
-  mc.cores = 6, ## set number of (mac) cores used in parallel processing
-  start.time= Sys.time()
-)
-
+###########################################################################################
+##############################FIRST PULL THE DATA TOGETHER#################################
+###########################################################################################
 
 ### we need to drop the code that pulls together all the data
 ##### create the gridded polygon data for GIN
-devtools::load_all()
 gingrid <- SAEplus::gengrid(dsn = "data",
                             layer = "sous_prefectures",
                             raster_tif = "gin_ppp_2020_UNadj_constrained.tif",
                             drop_Zero = FALSE)
 
 #### load the shapefile for the poverty economist for GIN
-ginshp <- st_read(dsn = "data", layer = "sous_prefectures")
+ginshp <- sf::st_read(dsn = "data", layer = "sous_prefectures")
 
 
 ### using the model selection algorithm code on the data
@@ -150,10 +142,6 @@ gin.points <- SAEplus::osm_processpoints(shapefile_path = "data/GIN_allbuilding.
 
 saveRDS(gin.points, file = "data/GIN_points_obj") #save the object as RData
 
-##load osm objects
-# gin.lines <- readRDS("./../S2S-REMDI/GIN_2021/GIN_lines_obj.RDS")
-# gin.mp <- readRDS("./../S2S-REMDI/GIN_2021/GIN_mp_obj")
-# gin.points <- readRDS("./../S2S-REMDI/GIN_2021/GIN_points_obj")
 
 #transform objects from long to wide first
 ginline.dt <-
@@ -178,8 +166,8 @@ paste_tolist <- function(X, tag = "pointcount"){
 
 varrelabs <- unlist(lapply(labs, paste_tolist))
 
-setnames(ginmp.dt, labs, varrelabs)
-setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
+data.table::setnames(ginmp.dt, labs, varrelabs)
+data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
 
 
 ginosm.dt <- ginmp.dt[ginline.dt, on = c("id")]
@@ -188,8 +176,8 @@ ginosm.dt <- gin.bld.dt[ginosm.dt, on = "id"] ### all open street maps data merg
 
 #### merge this with the household data
 # merge with household data
-test <- data.table::as.data.table(readstata13::read.dta13("./../S2S-REMDI/GIN_2021/GIN-Grappe_GPS_2018.dta"))
-test2 <- data.table::as.data.table(readstata13::read.dta13("./../S2S-REMDI/GIN_2021/ehcvm_welfare_GIN2018.dta"))
+test <- data.table::as.data.table(readstata13::read.dta13("data/GIN-Grappe_GPS_2018.dta"))
+test2 <- data.table::as.data.table(readstata13::read.dta13("data/ehcvm_welfare_GIN2018.dta"))
 ginhhgeo.dt <- test[test2, on = c("grappe", "vague")]
 
 ### include geospatial data into the household data
@@ -197,14 +185,74 @@ ginhhgeo.dt <- sf::st_as_sf(ginhhgeo.dt, coords = c("coordonnes_gps__Longitude",
                             crs = 4326, agr = "constant")
 
 
-### implement join
+### load in the google earth engine datasets
+gin_geepoly.dt <- list.files(path = "./../S2S-Imputation-WAEMU/InputData", pattern = "GIN")
+
+drop_chr <- function(x){
+  x <- substr(x, start = 1, stop = nchar(x) - 4)
+  return(x)
+}
+
+gin_geepoly.dt <- unique(unlist(lapply(gin_geepoly.dt, drop_chr)))
+
+st_readlist <- function(X){
+
+  obj <- sf::st_read(dsn = "./../S2S-Imputation-WAEMU/InputData", layer = X)
+  colnames(obj)[colnames(obj) %in% "mean"] <- X
+  return(obj)
+
+}
+
+gin_geepoly.dt <- lapply(gin_geepoly.dt, st_readlist)
+
+### merge the list of spatial objects
+convert_merge_DT <- function(sf1, sf2){
+
+  sf1 <- data.table::as.data.table(sf1)
+  sf2 <- data.table::as.data.table(sf2)
+
+  obj <- sf1[sf2, on = c("id", "population")]
+
+  return(obj)
+
+}
+
+gin_geepoly.dt <- Reduce(convert_merge_DT, gin_geepoly.dt)
+
+#drop extra geometry columns
+geovars <- colnames(gin_geepoly.dt)[grepl("geometry", colnames(gin_geepoly.dt))]
+geovars <- geovars[!(geovars %in% "geometry")]
+
+gin_geepoly.dt[,(geovars) := NULL]
+
+names(gin_geepoly.dt) <- tolower(names(gin_geepoly.dt))
+gin_geepoly.dt <- sf::st_as_sf(gin_geepoly.dt, crs = 4326, agr = "constant")
+
+### implement join with all data to the household survey
 ginosm.dt <- sf::st_as_sf(ginosm.dt, crs = 4326, agr = "constant")
-gin_master.dt <- sf::st_join(ginhhgeo.dt, gin_gee.dt)
+gin_master.dt <- sf::st_join(ginhhgeo.dt, gin_geepoly.dt)
 gin_master.dt <- sf::st_join(gin_master.dt, ginosm.dt)
 
 gin_master.dt <- as.data.table(gin_master.dt)
 
-saveRDS(gin_master.dt, file = "GIN_2021/GIN_master.RDS")
+
+##### also combine all the remote sensing geospatial data
+ginosm.dt <- data.table::as.data.table(ginosm.dt)
+gin_geepoly.dt <- data.table::as.data.table(gin_geepoly.dt)
+
+gin_masterpoly.dt <- ginosm.dt[gin_geepoly.dt, on = "id"]
+
+
+saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
+saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
+
+###########################################################################################
+##############################PREPARE FOR S2S IMPUTATION###################################
+###########################################################################################
+
+### run the model selection code
+selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt)
+
 
 
 
