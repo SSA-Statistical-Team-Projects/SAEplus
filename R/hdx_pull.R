@@ -7,13 +7,13 @@
 #'
 #' @export
 #'
-#' @import remotes tidyverse countrycode rhdx stringr
+#' @import remotes countrycode rhdx stringr
 
 
 
 hdx_pull <- function(iso = "BEN",
                      identifier = "Relative wealth indicator",
-                     location_folder = "C:/Users/wb571802/Desktop/WORK"){
+                     location_folder = NULL){
 
 
   remotes::install_github("dickoa/rhdx")
@@ -38,10 +38,12 @@ hdx_pull <- function(iso = "BEN",
   list_name <- unlist(list_name)
 
   ### List of all the countries
-  list_country <- str_sub(list_name,end=-27)
+  #list_country <- str_sub(list_name,end=-27)
+  list_country <- stringr::str_split(list_name, "_", simplify = TRUE)[ ,1]
+
 
   ### check if the country is in the list
-  country <- countrycode(iso, origin = "iso3c", destination = "country.name.en")
+  country <- countrycode::countrycode(iso, origin = "iso3c", destination = "country.name.en")
 
   if((country %in% list_country) == FALSE){
 
@@ -50,9 +52,19 @@ hdx_pull <- function(iso = "BEN",
   } else {
 
     n <- which(list_country == country)
-    dt <- rhdx::get_resource(ds[[1]],n) %>% rhdx::read_resource(download_folder = location_folder)
 
-    return(dt)
+    if (is.null(location_folder)) {
+
+      dt <- rhdx::get_resource(ds[[1]],n) %>% rhdx::read_resource()
+      return(dt)
+      #return(fwrite(dt, sep = ";", col.names = TRUE, row.names = TRUE))
+
+    } else {
+
+      dt <- rhdx::get_resource(ds[[1]],n) %>% rhdx::read_resource(download_folder = location_folder)
+      return(dt)
+
+    }
 
   }
 
