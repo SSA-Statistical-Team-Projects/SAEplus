@@ -245,6 +245,17 @@ gin_geepoly.dt <- data.table::as.data.table(gin_geepoly.dt)
 gin_masterpoly.dt <- ginosm.dt[gin_geepoly.dt, on = "id"]
 
 
+### include the HDX data as well
+gin_hdx.dt <- hdx_pull(iso = "GIN")
+gin_hdx.dt <- sf::st_as_sf(gin_hdx.dt, coords = c("longitude", "latitude"),crs = 4326, agr = "constant")
+
+gin_masterpoly.dt <- sf::st_as_sf(gin_masterpoly.dt, crs = 4326, agr = "constant")
+gin_masterpoly.dt <- sf::st_join(gin_masterpoly.dt, gin_hdx.dt)
+gin_master.dt <- sf::st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
+gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c("rwi", "geometry")])
+
+
+
 saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
 saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
 
@@ -274,8 +285,6 @@ gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
 #### the datasets
 gin_hhsurvey.dt <- gin_master.dt[,c("ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
 gin_hhcensus.dt <- gridhh_count.dt[,c("ADM3_CODE", "ind_estimate",selected.vars),with=F]
-
-
 
 #### perform EMDI
 gin_model <- paste(selected.vars, collapse = " + ")
