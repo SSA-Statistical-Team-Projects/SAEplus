@@ -1,3 +1,5 @@
+#' @import emdi
+#'
 
 ###########################################################################################
 ##############################FIRST PULL THE DATA TOGETHER#################################
@@ -252,6 +254,49 @@ saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
 
 ### run the model selection code
 selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt)
+selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
+
+### create both datasets, the survey household dataset and the census household dataset
+
+##### census household dataset
+## computing the number of households per grid estimates
+ginshp <- st_as_sf(ginshp, agr = "constant", crs = 4326)
+gin_master.dt <- st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
+
+gin_master.dt <- st_join(gin_master.dt, ginshp)
+
+gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_masterpoly.dt,
+                                     hh_dt = gin_master.dt,
+                                     shp_dt = ginshp)
+
+gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
+
+#### the datasets
+gin_hhsurvey.dt <- gin_master.dt[,c("ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
+gin_hhcensus.dt <- gridhh_count.dt[,c("ADM3_CODE", "ind_estimate",selected.vars),with=F]
+
+
+
+#### perform EMDI
+gin_model <- paste(selected.vars, collapse = " + ")
+gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
+
+gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(gin_hhsurvey.dt$ADM3_CODE) == FALSE,]
+
+ginemdi_model <- emdi::ebp(fixed = gin_model, pop_data = gin_hhcensus.dt, pop_domains = "ADM3_CODE",
+                           smp_data = gin_hhsurvey.dt, smp_domains = "ADM3_CODE", threshold = 0,
+                           L = 100, transformation = "box.cox", na.rm = TRUE)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
