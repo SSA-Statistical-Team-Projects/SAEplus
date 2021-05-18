@@ -171,7 +171,7 @@ varrelabs <- unlist(lapply(labs, paste_tolist))
 data.table::setnames(ginmp.dt, labs, varrelabs)
 data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
 
-
+####GINenvironment.RData is saved at this point
 ginosm.dt <- ginmp.dt[ginline.dt, on = c("id")]
 
 ginosm.dt <- gin.bld.dt[ginosm.dt, on = "id"] ### all open street maps data merged
@@ -292,18 +292,35 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 
 gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(gin_hhsurvey.dt$ADM3_CODE) == FALSE,]
 
-### replace NAs with zeros
-replace_NA <- function(x){
-  x[is.na(x)] <- 0
-  return(x)
+
+replace_NA <- function(DT) {
+  for (i in names(DT))
+    DT[is.na(get(i)), (i):=0]
+
+  return(DT)
+
 }
 
+gin_hhsurvey.dt <- replace_NA(gin_hhsurvey.dt)
+gin_hhcensus.dt <- replace_NA(gin_hhcensus.dt)
+
+#recode the adm3 codes to be numerics
+gin_hhsurvey.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
+gin_hhcensus.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
+
+
+gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM3_CODE) == FALSE,]
+
+gin_hhsurvey.dt[,pcexp := bestNormalize::orderNorm(pcexp)$x.t]
+
+
+#save the datasets to have a new environment for EMDI
+saveRDS(gin_hhcensus.dt, file = "data/gin_hhcensus.RDS")
+saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
 
 
 
-ginemdi_model <- emdi::ebp(fixed = gin_model, pop_data = gin_hhcensus.dt, pop_domains = "ADM3_CODE",
-                           smp_data = gin_hhsurvey.dt, smp_domains = "ADM3_CODE", threshold = 0,
-                           L = 100, transformation = "box.cox", na.rm = TRUE)
+
 
 
 
