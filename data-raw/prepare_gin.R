@@ -292,10 +292,18 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 
 gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(gin_hhsurvey.dt$ADM3_CODE) == FALSE,]
 
+### replace NAs with zeros
+replace_NA <- function(x){
+  x[is.na(x)] <- 0
+  return(x)
+}
+
+
+
+
 ginemdi_model <- emdi::ebp(fixed = gin_model, pop_data = gin_hhcensus.dt, pop_domains = "ADM3_CODE",
                            smp_data = gin_hhsurvey.dt, smp_domains = "ADM3_CODE", threshold = 0,
                            L = 100, transformation = "box.cox", na.rm = TRUE)
-
 
 
 
