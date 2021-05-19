@@ -256,25 +256,35 @@ gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c("rwi", "geometr
 
 
 
-saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
-saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
+# saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
+# saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
 
 ###########################################################################################
 ##############################PREPARE FOR S2S IMPUTATION###################################
 ###########################################################################################
+## create the state level variables to be included in the model selection process
+ginshp <- st_as_sf(ginshp, agr = "constant", crs = 4326)
+gin_master.dt <- st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
+
+gin_master.dt <- st_join(gin_master.dt, ginshp)
+
+gin_master.dt <- as.data.table(gin_master.dt)
+
+gin_master.dt[,ADM1_NUMBER := plyr::mapvalues(ADM1_NAME, from = unique(gin_master.dt$ADM1_NAME),
+                                              to = 1:length(unique(gin_master.dt$ADM1_NAME)))]
+gin_master.dt[,ADM1_NUMBER := as.numeric(ADM1_NUMBER)]
 
 ### run the model selection code
-selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt)
+selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
+                                              var_identifier = c("roaddensity_", "count_", "length_",
+                                                                 "_pointcount", "bld_", "_2018", "_2019",
+                                                                 "rwi", "ADM1_NUMBER"))
 selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
 
 ### create both datasets, the survey household dataset and the census household dataset
 
 ##### census household dataset
 ## computing the number of households per grid estimates
-ginshp <- st_as_sf(ginshp, agr = "constant", crs = 4326)
-gin_master.dt <- st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
-
-gin_master.dt <- st_join(gin_master.dt, ginshp)
 
 gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_masterpoly.dt,
                                      hh_dt = gin_master.dt,
