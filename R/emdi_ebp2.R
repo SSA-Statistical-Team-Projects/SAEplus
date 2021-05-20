@@ -1,0 +1,252 @@
+#' (ii) log transformation ("log"); (iii) Box-Cox transformation ("box.cox").
+#' Defaults to \code{"box.cox"}.
+#' @param interval a numeric vector containing a lower and upper limit
+#' determining an interval for the estimation of the optimal parameter. The
+#' interval is passed to function \code{\link[stats]{optimize}} for the
+#' optimization. Defaults to c(-1,2). If the convergence fails, it is often
+#' advisable to choose a smaller more suitable interval. For right skewed
+#' distributions the negative values may be excluded, also values larger than 1
+#' are seldom observed.
+#' @param L a number determining the number of Monte-Carlo simulations that
+#' must be at least 1. Defaults to 50. For practical applications, values
+#' larger than 200 are recommended (see also
+#' \cite{Molina, I. and Rao, J.N.K. (2010)}).
+#' @param MSE if \code{TRUE}, MSE estimates using a parametric bootstrap approach
+#' are calculated (see also \cite{Gonzalez-Manteiga et al. (2008)}). Defaults
+#' to \code{FALSE}.
+#' @param B a number determining the number of bootstrap populations in the
+#' parametric bootstrap approach (see also \cite{Gonzalez-Manteiga et al. (2008)})
+#' used in the MSE estimation. The number must be greater than 1. Defaults to 50.
+#' For practical applications, values larger than 200 are recommended (see also
+#' \cite{Molina, I. and Rao, J.N.K. (2010)}).
+#' @param seed an integer to set the seed for the random number generator. For
+#' the usage of random number generation see details. If seed is set to
+#' \code{NULL}, seed is chosen randomly. Defaults to \code{123}.
+#' @param boot_type character string to choose between different MSE estimation
+#' procedures,currently a \code{"parametric"} and a semi-parametric \code{"wild"}
+#' bootstrap are possible. Defaults to \code{"parametric"}.
+#' @param parallel_mode modus of parallelization, defaults to an automatic selection
+#' of a suitable mode, depending on the operating system, if the number of
+#' \code{cpus} is chosen higher than 1. For details see
+#' \code{\link[parallelMap]{parallelStart}}.
+#' @param cpus number determining the kernels that are used for the
+#' parallelization. Defaults to 1. For details see
+#' \code{\link[parallelMap]{parallelStart}}.
+#' @param custom_indicator a list of functions containing the indicators to be
+#' calculated additionally. Such functions must and must only depend on the
+#' target variable \code{y} and the \code{threshold}.
+#' Defaults to \code{NULL}.
+#' @param na.rm if \code{TRUE}, observations with \code{NA} values are deleted
+#' from the population and sample data. For the EBP procedure complete observations
+#' are required. Defaults to \code{FALSE}.
+#' @return An object of class "emdi" that provides estimators for regional
+#' disaggregated indicators and optionally corresponding MSE estimates. Generic
+#' functions such as \code{\link{estimators}}, \code{\link{print}},
+#' \code{\link{plot}} and \code{\link{summary}} have methods that can be used
+#' to obtain further information. See \code{\link{emdiObject}} for descriptions
+#' of components of objects of class "emdi".
+#' @details For Monte-Carlo approximations and in the parametric bootstrap
+#' approach random number generation is used. Thus, a seed is set by the
+#' argument \code{seed}. \cr \cr
+#' The set of predefined indicators includes the mean, median, four further quantiles
+#' (10\%, 25\%, 75\% and 90\%), head count ratio, poverty gap, Gini coefficient
+#' and the quintile share ratio.
+#' @references
+#' Battese, G.E., Harter, R.M. and Fuller, W.A. (1988). An Error-Components
+#' Model for Predictions of County Crop Areas Using Survey and Satellite Data.
+#' Journal of the American Statistical Association, Vol.83, No. 401, 28-36. \cr \cr
+#' Gonzalez-Manteiga, W. et al. (2008). Bootstrap mean squared error of
+#' a small-area EBLUP. Journal of Statistical Computation and Simulation,
+#' 78:5, 443-462. \cr \cr
+#' Molina, I. and Rao, J.N.K. (2010). Small area estimation of poverty
+#' indicators. The Canadian Journal of Statistics, Vol. 38, No.3, 369-385. \cr \cr
+#' Social Protection Committee (2001). Report on indicators in the field of
+#' poverty and social exclusions, Technical Report, European Union.
+#' @seealso \code{\link{emdiObject}}, \code{\link[nlme]{lme}},
+#' \code{\link{estimators.emdi}}, \code{\link{print.emdi}}, \code{\link{plot.emdi}},
+#' \code{\link{summary.emdi}}
+#' @examples
+#' \dontrun{
+#' # Loading data - population and sample data
+#' data("eusilcA_pop")
+#' data("eusilcA_smp")
+#'
+#' # Example 1: With default setting but na.rm=TRUE
+#' emdi_model <- ebp(fixed = eqIncome ~ gender + eqsize + cash + self_empl +
+#' unempl_ben + age_ben + surv_ben + sick_ben + dis_ben + rent + fam_allow +
+#' house_allow + cap_inv + tax_adj, pop_data = eusilcA_pop,
+#' pop_domains = "district", smp_data = eusilcA_smp, smp_domains = "district",
+#' na.rm = TRUE)
+#'
+#'
+#' # Example 2: With MSE, two additional indicators and function as threshold -
+#' # Please note that the example runs for several minutes. For a short check
+#' # change L and B to lower values.
+#' emdi_model <- ebp(fixed = eqIncome ~ gender + eqsize + cash +
+#' self_empl + unempl_ben + age_ben + surv_ben + sick_ben + dis_ben + rent +
+#' fam_allow + house_allow + cap_inv + tax_adj, pop_data = eusilcA_pop,
+#' pop_domains = "district", smp_data = eusilcA_smp, smp_domains = "district",
+#' threshold = function(y){0.6 * median(y)}, transformation = "log",
+#' L = 50, MSE = TRUE, boot_type = "wild", B = 50, custom_indicator =
+#' list(my_max = function(y, threshold){max(y)},
+#' my_min = function(y, threshold){min(y)}), na.rm = TRUE, cpus = 1)
+#' }
+#' @export
+#' @importFrom nlme fixed.effects VarCorr lme random.effects
+#' @importFrom parallelMap parallelStop parallelLapply parallelLibrary
+#' @importFrom parallel detectCores clusterSetRNGStream
+#' @importFrom stats as.formula dnorm lm median model.matrix na.omit optimize
+#' qnorm quantile residuals rnorm sd
+#' @importFrom utils flush.console
+#' @importFrom stats fitted
+
+emdi_ebp2 <- function(fixed,
+                      pop_data,
+                      pop_domains,
+                      smp_data,
+                      smp_domains,
+                      L = 50,
+                      threshold = NULL,
+                      transformation = "box.cox",
+                      interval = c(-1,2),
+                      MSE = FALSE,
+                      B = 50,
+                      seed = 123,
+                      boot_type = "parametric",
+                      parallel_mode = ifelse(grepl("windows",.Platform$OS.type),
+                                        "socket", "multicore"),
+                      cpus = 1,
+                      smp_weight=NULL,
+                      pop_weight=NULL,
+                      custom_indicator = NULL,
+                      na.rm = FALSE
+) {
+
+
+  emdi:::ebp_check1(fixed = fixed, pop_data = pop_data, pop_domains = pop_domains,
+                    smp_data = smp_data, smp_domains = smp_domains, L = L)
+
+  emdi:::ebp_check2(threshold = threshold, transformation = transformation,
+                    interval = interval, MSE = MSE, boot_type = boot_type, B = B,
+                    custom_indicator = custom_indicator, cpus = cpus,  seed = seed,
+                    na.rm = na.rm)
+
+  # Save function call ---------------------------------------------------------
+
+
+  call <- match.call()
+  if(inherits(call$fixed, "name"))
+  {
+    call$fixed <- fixed
+  }
+  # Data manipulation and notational framework ---------------------------------
+  if(!is.null(seed)) {
+    if (cpus > 1 && parallel_mode != "socket") {
+      RNG_kind <- RNGkind()
+      set.seed(seed, kind = "L'Ecuyer")
+    }
+    else
+    {
+      set.seed(seed)
+    }
+  }
+
+  # The function framework_ebp can be found in script framework_ebp.R
+  framework <- my.framework_ebp( pop_data         = pop_data,
+                                 pop_domains      = pop_domains,
+                                 smp_data         = smp_data,
+                                 smp_domains      = smp_domains,
+                                 custom_indicator = custom_indicator,
+                                 fixed            = fixed,
+                                 threshold         = threshold,
+                                 pop_weight     = pop_weight,
+                                 smp_weight      =  smp_weight,
+                                 na.rm            = na.rm
+  )
+
+
+
+  # Point Estimation -----------------------------------------------------------
+
+  # The function point_estim can be found in script point_estimation.R
+  point_estim <- my.point_estim(framework      = framework,
+                                fixed          = fixed,
+                                transformation = transformation,
+                                interval       = interval,
+                                L              = L,
+                                keep_data      = TRUE,
+                                smp_weight     = smp_weight,
+                                pop_weight     = pop_weight
+  )
+
+
+
+  # MSE Estimation -------------------------------------------------------------
+
+  if (MSE == TRUE) {
+
+    #  cat("here 1a")
+    # The function parametric_bootstrap can be found in script mse_estimation.R
+    mse_estimates <- my.parametric_bootstrap(framework      = framework,
+                                             point_estim    = point_estim,
+                                             fixed          = fixed,
+                                             transformation = transformation,
+                                             interval       = interval,
+                                             L              = L,
+                                             B              = B,
+                                             smp_weight     = smp_weight,
+                                             pop_weight     = pop_weight,
+                                             boot_type      = boot_type,
+                                             parallel_mode  = parallel_mode,
+                                             cpus           = cpus
+    )
+
+
+
+    ebp_out <- list(ind             = point_estim$ind,
+                    MSE             = mse_estimates,
+                    transform_param = point_estim[c("optimal_lambda","shift_par")],
+                    model           = point_estim$model,
+                    framework       = framework[c("N_dom_unobs",
+                                                  "N_dom_smp",
+                                                  "N_smp",
+                                                  "N_pop",
+                                                  "smp_domains",
+                                                  "smp_data",
+                                                  "smp_domains_vec",
+                                                  "pop_domains_vec")],
+                    transformation  = transformation,
+                    method          = "reml",
+                    fixed           = fixed,
+                    call            = call,
+                    successful_bootstraps = NULL
+    )
+  } else {
+
+    ebp_out <- list(ind             = point_estim$ind,
+                    MSE             = NULL,
+                    transform_param = point_estim[c("optimal_lambda","shift_par")],
+                    model           = point_estim$model,
+                    framework       = framework[c("N_dom_unobs",
+                                                  "N_dom_smp",
+                                                  "N_smp",
+                                                  "N_pop",
+                                                  "smp_domains",
+                                                  "smp_data",
+                                                  "smp_domains_vec",
+                                                  "pop_domains_vec")],
+                    transformation  = transformation,
+                    method          = "reml",
+                    fixed           = fixed,
+                    call            = call,
+                    successful_bootstraps = NULL
+    )
+  }
+
+  if (cpus > 1 && parallel_mode != "socket") {
+    RNGkind(RNG_kind[1]) # restoring RNG type
+  }
+  #class(ebp_out) <- c("emdi", "model")
+  class(ebp_out) <- c("ebp", "emdi")
+  return(ebp_out)
+}
