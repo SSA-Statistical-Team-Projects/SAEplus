@@ -1,3 +1,4 @@
+library(nlme)
 
 
 gin_hhcensus.dt <- readRDS("data/gin_hhcensus.RDS")
