@@ -19,7 +19,7 @@ dt <- gengrid(dsn = "data",
                        featname = "bld_count",
                        drop_Zero = F)
 tcd.bld.dt <- as.data.table(dt$polygon_dt)
-dt <- SAEplus::gengrid(dsn = "data",
+dt <- gengrid(dsn = "data",
                        layer = "afr_tcd_l02",
                        raster_tif = "TCD_buildings_v2_0_cv_area.tif",
                        stats = "mean",
@@ -67,8 +67,9 @@ tcd.bld.dt <- cbind(tcd.bld.dt, add.dt[,"bld_totallength"])
 saveRDS(tcd.bld.dt, "data/TCD_allbuilding.RDS")
 
 
-
-
+##### Pulling in the Relative well index data
+hdx_pull(iso = "TCD",
+         location_folder = "data")
 
 
 
