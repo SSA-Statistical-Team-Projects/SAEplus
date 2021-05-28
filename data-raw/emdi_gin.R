@@ -33,8 +33,8 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 
 ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
                             smp_data = as.data.frame(gin_hhsurvey.dt), smp_domains = "ADM3_CODE", threshold = -0.4486192,
-                            L = 3, transformation = "no", na.rm = TRUE, smp_weight = "hhweight",
-                            pop_weight = "ind_estimate", cpus = 15, MSE = TRUE)
+                            L = 100, transformation = "no", na.rm = TRUE, smp_weight = "hhweight",
+                            pop_weight = "ind_estimate", cpus = 25, MSE = TRUE)
 
 saveRDS(ginemdi_model2, "data/ginemdi_model2")
 
