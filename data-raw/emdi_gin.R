@@ -36,10 +36,6 @@ ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhce
                             L = 3, transformation = "no", na.rm = TRUE, smp_weight = "hhweight",
                             pop_weight = "ind_estimate", cpus = 15, MSE = TRUE)
 
+saveRDS(ginemdi_model2, "data/ginemdi_model2")
 
-write.excel(ginemdi_model2,
-            file = "D:/Ify/emdi_ebp2.xlsx",
-            indicator = "all",
-            MSE = TRUE,
-            CV = TRUE,
-            split = FALSE)
+
