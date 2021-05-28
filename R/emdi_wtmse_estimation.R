@@ -15,18 +15,18 @@
 # mse_estim (see below)
 # The parametric boostrap approach can be find in Molina and Rao (2010) p. 376
 
-my.parametric_bootstrap <- function(framework,
-                                    point_estim,
-                                    fixed,
-                                    transformation,
-                                    interval = c(-1,2),
-                                    L,
-                                    B,
-                                    smp_weight,
-                                    pop_weight,
-                                    boot_type,
-                                    parallel_mode,
-                                    cpus) {
+parametric_bootstrap <- function(framework,
+                                 point_estim,
+                                 fixed,
+                                 transformation,
+                                 interval = c(-1,2),
+                                 L,
+                                 B,
+                                 smp_weight,
+                                 pop_weight,
+                                 boot_type,
+                                 parallel_mode,
+                                 cpus) {
   cat('\r', "Bootstrap started                                                                       ")
   if (boot_type == "wild") {
     res_s <- residuals(point_estim$model)
@@ -48,9 +48,10 @@ my.parametric_bootstrap <- function(framework,
       parallel::clusterSetRNGStream()
     }
     parallelMap::parallelLibrary("nlme")
+    parallelMap::parallelLibrary("emdi")
     mses <- simplify2array(parallelMap::parallelLapply(
       xs              = seq_len(B),
-      fun             = my.mse_estim_wrapper,
+      fun             = mse_estim_wrapper,
       B               = B,
       framework       = framework,
       lambda          = point_estim$optimal_lambda,
@@ -72,7 +73,7 @@ my.parametric_bootstrap <- function(framework,
     parallelMap::parallelStop()
   } else{
     mses <- simplify2array(lapply(        X               = seq_len(B),
-                                          FUN             = my.mse_estim_wrapper,
+                                          FUN             = mse_estim_wrapper,
                                           B               = B,
                                           framework       = framework,
                                           lambda          = point_estim$optimal_lambda,
@@ -110,20 +111,20 @@ my.parametric_bootstrap <- function(framework,
 # be replicated B times for the Parametric Bootstrap Approach.
 # See Molina and Rao (2010) p. 376
 
-my.mse_estim <- function(framework,
-                         lambda,
-                         shift,
-                         model_par,
-                         gen_model,
-                         res_s,
-                         fitted_s,
-                         fixed,
-                         transformation,
-                         interval,
-                         L,
-                         boot_type,
-                         smp_weight,
-                         pop_weight
+mse_estim <- function(framework,
+                      lambda,
+                      shift,
+                      model_par,
+                      gen_model,
+                      res_s,
+                      fitted_s,
+                      fixed,
+                      transformation,
+                      interval,
+                      L,
+                      boot_type,
+                      smp_weight,
+                      pop_weight = NULL
 ) {
 
 
@@ -163,8 +164,9 @@ my.mse_estim <- function(framework,
                             data = unlist(lapply(framework$indicator_list,
                                                  function(f, threshold){
                                                    matrix(nrow = framework$N_dom_pop,
-                                                          data = unlist(tapply(c(pop_income_vector,framework$popweight_data),
-                                                                               c(framework$pop_domains_vec,framework$pop_domains_vec), f,
+                                                          data = unlist(tapply(c(pop_income_vector,framework$pop_weight),
+                                                                               c(rep(framework$pop_domains_vec, 2)),
+                                                                               f,
                                                                                threshold = framework$threshold ,
                                                                                simplify = TRUE)
                                                           ),
@@ -204,13 +206,12 @@ my.mse_estim <- function(framework,
   framework$smp_data <- bootstrap_sample
 
   # Prediction of indicators with bootstap sample.
-  bootstrap_point_estim <- as.matrix(my.point_estim(fixed          = fixed,
-                                                    transformation = transformation,
-                                                    interval       = interval,
-                                                    L              = L,
-                                                    framework      = framework,
-                                                    smp_weight     = smp_weights,
-                                                    pop_weight     = pop_weight
+  bootstrap_point_estim <- as.matrix(point_estim(fixed          = fixed,
+                                                 transformation = transformation,
+                                                 interval       = interval,
+                                                 L              = L,
+                                                 framework      = framework,
+                                                 pop_weight     = pop_weight
   )[[1]][,-1])
 
   return((bootstrap_point_estim - true_indicators)^2)
@@ -358,43 +359,43 @@ bootstrap_par_wild <- function(
 
 # progress for mse_estim (only internal) ----------
 
-my.mse_estim_wrapper <-  function(i,
-                                  B,
-                                  framework,
-                                  lambda,
-                                  shift,
-                                  model_par,
-                                  gen_model,
-                                  fixed,
-                                  transformation,
-                                  interval,
-                                  L,
-                                  smp_weight,
-                                  pop_weight,
-                                  res_s,
-                                  fitted_s,
-                                  start_time,
-                                  boot_type,
-                                  seedvec) {
+mse_estim_wrapper <-  function(i,
+                               B,
+                               framework,
+                               lambda,
+                               shift,
+                               model_par,
+                               gen_model,
+                               fixed,
+                               transformation,
+                               interval,
+                               L,
+                               smp_weight,
+                               pop_weight,
+                               res_s,
+                               fitted_s,
+                               start_time,
+                               boot_type,
+                               seedvec) {
 
-  source("D:/david/Mexico labor/wt.mse_estimation.R")
-  source("D:/david/Mexico labor/wt.point_estimation.R")
-  source("D:/david/Mexico labor/wt.optimal_parameter.R")
+  source(paste(getwd(),"R/emdi_wtmse_estimation.R", sep = "/"))
+  source(paste(getwd(),"R/emdi_wtpointestimation.R", sep = "/"))
+  source(paste(getwd(),"R/emdi_wtoptimal_parameter.R", sep = "/"))
 
-  tmp <- my.mse_estim(framework       = framework,
-                      lambda          = lambda,
-                      shift           = shift,
-                      model_par       = model_par,
-                      gen_model       = gen_model,
-                      res_s           = res_s,
-                      fitted_s        = fitted_s,
-                      fixed           = fixed,
-                      transformation  = transformation,
-                      interval        = interval,
-                      L               = L,
-                      boot_type       = boot_type,
-                      smp_weight      = smp_weight,
-                      pop_weight      = pop_weight
+  tmp <- mse_estim(framework       = framework,
+                   lambda          = lambda,
+                   shift           = shift,
+                   model_par       = model_par,
+                   gen_model       = gen_model,
+                   res_s           = res_s,
+                   fitted_s        = fitted_s,
+                   fixed           = fixed,
+                   transformation  = transformation,
+                   interval        = interval,
+                   L               = L,
+                   boot_type       = boot_type,
+                   smp_weight      = smp_weight,
+                   pop_weight      = pop_weight
   )
   #cat('\r', "Here")
   if (.Platform$OS.type == "windows") flush.console()
