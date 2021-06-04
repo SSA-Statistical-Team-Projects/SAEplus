@@ -10,6 +10,16 @@ combine_wpopbuilding(
   shp = "./../S2S-REMDI/GIN_2021/sous_prefectures.shp"
 )
 }
+\arguments{
+\item{ldrive}{path to the local drive}
+
+\item{identifier}{an identifier for the filnames obtained from WorldPop}
+
+\item{shp}{shapefile for the country in question}
+}
+\value{
+a datatable/dataframe object
+}
 \description{
 This function combines the data obtained from World Pop database on buildings with the filenames structured like
 XXX_buildings_v2_0_indicator within a specified shapefile

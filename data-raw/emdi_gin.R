@@ -31,11 +31,24 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 #################################################################################################################
 ### Beyond this point will only be on a SERVER with multiple cores
 
-ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
-                            smp_data = as.data.frame(gin_hhsurvey.dt), smp_domains = "ADM3_CODE", threshold = -0.4486192,
-                            L = 100, transformation = "no", na.rm = TRUE, smp_weight = "hhweight",
-                            pop_weight = "ind_estimate", cpus = 25, MSE = TRUE)
+# ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
+#                             smp_data = as.data.frame(gin_hhsurvey.dt), smp_domains = "ADM3_CODE", threshold = -0.4486192,
+#                             L = 100, transformation = "no", na.rm = TRUE, smp_weight = "hhweight",
+#                             pop_weight = "ind_estimate", cpus = 25, MSE = TRUE)
+#
+# saveRDS(ginemdi_model2, "data/ginemdi_model2")
 
-saveRDS(ginemdi_model2, "data/ginemdi_model2")
+### lets try to run the write.excel file
+
+ginemdi_model2 <- readRDS("data/ginemdi_model2")
+
+emdi_writeexcel(ginemdi_model2,
+                file = "data-raw/gin_emdiresults.xlsx",
+                indicator = "all",
+                MSE = TRUE,
+                CV = TRUE)
+
+
+
 
 
