@@ -1,5 +1,5 @@
 #' @import emdi openxlsx nlme
-#'
+#' @importFrom pysch dummy.code
 
 ###########################################################################################
 ##############################FIRST PULL THE DATA TOGETHER#################################
@@ -274,27 +274,40 @@ gin_master.dt[,ADM1_NUMBER := plyr::mapvalues(ADM1_NAME, from = unique(gin_maste
                                               to = 1:length(unique(gin_master.dt$ADM1_NAME)))]
 gin_master.dt[,ADM1_NUMBER := as.numeric(ADM1_NUMBER)]
 
+### create state level dummies
+gin_master.dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
+gin_master.dt <- cbind(gin_master.dt, gin_master.dt[,psych::dummy.code(ADM1_NAME)])
+
 ### run the model selection code
 selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
                                               var_identifier = c("roaddensity_", "count_", "length_",
                                                                  "_pointcount", "bld_", "_2018", "_2019",
-                                                                 "rwi", "ADM1_NUMBER"))
+                                                                 "rwi", "Conakry", "Kankan", "Nzerekore",
+                                                                 "Faranah", "Labe", "Mamou", "Kindia", "Boke"))
 selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
 
 ### create both datasets, the survey household dataset and the census household dataset
-
-##### census household dataset
+#### census household dataset
 ## computing the number of households per grid estimates
-
 gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_masterpoly.dt,
                                      hh_dt = gin_master.dt,
                                      shp_dt = ginshp)
 
 gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
+gridhh_count.dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
+
+gridhh_count.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
+gridhh_count.dt[, Kindia := ifelse(ADM1_NAME == "Kindia", 1, 0)]
+gridhh_count.dt[, Conakry := ifelse(ADM1_NAME == "Conakry", 1, 0)]
+gridhh_count.dt[, Nzerekore := ifelse(ADM1_NAME == "Nzerekore", 1, 0)]
+gridhh_count.dt[, Boke := ifelse(ADM1_NAME == "Boke", 1, 0)]
+gridhh_count.dt[, Labe := ifelse(ADM1_NAME == "Labe", 1, 0)]
+gridhh_count.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
+gridhh_count.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 
 #### the datasets
-gin_hhsurvey.dt <- gin_master.dt[,c("ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
-gin_hhcensus.dt <- gridhh_count.dt[,c("ADM3_CODE", "ind_estimate",selected.vars),with=F]
+gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
+gin_hhcensus.dt <- gridhh_count.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ind_estimate",selected.vars),with=F]
 
 #### perform EMDI
 gin_model <- paste(selected.vars, collapse = " + ")
@@ -314,12 +327,19 @@ replace_NA <- function(DT) {
 gin_hhsurvey.dt <- replace_NA(gin_hhsurvey.dt)
 gin_hhcensus.dt <- replace_NA(gin_hhcensus.dt)
 
-#recode the adm3 codes to be numerics
+#recode the adm codes to be numerics
 gin_hhsurvey.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
 gin_hhcensus.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
 
+gin_hhsurvey.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
+gin_hhcensus.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
 
-gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM3_CODE) == FALSE,]
+gin_hhsurvey.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
+gin_hhcensus.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
+
+# gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM3_CODE) == FALSE,]
+# gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM2_CODE) == FALSE,]
+# gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM1_CODE) == FALSE,]
 
 gin_hhsurvey.dt[,pcexp := bestNormalize::orderNorm(pcexp)$x.t]
 
