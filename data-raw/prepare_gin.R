@@ -277,6 +277,14 @@ gin_master.dt[,ADM1_NUMBER := as.numeric(ADM1_NUMBER)]
 ### create state level dummies
 gin_master.dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
 gin_master.dt <- cbind(gin_master.dt, gin_master.dt[,psych::dummy.code(ADM1_NAME)])
+gin_master.dt[,missing_state := ifelse(Kankan == 0 && Faranah == 0 && Labe == 0 && Mamou == 0 && Kindia == 0 &&
+                                         Boke == 0 && Conakry == 0 && Nzerekore == 0, 1, 0)]
+
+## drop the multicollinear variables
+gin_master.dt[,gin_lc_2018julsep := NULL]
+gin_master.dt[,length_secondary_link := NULL]
+gin_master.dt[,count_secondary_link := NULL]
+
 
 ### run the model selection code
 selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
@@ -308,6 +316,8 @@ gridhh_count.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 #### the datasets
 gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
 gin_hhcensus.dt <- gridhh_count.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ind_estimate",selected.vars),with=F]
+
+save(selected.vars, "data/gin_selectedvars.RDS")
 
 #### perform EMDI
 gin_model <- paste(selected.vars, collapse = " + ")
