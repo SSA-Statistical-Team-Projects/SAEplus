@@ -230,6 +230,13 @@ gin_geepoly.dt[,(geovars) := NULL]
 names(gin_geepoly.dt) <- tolower(names(gin_geepoly.dt))
 gin_geepoly.dt <- sf::st_as_sf(gin_geepoly.dt, crs = 4326, agr = "constant")
 
+gin_lc.dt <- data.table::fread("data-raw/LC_mean_bygrid_guinea.csv")
+gin_lc.dt <- gin_lc.dt[,c("id","bare-coverfraction", "crops-coverfraction","moss-coverfraction",
+                          "shrub-coverfraction", "tree-coverfraction", "urban-coverfraction",
+                          "water-permanent-coverfraction", "water-seasonal-coverfraction"),with=F]
+
+gin_geepoly.dt <- gin_lc.dt[gin_geepoly.dt, on = "id"]
+
 ### implement join with all data to the household survey
 ginosm.dt <- sf::st_as_sf(ginosm.dt, crs = 4326, agr = "constant")
 gin_master.dt <- sf::st_join(ginhhgeo.dt, gin_geepoly.dt)
@@ -254,8 +261,11 @@ gin_masterpoly.dt <- sf::st_join(gin_masterpoly.dt, gin_hdx.dt)
 gin_master.dt <- sf::st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
 gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c("rwi", "geometry")])
 
-
-
+#### add the data to LC data to gin masterpoly.dt
+# lcnames <- colnames(gin_geepoly.dt)[grepl("coverfraction", colnames(gin_geepoly.dt))]
+# gin_masterpoly.dt <- gin_geepoly.dt[,c("id", lcnames),with=F][as.data.table(gin_masterpoly.dt), on = "id"]
+#
+# gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c(lcnames, "geometry")])
 # saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
 # saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
 
@@ -291,12 +301,16 @@ selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
                                               var_identifier = c("roaddensity_", "count_", "length_",
                                                                  "_pointcount", "bld_", "_2018", "_2019",
                                                                  "rwi", "Conakry", "Kankan", "Nzerekore",
-                                                                 "Faranah", "Labe", "Mamou", "Kindia", "Boke"))
+                                                                 "Faranah", "Labe", "Mamou", "Kindia", "Boke",
+                                                                 "coverfraction"))
 selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
 
 ### create both datasets, the survey household dataset and the census household dataset
+###### add the landcover data real quick
+
 #### census household dataset
 ## computing the number of households per grid estimates
+
 gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_masterpoly.dt,
                                      hh_dt = gin_master.dt,
                                      shp_dt = ginshp)
@@ -314,10 +328,12 @@ gridhh_count.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
 gridhh_count.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 
 #### the datasets
+selected.vars <- gsub("`", "", selected.vars)
+
 gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
 gin_hhcensus.dt <- gridhh_count.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ind_estimate",selected.vars),with=F]
 
-save(selected.vars, "data/gin_selectedvars.RDS")
+saveRDS(selected.vars, "data/gin_selectedvars.RDS")
 
 #### perform EMDI
 gin_model <- paste(selected.vars, collapse = " + ")
