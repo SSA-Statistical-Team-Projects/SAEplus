@@ -172,6 +172,7 @@ data.table::setnames(ginmp.dt, labs, varrelabs)
 data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
 
 ####GINenvironment.RData is saved at this point
+##load("data/GINenvironment.RData")
 ginosm.dt <- ginmp.dt[ginline.dt, on = c("id")]
 
 ginosm.dt <- gin.bld.dt[ginosm.dt, on = "id"] ### all open street maps data merged
@@ -207,6 +208,7 @@ st_readlist <- function(X){
 
 gin_geepoly.dt <- lapply(gin_geepoly.dt, st_readlist)
 
+
 ### merge the list of spatial objects
 convert_merge_DT <- function(sf1, sf2){
 
@@ -221,15 +223,6 @@ convert_merge_DT <- function(sf1, sf2){
 
 gin_geepoly.dt <- Reduce(convert_merge_DT, gin_geepoly.dt)
 
-#drop extra geometry columns
-geovars <- colnames(gin_geepoly.dt)[grepl("geometry", colnames(gin_geepoly.dt))]
-geovars <- geovars[!(geovars %in% "geometry")]
-
-gin_geepoly.dt[,(geovars) := NULL]
-
-names(gin_geepoly.dt) <- tolower(names(gin_geepoly.dt))
-gin_geepoly.dt <- sf::st_as_sf(gin_geepoly.dt, crs = 4326, agr = "constant")
-
 gin_lc.dt <- data.table::fread("data-raw/LC_mean_bygrid_guinea.csv")
 gin_lc.dt <- gin_lc.dt[,c("id","bare-coverfraction", "crops-coverfraction","moss-coverfraction",
                           "shrub-coverfraction", "tree-coverfraction", "urban-coverfraction",
@@ -237,12 +230,24 @@ gin_lc.dt <- gin_lc.dt[,c("id","bare-coverfraction", "crops-coverfraction","moss
 
 gin_geepoly.dt <- gin_lc.dt[gin_geepoly.dt, on = "id"]
 
+
+#drop extra geometry columns
+geovars <- colnames(gin_geepoly.dt)[grepl("geometry", colnames(gin_geepoly.dt))]
+geovars <- geovars[!(geovars %in% "geometry")]
+
+#gin_geepoly.dt[,(geovars) := NULL]
+
+names(gin_geepoly.dt) <- tolower(names(gin_geepoly.dt))
+gin_geepoly.dt <- sf::st_as_sf(gin_geepoly.dt, crs = 4326, agr = "constant")
+
+
 ### implement join with all data to the household survey
 ginosm.dt <- sf::st_as_sf(ginosm.dt, crs = 4326, agr = "constant")
 gin_master.dt <- sf::st_join(ginhhgeo.dt, gin_geepoly.dt)
+gin_master.dt <- sf::st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
 gin_master.dt <- sf::st_join(gin_master.dt, ginosm.dt)
 
-gin_master.dt <- as.data.table(gin_master.dt)
+gin_master.dt <- data.table::as.data.table(gin_master.dt)
 
 
 ##### also combine all the remote sensing geospatial data
@@ -371,19 +376,38 @@ gin_hhsurvey.dt[,pcexp := bestNormalize::orderNorm(pcexp)$x.t]
 
 
 #save the datasets to have a new environment for EMDI
-saveRDS(gin_hhcensus.dt, file = "data/gin_hhcensus.RDS")
-saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
+# saveRDS(gin_hhcensus.dt, file = "data/gin_hhcensus.RDS")
+# saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
 
 
 
 
+##############################################################################################################################
 
+#### calibrate the poverty rates
+ginemdi_model2 <- readRDS("data/ginemdi_model2.RDS")
 
+###### Below are the steps to be taken for the poverty rate calibration #####
 
+#1.	Generate population estimate for each sub-prefecture by aggregating across grids
+#2.	Use these population estimates for each sampled sub-prefecture as weights to generate small area estimates for
+#   each state. Call these the sae state estimates.
+#         a.	Take the sum of population*poverty rate / total population, by sub-prefecture
+#3.	Calculate state estimates of poverty rates from the survey
+#4.	Divide the vector of state survey estimates by sae estimates to get the benchmarking ratio.
+#5.	Multiply the point estimates by the benchmarking ratio.
 
+## combine master polygon data with the shpfiles
+gin_masterpoly.dt <- sf::st_as_sf(gin_masterpoly.dt, agr = "constant", crs = 4326)
+ginshp <- sf::st_as_sf(ginshp, agr = "constant", crs = 4326)
 
+gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
+gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
 
-
+gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
+gin_mastercentroid.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
+gin_mastercentroid.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
+gin_mastercentroid.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
 
 
 
