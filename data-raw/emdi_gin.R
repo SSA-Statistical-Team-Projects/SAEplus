@@ -68,7 +68,7 @@ ginemdi_model2$ind$BM_Head_Count[is.na(ginemdi_model2$ind$BM_Head_Count)] <-
   ginemdi_model2$ind$Head_Count[is.na(ginemdi_model2$ind$BM_Head_Count)] ##replacing NAs in BM_Head_Count with Head_Count
 
 #### replace results in the EMDI file
-saeplus_addbenchmark()
+gin_benchmark <- saeplus_addbenchmark()
 
 
 ## modify admin variables to match correctly
@@ -80,14 +80,39 @@ ginshp[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
 ginshp <- sf::st_as_sf(ginshp, agr = "constant", crs = 4326)
 ginshp <- as.data.table(ginshp)
 
-
+setnames(gin_benchmark, "Domain", "ADM3_CODE")
+gin_benchmark[, ADM3_CODE := as.integer(as.character(ADM3_CODE))]
 gin_benchmark <- ginshp[,c("ADM3_CODE", "ADM3_NAME", "geometry")][gin_benchmark, on = "ADM3_CODE"]
 
 ## generate poverty maps
+gin_benchmark <- st_as_sf(gin_benchmark, agr = "constant", crs = 4326)
+
+gin_benchmark <- sfheaders::sf_remove_holes(gin_benchmark)
+#gin_benchmark <- rmapshaper::ms_filter_islands(gin_benchmark, min_area = 1e+09)
+
+
+#munis <- fortify(munis,region="ent_mun")
+gin_benchmark <- rmapshaper::ms_simplify(gin_benchmark)
 
 
 
-
+# tm_shape(gin_benchmark) +
+#   tm_fill() +
+#   tm_borders() +
+#   tm_fill("BM_HeadCount", palette="-RdBu",title="Headcount Poverty\nHousehold Model",
+#            colorNA="grey90",border.col="grey80",lwd=0.05)
+#
+# tmap_mode("view")
+# tm_shape(ginshp) +
+#   tm_borders() +
+#   tm_shape(ginshp[ginshp$ADM3_NAME %in% c("Kaloum", "Koba", "Tanene", "Beindou", "Missira"),]) +
+#   tm_borders(col = "red")
+#
+# tmap_mode("view")
+# tm_shape(ginshp) +
+#   tm_borders() +
+#   tm_shape(ginshp[ginshp$ADM3_CODE == ginshp$ADM3_CODE[duplicated(ginshp$ADM3_CODE)],]) +
+#   tm_borders(col = "red")
 
 
 

@@ -1,5 +1,6 @@
-#' @import emdi openxlsx nlme
+#' @import emdi openxlsx nlme tmap
 #' @importFrom pysch dummy.code
+
 
 ###########################################################################################
 ##############################FIRST PULL THE DATA TOGETHER#################################
