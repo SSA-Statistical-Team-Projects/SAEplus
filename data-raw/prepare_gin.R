@@ -198,6 +198,8 @@ drop_chr <- function(x){
 
 gin_geepoly.dt <- unique(unlist(lapply(gin_geepoly.dt, drop_chr)))
 
+gin_geepoly.dt <- gin_geepoly.dt[!(gin_geepoly.dt %in% "GIN_Electricity_2018")]
+
 st_readlist <- function(X){
 
   obj <- sf::st_read(dsn = "./../S2S-Imputation-WAEMU/InputData", layer = X)
@@ -385,7 +387,7 @@ gin_hhsurvey.dt[,pcexp := bestNormalize::orderNorm(pcexp)$x.t]
 ##############################################################################################################################
 
 #### calibrate the poverty rates
-ginemdi_model2 <- readRDS("data/ginemdi_model2.RDS")
+#ginemdi_model2 <- readRDS("data/ginemdi_model2.RDS")
 
 ###### Below are the steps to be taken for the poverty rate calibration #####
 
@@ -409,7 +411,10 @@ gin_mastercentroid.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_C
 gin_mastercentroid.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
 gin_mastercentroid.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
 
-
+hh.dt <- as.data.table(hh.dt)
+hh.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
+hh.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
+hh.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
 
 
 
