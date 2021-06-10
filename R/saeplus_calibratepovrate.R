@@ -42,7 +42,8 @@ saeplus_calibratepovrate <- function(hh_dt = hh.dt,
     pop_dt <- pop_dt[!(get(area_id) %in% excl_doms),]
   }
   #1. Generate population estimate for each SAE level ID by aggregating across grids
-  pop_size <- pop_dt[,sum(get(pop_var)),by = get(area_id)]
+  # pop_size <- pop_dt[,sum(get(pop_var)),by = get(area_id)]
+  pop_size <- hh_dt[,sum(get(weight)), by = area_id]
   setnames(pop_size, colnames(pop_size), c(area_id, "population"))
 
   #### merge in h_area ID and poverty rates from EMDI object
