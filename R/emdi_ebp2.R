@@ -221,7 +221,8 @@ emdi_ebp2 <- function(fixed,
                              transformation = transformation,
                              interval       = interval,
                              L              = L,
-                             keep_data      = TRUE
+                             keep_data      = TRUE,
+                             smp_weight     = smp_weight
   )
 
 

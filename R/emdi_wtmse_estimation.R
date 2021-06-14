@@ -211,7 +211,8 @@ mse_estim <- function(framework,
                                                  interval       = interval,
                                                  L              = L,
                                                  framework      = framework,
-                                                 pop_weight     = pop_weight
+                                                 pop_weight     = pop_weight,
+                                                 smp_weight     = smp_weight
   )[[1]][,-1])
 
   return((bootstrap_point_estim - true_indicators)^2)

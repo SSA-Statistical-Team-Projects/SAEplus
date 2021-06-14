@@ -92,7 +92,7 @@ emdi_writeexcel <- function(object,
                             CV        = FALSE,
                             split     = FALSE) {
 
-  writeexcel_check(object = object,
+  emdi:::writeexcel_check(object = object,
                    file = file,
                    split = split)
 
@@ -147,6 +147,7 @@ emdi_writeexcel <- function(object,
 }
 
 add_summary_ebp <- function(object, wb, headlines_cs) {
+
   su <- summary(object)
 
   title_cs <- createStyle(fontSize = 14,

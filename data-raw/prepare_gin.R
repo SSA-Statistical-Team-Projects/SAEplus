@@ -199,7 +199,7 @@ drop_chr <- function(x){
 
 gin_geepoly.dt <- unique(unlist(lapply(gin_geepoly.dt, drop_chr)))
 
-gin_geepoly.dt <- gin_geepoly.dt[!(gin_geepoly.dt %in% "GIN_Electricity_2018")]
+gin_geepoly.dt <- gin_geepoly.dt[!(gin_geepoly.dt %in% c("GIN_Electricity_2018", "GIN_LC_2018JanDec"))]
 
 st_readlist <- function(X){
 
@@ -232,6 +232,15 @@ gin_lc.dt <- gin_lc.dt[,c("id","bare-coverfraction", "crops-coverfraction","moss
                           "water-permanent-coverfraction", "water-seasonal-coverfraction"),with=F]
 
 gin_geepoly.dt <- gin_lc.dt[gin_geepoly.dt, on = "id"]
+
+## include electricity data
+# dt <- SAEplus::gengrid(dsn = "data",
+#                        layer = "sous_prefectures",
+#                        raster_tif = "GIN_Electricity_2018.tif",
+#                        drop_Zero = FALSE,
+#                        grid_shp = T,
+#                        featname = "electricity",
+#                        stats = "mean")
 
 
 #drop extra geometry columns
@@ -303,14 +312,36 @@ gin_master.dt[,gin_lc_2018julsep := NULL]
 gin_master.dt[,length_secondary_link := NULL]
 gin_master.dt[,count_secondary_link := NULL]
 
+## relabel some of the missing ADM3 areas
+# hh.dt <- as.data.table(hh.dt)
+# hh.dt[,id := 1:.N]
+# hh.dt[id %in% 816:827,
+#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+#         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
+#
+# hh.dt[id %in% 2591:2602,
+#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+#         list("Balandougouba", 400401, "Mandiana", 4004, "Kankan", 4)]
+#
+# hh.dt[id %in% 4948:4959,
+#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+#         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
+
 
 ### run the model selection code
+# selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
+#                                               var_identifier = c("roaddensity_", "count_", "length_",
+#                                                                  "_pointcount", "bld_", "_2018", "_2019",
+#                                                                  "rwi", "Conakry", "Kankan", "Nzerekore",
+#                                                                  "Faranah", "Labe", "Mamou", "Kindia", "Boke",
+#                                                                  "coverfraction"))
+
 selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
-                                              var_identifier = c("roaddensity_", "count_", "length_",
-                                                                 "_pointcount", "bld_", "_2018", "_2019",
+                                              var_identifier = c("bld_", "_2018", "_2019",
                                                                  "rwi", "Conakry", "Kankan", "Nzerekore",
                                                                  "Faranah", "Labe", "Mamou", "Kindia", "Boke",
                                                                  "coverfraction"))
+
 selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
 
 ### create both datasets, the survey household dataset and the census household dataset
@@ -338,7 +369,34 @@ gridhh_count.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 #### the datasets
 selected.vars <- gsub("`", "", selected.vars)
 
-gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", selected.vars),with=F]
+## relabel some of the missing ADM3 areas
+
+relabel_adm <- function(dt = hh.dt){
+
+}
+
+
+## relabel the missing ADM3 codes
+# gin_master.dt <- as.data.table(gin_master.dt)
+# gin_master.dt[,id := 1:.N]
+# gin_master.dt[id %in% 816:827,
+#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+#         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
+#
+# gin_master.dt[id %in% 2591:2602,
+#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+#         list("Balandougouba", 400401, "Mandiana", 4004, "Kankan", 4)]
+#
+# gin_master.dt[id %in% 4948:4959,
+#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+#         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
+
+
+### reassign ADM names and codes to missing observations
+#selected.vars <- c(selected.vars, "Conakry", "Boke")
+gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", "hhsize", selected.vars),
+                                 with=F]
+gin_hhsurvey.dt[, popweight := hhsize * hhweight]
 gin_hhcensus.dt <- gridhh_count.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ind_estimate",selected.vars),with=F]
 
 saveRDS(selected.vars, "data/gin_selectedvars.RDS")
@@ -378,9 +436,14 @@ gin_hhcensus.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))
 gin_hhsurvey.dt[,pcexp := bestNormalize::orderNorm(pcexp)$x.t]
 
 
+
+
+
+
+
 #save the datasets to have a new environment for EMDI
-# saveRDS(gin_hhcensus.dt, file = "data/gin_hhcensus.RDS")
-# saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
+saveRDS(gin_hhcensus.dt, file = "data/gin_hhcensus.RDS")
+saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
 
 
 

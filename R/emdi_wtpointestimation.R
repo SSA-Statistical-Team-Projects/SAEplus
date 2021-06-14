@@ -13,7 +13,8 @@ point_estim <- function (framework,
                          interval,
                          L,
                          keep_data  = FALSE,
-                         pop_weight = NULL
+                         pop_weight = NULL,
+                         smp_weight = NULL
 ) {
 
   # Transformation of data -------------------------------------------------------
@@ -47,13 +48,23 @@ point_estim <- function (framework,
   # See Molina and Rao (2010) p. 374
   # lme function is included in the nlme package which is imported.
 
-  mixed_model <- nlme::lme(fixed  = fixed,
-                           data   = transformation_par$transformed_data ,
-                           random = as.formula(paste0("~ 1 | as.factor(",
-                                                      framework$smp_domains, ")")),
-                           method = "REML",
-                           keep.data = keep_data)
+  #mixed_model <- nlme::lme(fixed  = fixed,
+   #                        data   = transformation_par$transformed_data ,
+    #                       random = as.formula(paste0("~ 1 | as.factor(",
+     #                                                 framework$smp_domains, ")")),
+      #                     method = "REML",
+       #                    keep.data = keep_data)
 
+  mixed_model <- nlme::lme(fixed  = fixed,
+                            data   = transformation_par$transformed_data ,
+                            random = as.formula(paste0("~ 1 | as.factor(",
+                                                       framework$smp_domains, ")")),
+                            method = "ML",
+                            control = lmeControl(maxiter=100,opt="optim"),
+                            keep.data= keep_data,
+                            weights = varComb(varIdent(as.formula(paste0("~ 1 | as.factor(",
+                                                                         framework$smp_domains, ")"))),
+                                              varFixed(as.formula(paste0("~1/", smp_weight)))))
 
   # Function model_par extracts the needed parameters theta from the nested
   # error linear regression model. It returns the beta coefficients (betas),
