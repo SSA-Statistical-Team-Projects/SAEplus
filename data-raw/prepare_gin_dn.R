@@ -325,7 +325,8 @@ saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
 
 gin_master.dt <- readRDS("data/GIN_masterhh.RDS")
 source("C:/Users/wb559885/Documents/github/SAEplus/R/saeplus_selectmodel.R")
-
+library(haven)
+write.csv(gin_master.dt,"gin_master.csv")
 
 selected.vars <- saeplus_selectmodel(dt = gin_master.dt, var_identifier = c("bld_", "_2018", "_2019","population","rwi","Conakry","Kankan", "Nzerekore"))
 selected.vars <- selected.vars$coefficients[selected.vars$index == TRUE]

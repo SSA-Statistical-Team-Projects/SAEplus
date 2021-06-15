@@ -50,7 +50,7 @@ ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhce
 
 saveRDS(ginemdi_model2, "data/ginemdi_model2.RDS")
 
-ginemdi_model2 <- readRDS("data/ginemdi_model2.RDS")
+#ginemdi_model2 <- readRDS("data/ginemdi_model2.RDS")
 
 
 emdi_writeexcel(ginemdi_model2, file = "data/emdi_results.xlsx",
@@ -58,10 +58,11 @@ emdi_writeexcel(ginemdi_model2, file = "data/emdi_results.xlsx",
 
 
 #### benchmark poverty estimates
-gin_benchmark <- saeplus_calibratepovrate(pop_dt = gin_mastercentroid.dt,
+gin_benchmark <- saeplus_calibratepovrate(pop_dt = gin_hhcensus.dt,
                                           hh_dt = gin_hhsurvey.dt,
                                           weight = "popweight",
-                                          povline = -0.448955)
+                                          povline = -0.448955,
+                                          pop_var = "ind_estimate")
 #### replace benchmarked values from insample regions
 
 #### create actual poverty map
@@ -83,6 +84,35 @@ colnames(ginemdi_model2$ind)[colnames(ginemdi_model2$ind) %in% "BM_Head_Count"] 
 #### create the file with the EMDI estimates
 emdi_writeexcel(ginemdi_model2, file = "data/emdi_results_bm.xlsx",
                 indicator = "all", MSE = TRUE, CV = TRUE)
+
+
+
+### create the plot for the poverty grid
+geo.dt <- as.data.table(ginshp)
+geo.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
+geo.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
+geo.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
+
+povgrid.dt <- as.data.table(ginemdi_model2$ind)
+setnames(povgrid.dt, "Domain", "ADM3_CODE")
+povgrid.dt[,ADM3_CODE := as.integer(as.character(ADM3_CODE))]
+
+povgrid.dt <- geo.dt[povgrid.dt, on = "ADM3_CODE"]
+povgrid.dt <- povgrid.dt[is.na(Head_Count) == "FALSE",]
+
+
+povgrid.dt <- st_as_sf(povgrid.dt, agr = "constant", crs = 4326)
+
+figure1 <-
+tm_shape(povgrid.dt) +
+  tm_polygons("Head_Count", title = "Headcount Rates") +
+  tm_layout(title = "Guinea: Headcount Poverty Rates",
+            title.size = 1.1,
+            title.position = c("center", "top"))
+
+tmap_save(tm = figure1, filename = "data/gin_povmap1.pdf")
+
+
 
 
 
