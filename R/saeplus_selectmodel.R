@@ -24,7 +24,15 @@ saeplus_selectmodel <- function(dt,
   dt <- setDT(dt)
 
   ## prepare the set of variables to used for analysis
-  xset <- colnames(dt)[!(colnames(dt) %in% outcomevar)]
+  mult_grepl <- function(ids = var_identifier,
+                         dt.obj = dt){
+
+    vars <- colnames(dt.obj)[grepl(ids, colnames(dt.obj))]
+
+    return(vars)
+  }
+
+  xset <- unlist(lapply(var_identifier, mult_grepl))
   yvar <- dt[,get(outcomevar)]
   select_variables <- function(tag){
 

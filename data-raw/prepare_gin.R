@@ -336,6 +336,40 @@ gin_master.dt[,count_secondary_link := NULL]
 #                                                                  "Faranah", "Labe", "Mamou", "Kindia", "Boke",
 #                                                                  "coverfraction"))
 
+
+### create the aggregate indicators at the adm3 level
+idvars <- c("bld_", "_2018", "_2019",
+            "rwi", "Conakry", "Kankan", "Nzerekore",
+            "Faranah", "Labe", "Mamou", "Kindia", "Boke",
+            "coverfraction")
+
+mult_grepl <- function(ids = idvars,
+                       dt = gin_master.dt){
+
+  vars <- colnames(dt)[grepl(ids, colnames(dt))]
+
+  return(vars)
+}
+
+vars <- unlist(lapply(idvars, mult_grepl))
+
+### compute adm3 level aggregates
+gin_master.dt[,popweight := hhsize * hhweight]
+gin_master.dt[,spopweight := mean(popweight, na.rm = TRUE), by = "ADM3_CODE"]
+gin_master.dt[,spopweight := popweight / spopweight]
+
+
+append_to_names <- function(X = vars){
+
+  var <- paste(X, "adm", sep = "_")
+  return(var)
+
+}
+
+new_vars <- unlist(lapply(vars, append_to_names))
+
+gin_master.dt[, (new_vars) := lapply(.SD, weighted.mean, w = popweight), by = "ADM3_CODE", .SDcols = vars]
+
 selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
                                               var_identifier = c("bld_", "_2018", "_2019",
                                                                  "rwi", "Conakry", "Kankan", "Nzerekore",
@@ -344,17 +378,45 @@ selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
 
 selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
 
-### create both datasets, the survey household dataset and the census household dataset
-###### add the landcover data real quick
+saveRDS(selected.vars, "data/gin_selectedvars.RDS")
+
+gin_master.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
+gin_master.dt[, Kindia := ifelse(ADM1_NAME == "Kindia", 1, 0)]
+gin_master.dt[, Conakry := ifelse(ADM1_NAME == "Conakry", 1, 0)]
+gin_master.dt[, Nzerekore := ifelse(ADM1_NAME == "Nzerekore", 1, 0)]
+gin_master.dt[, Boke := ifelse(ADM1_NAME == "Boke", 1, 0)]
+gin_master.dt[, Labe := ifelse(ADM1_NAME == "Labe", 1, 0)]
+gin_master.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
+gin_master.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 
 #### census household dataset
 ## computing the number of households per grid estimates
+gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
+gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
 
-gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_masterpoly.dt,
+
+gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
+
+gin_mastercentroid.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
+gin_mastercentroid.dt[, Kindia := ifelse(ADM1_NAME == "Kindia", 1, 0)]
+gin_mastercentroid.dt[, Conakry := ifelse(ADM1_NAME == "Conakry", 1, 0)]
+gin_mastercentroid.dt[, Nzerekore := ifelse(ADM1_NAME == "Nzerekore", 1, 0)]
+gin_mastercentroid.dt[, Boke := ifelse(ADM1_NAME == "Boke", 1, 0)]
+gin_mastercentroid.dt[, Labe := ifelse(ADM1_NAME == "Labe", 1, 0)]
+gin_mastercentroid.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
+gin_mastercentroid.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
+
+gin_mastercentroid.dt[, (new_vars) := lapply(.SD, mean), by = "ADM3_CODE", .SDcols = vars]
+
+
+
+gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_mastercentroid.dt,
                                      hh_dt = gin_master.dt,
                                      shp_dt = ginshp)
 
 gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
+setnames(gridhh_count.dt, c("ADM1_CODE.x", "ADM2_CODE.x", "ADM3_CODE.x", "ADM1_NAME.x", "ADM2_NAME.x", "ADM3_NAME.x"),
+         c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ADM1_NAME", "ADM2_NAME", "ADM3_NAME"))
 gridhh_count.dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
 
 gridhh_count.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
@@ -369,11 +431,6 @@ gridhh_count.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 #### the datasets
 selected.vars <- gsub("`", "", selected.vars)
 
-## relabel some of the missing ADM3 areas
-
-relabel_adm <- function(dt = hh.dt){
-
-}
 
 
 ## relabel the missing ADM3 codes
@@ -396,10 +453,8 @@ relabel_adm <- function(dt = hh.dt){
 #selected.vars <- c(selected.vars, "Conakry", "Boke")
 gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", "hhsize", selected.vars),
                                  with=F]
-gin_hhsurvey.dt[, popweight := hhsize * hhweight]
 gin_hhcensus.dt <- gridhh_count.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ind_estimate",selected.vars),with=F]
 
-saveRDS(selected.vars, "data/gin_selectedvars.RDS")
 
 #### perform EMDI
 gin_model <- paste(selected.vars, collapse = " + ")
@@ -467,8 +522,6 @@ saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
 gin_masterpoly.dt <- sf::st_as_sf(gin_masterpoly.dt, agr = "constant", crs = 4326)
 ginshp <- sf::st_as_sf(ginshp, agr = "constant", crs = 4326)
 
-gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
-gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
 
 gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
 gin_mastercentroid.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]

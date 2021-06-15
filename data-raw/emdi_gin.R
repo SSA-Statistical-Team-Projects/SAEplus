@@ -37,6 +37,7 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 # #################################################################################################################
 # ### Beyond this point will only be on a SERVER with multiple cores
 ## rescale popweights before imputation
+gin_hhsurvey.dt[,popweight := hhsize * hhweight]
 gin_hhsurvey.dt[,spopweight := mean(popweight, na.rm = TRUE), by = "ADM3_CODE"]
 gin_hhsurvey.dt[,spopweight := popweight / spopweight]
 #
