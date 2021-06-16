@@ -35,6 +35,7 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 #
 #
 # #################################################################################################################
+####### MODEL WITH COMMUNITY LEVEL VARIABLES
 # ### Beyond this point will only be on a SERVER with multiple cores
 ## rescale popweights before imputation
 gin_hhsurvey.dt[,popweight := hhsize * hhweight]
@@ -111,6 +112,9 @@ tm_shape(povgrid.dt) +
             title.position = c("center", "top"))
 
 tmap_save(tm = figure1, filename = "data/gin_povmap1.pdf")
+
+##########################################################################################################################
+#### MODEL WITHOUT COMMUNITY LEVEL VARIABLES
 
 
 

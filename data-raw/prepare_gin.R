@@ -174,6 +174,7 @@ data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
 
 ####GINenvironment.RData is saved at this point
 ##load("data/GINenvironment.RData")
+
 ginosm.dt <- ginmp.dt[ginline.dt, on = c("id")]
 
 ginosm.dt <- gin.bld.dt[ginosm.dt, on = "id"] ### all open street maps data merged
@@ -394,7 +395,6 @@ gin_master.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
 gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
 
-
 gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
 
 gin_mastercentroid.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
@@ -408,15 +408,18 @@ gin_mastercentroid.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 
 gin_mastercentroid.dt[, (new_vars) := lapply(.SD, mean), by = "ADM3_CODE", .SDcols = vars]
 
-
+gin_mastercentroid.dt <- gin_mastercentroid.dt[!duplicated(id),]
 
 gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_mastercentroid.dt,
                                      hh_dt = gin_master.dt,
                                      shp_dt = ginshp)
 
-gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
 setnames(gridhh_count.dt, c("ADM1_CODE.x", "ADM2_CODE.x", "ADM3_CODE.x", "ADM1_NAME.x", "ADM2_NAME.x", "ADM3_NAME.x"),
          c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ADM1_NAME", "ADM2_NAME", "ADM3_NAME"))
+gridhh_count.dt <- as.data.table(gridhh_count.dt)
+gridhh_count.dt <- gridhh_count.dt[!duplicated(id),]
+
+gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
 gridhh_count.dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
 
 gridhh_count.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
@@ -532,11 +535,4 @@ hh.dt <- as.data.table(hh.dt)
 hh.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
 hh.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
 hh.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
-
-
-
-
-
-
-
 
