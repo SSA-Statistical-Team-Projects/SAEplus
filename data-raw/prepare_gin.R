@@ -369,7 +369,7 @@ append_to_names <- function(X = vars){
 
 new_vars <- unlist(lapply(vars, append_to_names))
 
-gin_master.dt[, (new_vars) := lapply(.SD, weighted.mean, w = popweight), by = "ADM3_CODE", .SDcols = vars]
+#gin_master.dt[, (new_vars) := lapply(.SD, weighted.mean, w = popweight), by = "ADM3_CODE", .SDcols = vars]
 
 selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
                                               var_identifier = c("bld_", "_2018", "_2019",
