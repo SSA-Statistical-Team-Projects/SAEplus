@@ -114,6 +114,10 @@ tm_shape(povgrid.dt) +
 
 tmap_save(tm = figure1, filename = "data/gin_povmap1.pdf")
 
+save(ginemdi_model2, gridhh_count.dt, gin_master.dt, gin_benchmark, povgrid.dt,
+     file = "data/ginspace.RData")
+
+
 ##########################################################################################################################
 #### MODEL WITHOUT COMMUNITY LEVEL VARIABLES
 ginemdi_ncmodel2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
