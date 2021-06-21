@@ -12,3 +12,6 @@ data/GINenvironment.RData
 data-raw/gin_emdiresults.xlsx
 data/GINpostestenvir.RData
 data/gin_general_2020.tif
+
+data/ginspace.RData
+data/nc_ginspace.RData
