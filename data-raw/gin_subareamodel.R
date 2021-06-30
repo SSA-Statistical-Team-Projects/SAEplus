@@ -213,26 +213,62 @@ gin_areacensus.dt[, domain_rate := domain_size / sum(domain_size)]
 #                            weights = "popweight", B = 100, na.rm = TRUE,
 #                            threshold = 5006362)
 
-gin_direct <- sae::direct(y = pcexp, dom = ADM3_CODE, sweight = popweight, domsize = as.data.frame(area_popn.dt),
+
+
+gin_direct <- sae::direct(y = poor,
+                          dom = ADM3_CODE,
+                          sweight = popweight,
+                          domsize = as.data.frame(area_sample.dt[is.na(ADM3_CODE) == FALSE,]),
                           data = as.data.frame(gin_master.dt))
+gin_direct$variance <- gin_direct$SD^2
 
-gin_areacombine.dt <- combine_data(pop_data = gin_areacensus.dt,
+gin_areacombine.dt <- combine_data(pop_data = as.data.frame(gin_areacensus.dt),
                                    pop_domains = "ADM3_CODE",
-                                   smp_data = gin_areacensus.dt,
-                                   smp_domains = "ADM3_CODE")
+                                   smp_data = as.data.frame(gin_direct),
+                                   smp_domains = "Domain")
 
-povrate.dt <- unique(gin_master.dt[,c("ADM3_CODE", "povrate"),with = F])
-gin_areacensus.dt <- povrate.dt[gin_areacensus.dt, on = "ADM3_CODE"]
+# povrate.dt <- unique(gin_master.dt[,c("ADM3_CODE", "povrate"),with = F])
+# gin_areacensus.dt <- povrate.dt[gin_areacensus.dt, on = "ADM3_CODE"]
 
-
+gin_areacombine.dt$povrate <- gin_areacombine.dt$Direct
 
 ## model estimation time!
 gin_areamodel <- fh(fixed = gin_model,
-                    vardir = gin_direct,
-                    combined_data = gin_areacensus.dt,
-                    domains = "ADM3_CODE", transformation = "arcsin",
+                    vardir = "variance",
+                    combined_data = gin_areacombine.dt,
+                    domains = "Domain", transformation = "arcsin",
                     backtransformation = "naive",
                     eff_smpsize = "domain_size")
+
+
+
+### benchmark estimates
+#### rearrange populations to match gin_areamodel object results
+
+
+
+
+##########################################################################################################################
+
+#### Putting together the tables for the paper
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
