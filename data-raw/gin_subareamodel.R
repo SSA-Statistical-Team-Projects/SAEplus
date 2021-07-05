@@ -73,8 +73,8 @@ gin_hhcensus.dt <-
 #save(gin_model, gin_hhcensus.dt, gin_hhsurvey.dt, ginemdi_model2, file = "data/gin_subareaobjs.RData")
 
 #load("data/gin_subareaobjs.RData")
-
-load("data/gin_subareaobjs.RData")
+setwd("D:/Ify/GitProjects/SAEplus")
+ginemdi_model2 <- readRDS("data/gin_subareaobjs.RDS")
 
 ginemdi_model2$ind$Mean[ginemdi_model2$ind$Mean < 0] <- 0
 ginemdi_model2$ind$Mean[ginemdi_model2$ind$Mean > 1] <- 1
@@ -213,7 +213,7 @@ gin_areacensus.dt[, domain_rate := domain_size / sum(domain_size)]
 #                            weights = "popweight", B = 100, na.rm = TRUE,
 #                            threshold = 5006362)
 
-
+##### Start here to load the GIN_environmentALL.RData
 
 gin_direct <- sae::direct(y = poor,
                           dom = ADM3_CODE,
@@ -222,10 +222,10 @@ gin_direct <- sae::direct(y = poor,
                           data = as.data.frame(gin_master.dt))
 gin_direct$variance <- gin_direct$SD^2
 
-gin_areacombine.dt <- combine_data(pop_data = as.data.frame(gin_areacensus.dt),
-                                   pop_domains = "ADM3_CODE",
-                                   smp_data = as.data.frame(gin_direct),
-                                   smp_domains = "Domain")
+gin_areacombine.dt <- emdi::combine_data(pop_data = as.data.frame(gin_areacensus.dt),
+                                         pop_domains = "ADM3_CODE",
+                                         smp_data = as.data.frame(gin_direct),
+                                         smp_domains = "Domain")
 
 # povrate.dt <- unique(gin_master.dt[,c("ADM3_CODE", "povrate"),with = F])
 # gin_areacensus.dt <- povrate.dt[gin_areacensus.dt, on = "ADM3_CODE"]
@@ -236,8 +236,7 @@ gin_areacombine.dt$povrate <- gin_areacombine.dt$Direct
 gin_areamodel <- fh(fixed = gin_model,
                     vardir = "variance",
                     combined_data = gin_areacombine.dt,
-                    domains = "Domain", transformation = "arcsin",
-                    backtransformation = "naive",
+                    domains = "Domain", transformation = "no",
                     eff_smpsize = "domain_size")
 
 
@@ -245,7 +244,14 @@ gin_areamodel <- fh(fixed = gin_model,
 ### benchmark estimates
 #### rearrange populations to match gin_areamodel object results
 
+gin_areamodelbenchmark <- fh_calibratepovrate(hh_dt = gin_master.dt,
+                                              pop_dt = gin_mastercentroid.dt,
+                                              fh_obj = gin_areamodel,
+                                              weight = "popweight")
 
+### include indicator for in-sample out of sample
+add.dt <- as.data.table(gin_areamodel$ind)
+setnames(add.dt, "Domain", "ADM3_CODE")
 
 
 ##########################################################################################################################

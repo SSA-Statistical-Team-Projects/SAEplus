@@ -1,4 +1,4 @@
-#devtools::load_all()
+devtools::load_all()
 
 #' #' @import emdi openxlsx nlme tmap
 #' #' @importFrom pysch dummy.code

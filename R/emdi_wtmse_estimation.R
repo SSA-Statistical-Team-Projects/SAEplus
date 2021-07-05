@@ -38,8 +38,6 @@ parametric_bootstrap <- function(framework,
 
   start_time = Sys.time()
   if (cpus > 1) {
-
-
     cpus <- min(cpus, parallel::detectCores())
     parallelMap::parallelStart(mode = parallel_mode,
                                cpus = cpus, show.info = TRUE)
@@ -382,6 +380,7 @@ mse_estim_wrapper <-  function(i,
   source(paste(getwd(),"R/emdi_wtmse_estimation.R", sep = "/"))
   source(paste(getwd(),"R/emdi_wtpointestimation.R", sep = "/"))
   source(paste(getwd(),"R/emdi_wtoptimal_parameter.R", sep = "/"))
+
 
   tmp <- mse_estim(framework       = framework,
                    lambda          = lambda,

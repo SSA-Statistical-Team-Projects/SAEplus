@@ -1,174 +1,182 @@
-#' @import emdi openxlsx nlme tmap
-#' @importFrom pysch dummy.code
+#devtools::load_all()
 
-
-###########################################################################################
-##############################FIRST PULL THE DATA TOGETHER#################################
-###########################################################################################
-
-### we need to drop the code that pulls together all the data
-##### create the gridded polygon data for GIN
-gingrid <- SAEplus::gengrid(dsn = "data",
-                            layer = "sous_prefectures",
-                            raster_tif = "gin_ppp_2020_UNadj_constrained.tif",
-                            drop_Zero = FALSE)
-
-#### load the shapefile for the poverty economist for GIN
-ginshp <- sf::st_read(dsn = "data", layer = "sous_prefectures")
-
-
-### using the model selection algorithm code on the data
-
-##### first read in the GIN_master.RDS file
-
-
-
-
-
-##### create synthetic census with household and polygon level data
-### estimate household size
-
-hh.dt <- st_join(st_as_sf(hh.dt), st_as_sf(ginshp))
-
-gin_poly.dt <- saeplus_hhestpoly(geo_dt = gingrid$polygon_dt, hh_dt = hh.dt, shp_dt = ginshp)
-
-## drop the duplicates
-gin_poly.dt <- gin_poly.dt[!duplicated(gin_poly.dt$id),]
-
-#### merge in household dataset
-hh.dt <- st_as_sf(hh.dt, crs = 4326, agr = "constant")
-gingrid$polygon_dt <- st_as_sf(gingrid$polygon_dt, crs = 4326, agr = "constant")
-
-##### create the combined GEE data for GIN
-gin_geepoly.dt <- st_read(dsn = "data", layer = "GIN_gee_combined")
-
-
-
-###### read in all the OSM data
-## combine all building stats
-### list all building tif data in the GIN folder
-### take the sums of count, area, total length and then averages for density, urban, mean area, cv_area, mean length,
-### cv length,
-
-##### first pull in the building data
-# buildinglist <- wpopbuilding_vcheck()
-# ginbuilding_pull <- wpopbuilding_pull(iso = "GIN")
-#
-unzip("data-raw/GIN_buildings_v2_0.zip", exdir = "data")
-
-
-dt <- SAEplus::gengrid(dsn = "data",
-                       layer = "sous_prefectures",
-                       raster_tif = "GIN_buildings_v2_0_count.tif",
-                       grid_shp = T,
-                       featname = "bld_count",
-                       drop_Zero = F)
-gin.bld.dt <- as.data.table(dt$polygon_dt)
-dt <- SAEplus::gengrid(dsn = "data",
-                       layer = "sous_prefectures",
-                       raster_tif = "GIN_buildings_v2_0_cv_area.tif",
-                       stats = "mean",
-                       grid_shp = T,
-                       featname = "bld_cvarea",
-                       drop_Zero = F)
-add.dt <- as.data.table(dt$polygon_dt)
-gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_cvarea"])
-dt <- gengrid(dsn = "data",
-              layer = "sous_prefectures",
-              raster_tif = "GIN_buildings_v2_0_cv_length.tif",
-              stats = "mean",
-              grid_shp = T,
-              featname = "bld_cvlength",
-              drop_Zero = F)
-add.dt <- as.data.table(dt$polygon_dt)
-gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_cvlength"])
-dt <- gengrid(dsn = "data",
-              layer = "sous_prefectures",
-              raster_tif = "GIN_buildings_v2_0_density.tif",
-              stats = "mean",
-              grid_shp = T,
-              featname = "bld_density",
-              drop_Zero = F)
-add.dt <- as.data.table(dt$polygon_dt)
-gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_density"])
-dt <- gengrid(dsn = "data",
-              layer = "sous_prefectures",
-              raster_tif = "GIN_buildings_v2_0_mean_area.tif",
-              stats = "mean",
-              grid_shp = T,
-              featname = "bld_meanarea",
-              drop_Zero = F)
-add.dt <- as.data.table(dt$polygon_dt)
-gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_meanarea"])
-dt <- gengrid(dsn = "data",
-              layer = "sous_prefectures",
-              raster_tif = "GIN_buildings_v2_0_total_length.tif",
-              grid_shp = T,
-              stats = "mean",
-              featname = "bld_totallength",
-              drop_Zero = F)
-add.dt <- as.data.table(dt$polygon_dt)
-gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_totallength"])
-saveRDS(gin.bld.dt, "data/GIN_allbuilding.RDS")
-
-
-## write the data into a shapefile format that can be used to do other work
-sf::st_write(st_as_sf(gin.bld.dt, crs = "WGS84", agr = "constant"),
-             layer = "GIN_allbuilding", dsn = "data",
-             driver = "ESRI Shapefile")
-
-# pull process and join the osm data
-gin.osm <- osm_datapull(country = "Guinea",
-                        ldrive = "data-raw")
-
-gin.lines <- SAEplus::osm_processlines(shapefile_path = "data/GIN_allbuilding.shp",
-                                       geoid_var = "id",
-                                       osm_path = "data-raw/Guinea_osmlines")
-saveRDS(gin.lines, file = "data/GIN_lines_obj.RDS")
-
-
-gin.mp <- SAEplus::osm_processmp(shapefile_path = "data/GIN_allbuilding.shp",
-                                 geoid_var = "id",
-                                 osm_path = "data-raw/Guinea_osmmp",
-                                 feature_var = "amenity")
-
-saveRDS(gin.mp, file = "data/GIN_mp_obj")
-
-gin.points <- SAEplus::osm_processpoints(shapefile_path = "data/GIN_allbuilding.shp",
-                                         geoid_var = "id",
-                                         osm_path = "data-raw/Guinea_osmpoints")
-
-saveRDS(gin.points, file = "data/GIN_points_obj") #save the object as RData
-
-
-#transform objects from long to wide first
-ginline.dt <-
-  data.table::dcast(gin.lines[[1]], id ~ highway,
-                    value.var = c("roaddensity", "count", "length"),
-                    fun.aggregate = mean)
-
-ginmp.dt <-
-  data.table::dcast(gin.mp[[1]],
-                    id ~ amenity,
-                    value.var = "count",
-                    fun.aggregate = mean)
-
-### relabel variable names
-labs <- colnames(ginmp.dt)[!(colnames(ginmp.dt) %in% "id")]
-
-
-
-paste_tolist <- function(X, tag = "pointcount"){
-  paste(X, tag, sep = "_")
-}
-
-varrelabs <- unlist(lapply(labs, paste_tolist))
-
-data.table::setnames(ginmp.dt, labs, varrelabs)
-data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
+#' #' @import emdi openxlsx nlme tmap
+#' #' @importFrom pysch dummy.code
+#'
+#'
+#' ###########################################################################################
+#' ##############################FIRST PULL THE DATA TOGETHER#################################
+#' ###########################################################################################
+#'
+#' ### we need to drop the code that pulls together all the data
+#' ##### create the gridded polygon data for GIN
+#' gingrid <- SAEplus::gengrid(dsn = "data",
+#'                             layer = "sous_prefectures",
+#'                             raster_tif = "gin_ppp_2020_UNadj_constrained.tif",
+#'                             drop_Zero = FALSE)
+#'
+#' #### load the shapefile for the poverty economist for GIN
+#' ginshp <- sf::st_read(dsn = "data", layer = "sous_prefectures")
+#'
+#'
+#' ### using the model selection algorithm code on the data
+#'
+#' ##### first read in the GIN_master.RDS file
+#'
+#'
+#' hh.dt <- readRDS("data/GIN_master.RDS")
+#'
+#' selected.vars <- saeplus_selectmodel(dt = hh.dt)
+#' selected.vars <- selected.vars$coefficients[selected.vars$index == TRUE]
+#'
+#' selected.vars <- names(selected.vars)
+#'
+#'
+#' ##### create synthetic census with household and polygon level data
+#' ### estimate household size
+#'
+#' hh.dt <- st_join(st_as_sf(hh.dt), st_as_sf(ginshp))
+#'
+#' gin_poly.dt <- saeplus_hhestpoly(geo_dt = gingrid$polygon_dt, hh_dt = hh.dt, shp_dt = ginshp)
+#'
+#' ## drop the duplicates
+#' gin_poly.dt <- gin_poly.dt[!duplicated(gin_poly.dt$id),]
+#'
+#' #### merge in household dataset
+#' hh.dt <- st_as_sf(hh.dt, crs = 4326, agr = "constant")
+#' gingrid$polygon_dt <- st_as_sf(gingrid$polygon_dt, crs = 4326, agr = "constant")
+#'
+#' ##### create the combined GEE data for GIN
+#' gin_geepoly.dt <- st_read(dsn = "data", layer = "GIN_gee_combined")
+#'
+#'
+#'
+#' ###### read in all the OSM data
+#' ## combine all building stats
+#' ### list all building tif data in the GIN folder
+#' ### take the sums of count, area, total length and then averages for density, urban, mean area, cv_area, mean length,
+#' ### cv length,
+#'
+#' ##### first pull in the building data
+#' # buildinglist <- wpopbuilding_vcheck()
+#' # ginbuilding_pull <- wpopbuilding_pull(iso = "GIN")
+#' #
+#' unzip("data-raw/GIN_buildings_v2_0.zip", exdir = "data")
+#'
+#'
+#' dt <- SAEplus::gengrid(dsn = "data",
+#'                        layer = "sous_prefectures",
+#'                        raster_tif = "GIN_buildings_v2_0_count.tif",
+#'                        grid_shp = T,
+#'                        featname = "bld_count",
+#'                        drop_Zero = F)
+#' gin.bld.dt <- as.data.table(dt$polygon_dt)
+#' dt <- SAEplus::gengrid(dsn = "data",
+#'                        layer = "sous_prefectures",
+#'                        raster_tif = "GIN_buildings_v2_0_cv_area.tif",
+#'                        stats = "mean",
+#'                        grid_shp = T,
+#'                        featname = "bld_cvarea",
+#'                        drop_Zero = F)
+#' add.dt <- as.data.table(dt$polygon_dt)
+#' gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_cvarea"])
+#' dt <- gengrid(dsn = "data",
+#'               layer = "sous_prefectures",
+#'               raster_tif = "GIN_buildings_v2_0_cv_length.tif",
+#'               stats = "mean",
+#'               grid_shp = T,
+#'               featname = "bld_cvlength",
+#'               drop_Zero = F)
+#' add.dt <- as.data.table(dt$polygon_dt)
+#' gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_cvlength"])
+#' dt <- gengrid(dsn = "data",
+#'               layer = "sous_prefectures",
+#'               raster_tif = "GIN_buildings_v2_0_density.tif",
+#'               stats = "mean",
+#'               grid_shp = T,
+#'               featname = "bld_density",
+#'               drop_Zero = F)
+#' add.dt <- as.data.table(dt$polygon_dt)
+#' gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_density"])
+#' dt <- gengrid(dsn = "data",
+#'               layer = "sous_prefectures",
+#'               raster_tif = "GIN_buildings_v2_0_mean_area.tif",
+#'               stats = "mean",
+#'               grid_shp = T,
+#'               featname = "bld_meanarea",
+#'               drop_Zero = F)
+#' add.dt <- as.data.table(dt$polygon_dt)
+#' gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_meanarea"])
+#' dt <- gengrid(dsn = "data",
+#'               layer = "sous_prefectures",
+#'               raster_tif = "GIN_buildings_v2_0_total_length.tif",
+#'               grid_shp = T,
+#'               stats = "mean",
+#'               featname = "bld_totallength",
+#'               drop_Zero = F)
+#' add.dt <- as.data.table(dt$polygon_dt)
+#' gin.bld.dt <- cbind(gin.bld.dt, add.dt[,"bld_totallength"])
+#' saveRDS(gin.bld.dt, "data/GIN_allbuilding.RDS")
+#'
+#'
+#' ## write the data into a shapefile format that can be used to do other work
+#' sf::st_write(st_as_sf(gin.bld.dt, crs = "WGS84", agr = "constant"),
+#'              layer = "GIN_allbuilding", dsn = "data",
+#'              driver = "ESRI Shapefile")
+#'
+#' # pull process and join the osm data
+#' gin.osm <- osm_datapull(country = "Guinea",
+#'                         ldrive = "data-raw")
+#'
+#' gin.lines <- SAEplus::osm_processlines(shapefile_path = "data/GIN_allbuilding.shp",
+#'                                        geoid_var = "id",
+#'                                        osm_path = "data-raw/Guinea_osmlines")
+#' saveRDS(gin.lines, file = "data/GIN_lines_obj.RDS")
+#'
+#'
+#' gin.mp <- SAEplus::osm_processmp(shapefile_path = "data/GIN_allbuilding.shp",
+#'                                  geoid_var = "id",
+#'                                  osm_path = "data-raw/Guinea_osmmp",
+#'                                  feature_var = "amenity")
+#'
+#' saveRDS(gin.mp, file = "data/GIN_mp_obj")
+#'
+#' gin.points <- SAEplus::osm_processpoints(shapefile_path = "data/GIN_allbuilding.shp",
+#'                                          geoid_var = "id",
+#'                                          osm_path = "data-raw/Guinea_osmpoints")
+#'
+#' saveRDS(gin.points, file = "data/GIN_points_obj") #save the object as RData
+#'
+#'
+#' #transform objects from long to wide first
+#' ginline.dt <-
+#'   data.table::dcast(gin.lines[[1]], id ~ highway,
+#'                     value.var = c("roaddensity", "count", "length"),
+#'                     fun.aggregate = mean)
+#'
+#' ginmp.dt <-
+#'   data.table::dcast(gin.mp[[1]],
+#'                     id ~ amenity,
+#'                     value.var = "count",
+#'                     fun.aggregate = mean)
+#'
+#' ### relabel variable names
+#' labs <- colnames(ginmp.dt)[!(colnames(ginmp.dt) %in% "id")]
+#'
+#'
+#'
+#' paste_tolist <- function(X, tag = "pointcount"){
+#'   paste(X, tag, sep = "_")
+#' }
+#'
+#' varrelabs <- unlist(lapply(labs, paste_tolist))
+#'
+#' data.table::setnames(ginmp.dt, labs, varrelabs)
+#' data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
 
 ####GINenvironment.RData is saved at this point
-##load("data/GINenvironment.RData")
+load("data/GINenvironment.RData")
+
 ginosm.dt <- ginmp.dt[ginline.dt, on = c("id")]
 
 ginosm.dt <- gin.bld.dt[ginosm.dt, on = "id"] ### all open street maps data merged
@@ -263,7 +271,7 @@ gin_geepoly.dt <- data.table::as.data.table(gin_geepoly.dt)
 
 gin_masterpoly.dt <- ginosm.dt[gin_geepoly.dt, on = "id"]
 
-
+source("./R/hdx_pull.R")
 ### include the HDX data as well
 gin_hdx.dt <- hdx_pull(iso = "GIN")
 gin_hdx.dt <- sf::st_as_sf(gin_hdx.dt, coords = c("longitude", "latitude"),crs = 4326, agr = "constant")
@@ -281,6 +289,63 @@ gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c("rwi", "geometr
 # saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
 # saveRDS(gin_masterpoly.dt, file = "data/GIN_masterpoly.RDS")
 
+
+#### create community level variables
+gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
+gin_mastercentroid.dt <- st_as_sf(gin_mastercentroid.dt, agr = "constant", crs = 4326)
+ginshp <- st_as_sf(ginshp, agr = "constant", crs = 4326)
+gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
+
+
+
+gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
+gin_mastercentroid.dt <- gin_mastercentroid.dt[!duplicated(id),]
+### create the aggregate indicators at the adm3 level
+gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
+
+gin_mastercentroid.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
+gin_mastercentroid.dt[, Kindia := ifelse(ADM1_NAME == "Kindia", 1, 0)]
+gin_mastercentroid.dt[, Conakry := ifelse(ADM1_NAME == "Conakry", 1, 0)]
+gin_mastercentroid.dt[, Nzerekore := ifelse(ADM1_NAME == "Nzerekore", 1, 0)]
+gin_mastercentroid.dt[, Boke := ifelse(ADM1_NAME == "Boke", 1, 0)]
+gin_mastercentroid.dt[, Labe := ifelse(ADM1_NAME == "Labe", 1, 0)]
+gin_mastercentroid.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
+gin_mastercentroid.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
+
+idvars <- c("bld_", "_2018", "_2019",
+            "rwi", "Conakry", "Kankan", "Nzerekore",
+            "Faranah", "Labe", "Mamou", "Kindia", "Boke",
+            "coverfraction")
+
+mult_grepl <- function(ids = idvars,
+                       dt = gin_mastercentroid.dt){
+
+  vars <- colnames(dt)[grepl(ids, colnames(dt))]
+
+  return(vars)
+}
+
+vars <- unlist(lapply(idvars, mult_grepl))
+
+
+append_to_names <- function(X = vars){
+
+  var <- paste(X, "adm", sep = "_")
+  return(var)
+
+}
+
+new_vars <- unlist(lapply(vars, append_to_names))
+
+
+gin_mastercentroid.dt[, (new_vars) := lapply(.SD, weighted.mean, w = population), by = "ADM3_CODE", .SDcols = vars]
+
+gin_masterpoly.dt <- as.data.table(gin_masterpoly.dt)
+gin_masterpoly.dt <- gin_mastercentroid.dt[, c(new_vars, "id"), with = FALSE][gin_masterpoly.dt, on = "id"]
+
+### add gin_master.dt into the data
+
+
 ###########################################################################################
 ##############################PREPARE FOR S2S IMPUTATION###################################
 ###########################################################################################
@@ -289,6 +354,11 @@ ginshp <- st_as_sf(ginshp, agr = "constant", crs = 4326)
 gin_master.dt <- st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
 
 gin_master.dt <- st_join(gin_master.dt, ginshp)
+
+gin_master.dt <- sf::st_as_sf(gin_master.dt, crs = 4326, agr = "constant")
+gin_masterpoly.dt <- sf::st_as_sf(gin_masterpoly.dt, crs = 4326, agr = "constant")
+gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c(new_vars, "geometry"),with=F])
+
 
 gin_master.dt <- as.data.table(gin_master.dt)
 
@@ -308,49 +378,103 @@ gin_master.dt[,length_secondary_link := NULL]
 gin_master.dt[,count_secondary_link := NULL]
 
 ## relabel some of the missing ADM3 areas
-# hh.dt <- as.data.table(hh.dt)
-# hh.dt[,id := 1:.N]
-# hh.dt[id %in% 816:827,
-#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
-#         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
-#
-# hh.dt[id %in% 2591:2602,
-#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
-#         list("Balandougouba", 400401, "Mandiana", 4004, "Kankan", 4)]
-#
-# hh.dt[id %in% 4948:4959,
-#       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
-#         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
-saveRDS(gin_master.dt, file = "data/GIN_masterhh.RDS")
+ hh.dt <- as.data.table(hh.dt)
+ hh.dt[,id := 1:.N]
+ hh.dt[id %in% 816:827,
+       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
 
-gin_master.dt <- readRDS("data/GIN_masterhh.RDS")
-source("C:/Users/wb559885/Documents/github/SAEplus/R/saeplus_selectmodel.R")
-library(haven)
-write.csv(gin_master.dt,"gin_master.csv")
+ hh.dt[id %in% 2591:2602,
+       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+         list("Balandougouba", 400401, "Mandiana", 4004, "Kankan", 4)]
 
-selected.vars <- saeplus_selectmodel(dt = gin_master.dt, var_identifier = c("bld_", "_2018", "_2019","population","rwi","Conakry","Kankan", "Nzerekore"))
-selected.vars <- selected.vars$coefficients[selected.vars$index == TRUE]
-selected.vars <- names(selected.vars)
-selected.vars
+ hh.dt[id %in% 4948:4959,
+       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
+
+
+
+ gin_master.dt[,id := 1:.N]
+ gin_master.dt[id %in% 816:827,
+       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
+
+ gin_master.dt[id %in% 2591:2602,
+       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+         list("Balandougouba", 400401, "Mandiana", 4004, "Kankan", 4)]
+
+ gin_master.dt[id %in% 4948:4959,
+       c("ADM3_NAME", "ADM3_CODE", "ADM2_NAME", "ADM2_CODE", "ADM1_NAME", "ADM1_CODE") :=
+         list("Ratoma", 200105, "Conakry", 2001, "Conakry", 2)]
 
 ### run the model selection code
-selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
-                                              var_identifier = c("roaddensity_", "count_", "length_",
-                                                                 "_pointcount", "bld_", "_2018", "_2019",
-                                                                 "rwi", "Conakry", "Kankan", "Nzerekore",
-                                                                 "Faranah", "Labe", "Mamou", "Kindia", "Boke",
-                                                                 "coverfraction","population"))
-selected.vars <- names(selected.vars$index[selected.vars$index == TRUE])
+# selected.vars <- SAEplus::saeplus_selectmodel(dt = gin_master.dt,
+#                                               var_identifier = c("roaddensity_", "count_", "length_",
+#                                                                  "_pointcount", "bld_", "_2018", "_2019",
+#                                                                  "rwi", "Conakry", "Kankan", "Nzerekore",
+#                                                                  "Faranah", "Labe", "Mamou", "Kindia", "Boke",
+#                                                                  "coverfraction"))
 
-### create both datasets, the survey household dataset and the census household dataset
-###### add the landcover data real quick
+
+
+### compute adm3 level aggregates
+gin_master.dt[,popweight := hhsize * hhweight]
+gin_master.dt[,spopweight := mean(popweight, na.rm = TRUE), by = "ADM3_CODE"]
+gin_master.dt[,spopweight := popweight / spopweight]
+
+
+
+# gin_master.dt[, (new_vars) := lapply(.SD, weighted.mean, w = popweight), by = "ADM3_CODE", .SDcols = vars]
+#Use glmnet
+source("./R/saeplus_selectmodel_dn.R")
+# Use hdm
+#source("./R/saeplus_selectmodel.R")
+#selected.vars <- saeplus_selectmodel(dt = gin_master.dt,
+#                                              var_identifier = c("bld_", "_2018", "_2019",
+#                                                                 "rwi", "Boke", "Conakry", "Faranah", "Kankan",
+#                                                                 "Kindia",  "Labe", "Mamou", "Nzerekore",
+#                                                                 "coverfraction"))
+
+
+selected.vars <- saeplus_selectmodel(dt = gin_master.dt,
+                                     var_identifier = c("bld_", "_2018", "_2019",
+                                                        "rwi", "Boke", "Conakry", "Faranah", "Kankan",
+                                                        "Kindia",  "Labe", "Mamou", "Nzerekore",
+                                                        "coverfraction"))
+
+
+
+# selected.vars <- names(selected.vars$index[selected.vars$index == TRUE]) # for HDM
+
+selected.vars <- dimnames(selected.vars[selected.vars$index == TRUE,])[1] # for glmnet
+write.csv(gin_master.dt,file="gin_master.csv")
+
+saveRDS(selected.vars, "data/gin_selectedvars_dn.RDS")
+
+gin_master.dt[, Kankan := ifelse(ADM1_NAME == "Kankan", 1, 0)]
+gin_master.dt[, Kindia := ifelse(ADM1_NAME == "Kindia", 1, 0)]
+gin_master.dt[, Conakry := ifelse(ADM1_NAME == "Conakry", 1, 0)]
+gin_master.dt[, Nzerekore := ifelse(ADM1_NAME == "Nzerekore", 1, 0)]
+gin_master.dt[, Boke := ifelse(ADM1_NAME == "Boke", 1, 0)]
+gin_master.dt[, Labe := ifelse(ADM1_NAME == "Labe", 1, 0)]
+gin_master.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
+gin_master.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 
 #### census household dataset
 ## computing the number of households per grid estimates
 
-gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_masterpoly.dt,
+
+
+source("./R/saeplus_hhestpoly.R")
+source("./R/saeplus_gencensus.R")
+gridhh_count.dt <- saeplus_hhestpoly(geo_dt = gin_mastercentroid.dt,
                                      hh_dt = gin_master.dt,
                                      shp_dt = ginshp)
+
+setnames(gridhh_count.dt, c("ADM1_CODE.x", "ADM2_CODE.x", "ADM3_CODE.x", "ADM1_NAME.x", "ADM2_NAME.x", "ADM3_NAME.x"),
+         c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ADM1_NAME", "ADM2_NAME", "ADM3_NAME"))
+gridhh_count.dt <- as.data.table(gridhh_count.dt)
+gridhh_count.dt <- gridhh_count.dt[!duplicated(id),]
 
 gridhh_count.dt <- saeplus_gencensus(poly_dt = gridhh_count.dt)
 gridhh_count.dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
@@ -367,11 +491,6 @@ gridhh_count.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 #### the datasets
 selected.vars <- gsub("`", "", selected.vars)
 
-## relabel some of the missing ADM3 areas
-
-relabel_adm <- function(dt = hh.dt){
-
-}
 
 
 ## relabel the missing ADM3 codes
@@ -391,13 +510,11 @@ relabel_adm <- function(dt = hh.dt){
 
 
 ### reassign ADM names and codes to missing observations
-selected.vars <- c(selected.vars, "Conakry", "Boke")
+#selected.vars <- c(selected.vars, "Conakry", "Boke")
 gin_hhsurvey.dt <- gin_master.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "hhweight", "pcexp", "hhsize", selected.vars),
                                  with=F]
-gin_hhsurvey.dt[, popweight := hhsize * hhweight]
 gin_hhcensus.dt <- gridhh_count.dt[,c("ADM1_CODE", "ADM2_CODE", "ADM3_CODE", "ind_estimate",selected.vars),with=F]
 
-saveRDS(selected.vars, "data/gin_selectedvars.RDS")
 
 #### perform EMDI
 gin_model <- paste(selected.vars, collapse = " + ")
@@ -465,8 +582,6 @@ saveRDS(gin_hhsurvey.dt, file = "data/gin_hhsurvey.RDS")
 gin_masterpoly.dt <- sf::st_as_sf(gin_masterpoly.dt, agr = "constant", crs = 4326)
 ginshp <- sf::st_as_sf(ginshp, agr = "constant", crs = 4326)
 
-gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
-gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
 
 gin_mastercentroid.dt <- as.data.table(gin_mastercentroid.dt)
 gin_mastercentroid.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
@@ -477,11 +592,4 @@ hh.dt <- as.data.table(hh.dt)
 hh.dt[,ADM3_CODE := as.integer(substr(ADM3_CODE, 4, nchar(ADM3_CODE)))]
 hh.dt[,ADM2_CODE := as.integer(substr(ADM2_CODE, 4, nchar(ADM2_CODE)))]
 hh.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))]
-
-
-
-
-
-
-
-
+save.image(file="./data/prepare_gin_Environment_dn.RData")

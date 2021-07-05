@@ -298,3 +298,322 @@ throw_class_error <- function(object, subclass){
 
 
 
+data_transformation <- function(fixed,
+                                smp_data,
+                                transformation,
+                                lambda) {
+
+  y_vector <- as.vector(smp_data[paste(fixed[2])])
+
+  transformed <- if (transformation == "no") {
+    no_transform(y = y_vector, shift = NULL)
+  } else if (transformation == "log") {
+    log_transform(y = y_vector, shift = 0)
+  } else if (transformation == "box.cox") {
+    box_cox(y = y_vector, lambda = lambda, shift = 0)
+  } else if (transformation == "dual") {
+    dual(y = y_vector, lambda = lambda, shift = 0)
+  } else if (transformation == "log.shift") {
+    log_shift_opt(y = y_vector, lambda = lambda, shift = NULL)
+  }
+
+  smp_data[paste(fixed[2])] <- transformed$y
+
+  return(list(transformed_data = smp_data, shift = transformed$shift))
+} # End data_transformation
+
+
+# Following functions are only internal ----------------------------------------
+
+# Function std_data_transformation only returns a data frame with transformed
+# dependent variable.
+
+std_data_transformation <- function(fixed=fixed,
+                                    smp_data,
+                                    transformation,
+                                    lambda) {
+
+  y_vector <- as.matrix(smp_data[paste(fixed[2])])
+
+  std_transformed <- if (transformation == "box.cox"){
+    as.data.frame(box_cox_std(y = y_vector, lambda = lambda))
+  } else if (transformation == "dual") {
+    as.data.frame(dual_std(y = y_vector, lambda = lambda))
+  } else if (transformation == 'log.shift') {
+    as.data.frame(log_shift_opt_std(y = y_vector, lambda = lambda))
+  } else if (transformation == "log") {
+    smp_data[paste(fixed[2])]
+  } else if (transformation == "no") {
+    smp_data[paste(fixed[2])]
+  }
+
+  smp_data[paste(fixed[2])] <- std_transformed
+  return(transformed_data = smp_data)
+} # End std_data_transformation
+
+
+# Back transformation function -------------------------------------------------
+
+back_transformation <- function(y, transformation, lambda, shift) {
+  back_transformed <- if (transformation == "no") {
+    no_transform_back(y = y)
+  } else if (transformation == "log") {
+    log_transform_back(y = y, shift = shift)
+  } else if (transformation == "box.cox") {
+    box_cox_back(y = y, lambda = lambda, shift = shift)
+  } else if (transformation == "dual") {
+    dual_back(y = y, lambda = lambda, shift = shift)
+  } else if (transformation == "log.shift") {
+    log_shift_opt_back(y = y, lambda = lambda)
+  }
+
+  return(y = back_transformed)
+} # End back_transform
+
+
+# Transformation types ---------------------------------------------------------
+
+# No transformation ------------------------------------------------------------
+
+# Transformation: no transformation
+no_transform <- function(y, shift = NULL) {
+  return(list(y = y, shift = NULL))
+} # End no-transform
+
+
+# Back transformation: no transformation
+no_transform_back <- function(y) {
+  return(y = y)
+}
+
+# Log transformation -----------------------------------------------------------
+
+# Transformation: log
+log_transform <- function(y, shift = 0) {
+  min <- min(y)
+  if (min <= 0) {
+    shift <- abs(min) + 1
+    y <- y + shift
+  }
+  y <- log(y)
+  return(list(y = y, shift = shift))
+} # End log_transform
+
+
+# Back transformation: log
+log_transform_back <- function(y, shift = 0) {
+  y <- exp(y) - shift
+  return(y = y)
+} # End log_transfom_back
+
+
+# Box Cox ----------------------------------------------------------------------
+
+# Transformation: Box Cox
+box_cox <- function(y, lambda = lambda, shift = 0) {
+  with_shift <- function(y, shift) {
+    min <- min(y)
+    if (min <= 0) {
+      shift <- shift + abs(min(y)) +1
+    } else {
+      shift <- shift
+    }
+    return(shift)
+  }
+  # Shift parameter
+  shift <- with_shift(y = y, shift = shift)
+
+  lambda_cases <- function(y, lambda = lambda) {
+    lambda_absolute <- abs(lambda)
+    if (lambda_absolute <= 1e-12) {  #case lambda=0
+      y <- log(y + shift)
+    } else {
+      y <- ((y + shift)^lambda - 1) / lambda
+    }
+    return(y)
+  }
+  y <- lambda_cases(y = y, lambda = lambda)
+
+  return(list(y = y, shift = shift))
+} # End box_cox
+
+
+
+# Standardized transformation: Box Cox
+
+geometric.mean <- function(x) { #for RMLE in the parameter estimation
+
+  exp(mean(log(x)))
+}
+
+box_cox_std <- function(y, lambda) {
+  min <- min(y)
+  if (min <= 0) {
+    y <- y - min + 1
+  }
+
+  gm <- geometric.mean(y)
+  y <- if (abs(lambda) > 1e-12) {
+    y <- (y^lambda - 1) / (lambda * ((gm)^(lambda - 1)))
+  } else {
+    y <- gm * log(y)
+  }
+  return(y)
+}
+
+
+# Back transformation: Box Cox
+box_cox_back <- function(y, lambda, shift = 0) {
+
+  lambda_cases_back <- function(y, lambda = lambda, shift){
+    if (abs(lambda) <= 1e-12) {   #case lambda=0
+      y <-  exp(y) - shift
+    } else {
+      y <- (lambda * y + 1)^(1 / lambda) - shift
+    }
+    return(y = y)
+  }
+  y <- lambda_cases_back(y = y, lambda = lambda, shift = shift)
+
+  return(y = y)
+} #  End box_cox_back
+
+
+# The dual transformation ------------------------------------------------------
+
+# Transformation: dual
+dual <-  function(y, lambda = lambda, shift = 0) {
+
+  with_shift <- function(y, shift) {
+    min <- min(y)
+    if (min <= 0) {
+      shift <- shift + abs(min(y)) +1
+    } else {
+      shift <- shift
+    }
+    return(shift)
+  }
+
+  shift <- with_shift(y = y, shift = shift)
+
+  lambda_absolute <- abs(lambda)
+
+  if (lambda_absolute <= 1e-12) {  #case lambda=0
+    yt <-  log(y + shift)
+  } else if (lambda > 1e-12){
+    yt <- ((y + shift)^(lambda) - (y + shift)^(-lambda))/(2 * lambda)
+  } else {
+    stop("lambda cannot be negative for the dual transformation")
+  }
+  return(list(y = yt, shift = shift))
+  #return(y = yt)
+}
+
+# Standardized transformation: dual
+dual_std <- function(y, lambda) {
+
+  min <- min(y)
+  if (min <= 0) {
+    y <- y - min + 1
+  }
+
+  yt <- dual(y, lambda)$y
+
+  zt <- if (abs(lambda) > 1e-12) {
+    geo <- geometric.mean(y^(lambda -1) + y^(-lambda -1))
+    zt <- yt * 2 / geo
+  } else {
+    zt <- geometric.mean(y) * log(y)
+  }
+
+  y <- zt
+
+  return(y)
+}
+
+# Back transformation: dual
+dual_back <- function(y, lambda = lambda, shift) {
+  lambda_absolute <- abs(lambda)
+  if(lambda_absolute <= 1e-12)
+  {
+    y <- exp(y) - shift
+  }
+  else
+  {
+    y <- (lambda * y + sqrt(lambda^2 * y^2 + 1))^(1/lambda) - shift
+  }
+
+  return(y = y)
+}
+
+
+# The log-shift transformation -------------------------------------------------
+
+#  Transformation: log_shift_opt
+
+log_shift_opt <- function(y, lambda = lambda, shift = NULL) {
+
+  with_shift <-  function(y, lambda) {
+
+    min <- min(y + lambda)
+    if (min <= 0) {
+      lambda <- lambda + abs(min) + 1
+    } else {
+      lambda <- lambda
+    }
+    return(lambda)
+  }
+
+  # Shift parameter
+  lambda <- with_shift(y = y, lambda = lambda )
+
+  log_trafo <- function(y, lambda = lambda) {
+    y <- log(y + lambda)
+    return(y)
+  }
+  yt <- log_trafo(y = y, lambda = lambda)
+  #return(y)
+  return(list(y = yt, shift = NULL))
+} # End log_shift
+
+
+
+# Standardized transformation: Log_shift_opt
+
+geometric.mean <- function(x) { #for RMLE in the parameter estimation
+  exp(mean(log(x)))
+}
+
+log_shift_opt_std <- function(y, lambda) {
+
+  with_shift <-  function(y, lambda) {
+    min <- min(y + lambda)
+    if (min <= 0) {
+      lambda <- lambda + abs(min(y)) + 1
+    } else {
+      lambda <- lambda
+    }
+    return(lambda)
+  }
+
+  # Shift parameter
+  lambda <- with_shift(y = y, lambda = lambda )
+
+  log_trafo_std <- function(y, lambda = lambda) {
+    gm <- geometric.mean(y + lambda)
+    y <- gm * log(y + lambda)
+    return(y)
+  }
+  y <- log_trafo_std(y = y, lambda = lambda)
+  return(y)
+}
+
+# Back transformation: log_shift_opt
+log_shift_opt_back <- function(y, lambda) {
+  log_shift_opt_back <- function(y, lambda = lambda){
+    y <-  exp(y) - lambda
+    return(y = y)
+  }
+  y <- log_shift_opt_back(y = y, lambda = lambda)
+  return(y = y)
+} #  End log_shift_opt

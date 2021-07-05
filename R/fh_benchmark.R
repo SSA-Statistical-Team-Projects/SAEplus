@@ -21,7 +21,7 @@
 
 fh_calibratepovrate <- function(hh_dt = hh.dt,
                                 pop_dt = gin_masterpoly.dt,
-                                ebp_obj = ginemdi_model2,
+                                fh_obj = ginemdi_model2,
                                 area_id = "ADM3_CODE",
                                 pop_var = "population",
                                 harea_id = "ADM1_CODE",
@@ -50,7 +50,7 @@ fh_calibratepovrate <- function(hh_dt = hh.dt,
   #### merge in h_area ID and poverty rates from EMDI object
   pop_size <- pop_dt[,c(area_id, harea_id),with=F][pop_size, on = area_id]
   pop_size <- unique(pop_size)
-  povrate.dt <- as.data.table(ebp_obj$ind)
+  povrate.dt <- as.data.table(fh_obj$ind)
   povrate.dt[,Domain := as.integer(as.character(Domain))]
   setnames(povrate.dt, "Domain", area_id)
   pop_size <- povrate.dt[,c(area_id, "FH"),with=F][pop_size, on = area_id]
@@ -60,7 +60,7 @@ fh_calibratepovrate <- function(hh_dt = hh.dt,
   #         a.	Take the sum of population*poverty rate / total population, by sub-prefecture
   #3. Estimate state level poverty rates
   pop_size[,harea_popsize := sum(population), by = harea_id]
-  pop_size[,area_povrate_share := population * Head_Count / harea_popsize]
+  pop_size[,area_povrate_share := population * FH / harea_popsize]
   pop_size[,harea_povrate := sum(area_povrate_share), by = harea_id]
 
   hh_dt[,povline := ifelse(get(welfare) < povline, 1, 0)]
@@ -75,7 +75,7 @@ fh_calibratepovrate <- function(hh_dt = hh.dt,
 
   pop_size[, bmratio := survey_povrate / harea_povrate]
 
-  pop_size[, BM_Head_Count := Head_Count * bmratio]
+  pop_size[, BM_Head_Count := FH * bmratio]
 
   return(pop_size)
 
