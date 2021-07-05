@@ -4,8 +4,10 @@
 .Ruserdata
 
 data-raw/Guinea_osmmp
+data-raw/gin_master.csv
+data/gin_master_dn.dt
 
-data/GINenvironment.RData
+data-raw/GIN_environmentALL.RData
 data/GINenvironment.RData
 data/GINenvironment.RData
 
@@ -17,3 +19,4 @@ data/ginspace.RData
 data/nc_ginspace.RData
 data/gin_subareaenv.RData
 data/prepare_gin_Environment_dn.RData
+
