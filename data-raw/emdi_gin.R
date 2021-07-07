@@ -1,6 +1,6 @@
-devtools::load_all()
+#devtools::load_all()
 
-load("data/prepare_gin_Environment_dn.RData")
+#load("data/prepare_gin_Environment_dn.RData")
 library(nlme)
 library(emdi)
 
@@ -17,12 +17,25 @@ selected.vars <-  gsub("-", "_", selected.vars)
 gin_model <- paste(selected.vars, collapse = " + ")
 gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 
+gin_hhsurvey.dt[,popweight := hhsize * hhweight]
+gin_hhsurvey.dt[,spopweight := mean(popweight, na.rm = TRUE), by = "ADM3_CODE"]
+gin_hhsurvey.dt[,spopweight := popweight / spopweight]
 
-# ###store the GINevnrionment and run ENDI in another script
-# ginemdi_model <- emdi::ebp(fixed = gin_model, pop_data = gin_hhcensus.dt, pop_domains = "ADM3_CODE",
-#                            smp_data = gin_hhsurvey.dt, smp_domains = "ADM3_CODE", threshold = 0,
-#                            L = 100, transformation = "no", na.rm = TRUE)
-#
+
+###store the GINevnrionment and run ENDI in another script
+ginemdi_model <- emdi::ebp(fixed = gin_model, pop_data = gin_hhcensus.dt, pop_domains = "ADM3_CODE",
+                           smp_data = gin_hhsurvey.dt, smp_domains = "ADM3_CODE", threshold = -0.448955,
+                           L = 100, transformation = "no", na.rm = TRUE)
+
+
+ginemdi_modelbm <- saeplus_calibratepovrate(pop_dt = gin_hhcensus.dt,
+                                            hh_dt = gin_hhsurvey.dt,
+                                            weight = "popweight",
+                                            povline = -0.448955,
+                                            pop_var = "ind_estimate",
+                                            ebp_obj = ginemdi_model)
+
+
 # gin_hhcensus.dt[, pop_weight := 1]
 #
 # ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
@@ -35,9 +48,6 @@ gin_model <- as.formula(paste("pcexp", gin_model, sep = " ~ "))
 #
 #
 #
-gin_hhsurvey.dt[,popweight := hhsize * hhweight]
-gin_hhsurvey.dt[,spopweight := mean(popweight, na.rm = TRUE), by = "ADM3_CODE"]
-gin_hhsurvey.dt[,spopweight := popweight / spopweight]
 
 # #################################################################################################################
 ####### MODEL WITH COMMUNITY LEVEL VARIABLES (skip below for alternate model)

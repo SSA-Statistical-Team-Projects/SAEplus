@@ -7,6 +7,7 @@
 #' @param outcomevar character vector of size 1 naming the outcome variable
 #' @param var_identifier a character vector of common tags
 #' @param drop_NA_tags if TRUE, variable names with "NA" in the names are dropped
+#' @param method two methods are available, "LASSO" or "GLMNET"
 #' @return a list summarizing the lasso regression output as well as the set of coefficients
 #'
 #' @export
@@ -19,7 +20,8 @@ saeplus_selectmodel <- function(dt,
                                 outcomevar = "pcexp",
                                 var_identifier = c("roaddensity_", "count_", "length_",
                                                    "_pointcount", "bld_", "_2018", "_2019"),
-                                drop_NA_tags = TRUE){
+                                drop_NA_tags = TRUE,
+                                method = "LASSO"){
 
   dt <- setDT(dt)
 
@@ -33,6 +35,7 @@ saeplus_selectmodel <- function(dt,
   }
 
   xset <- unlist(lapply(var_identifier, mult_grepl))
+  xset <- unique(xset)
   yvar <- dt[,get(outcomevar)]
   select_variables <- function(tag){
 
@@ -42,6 +45,7 @@ saeplus_selectmodel <- function(dt,
   }
 
   xset <- unlist(lapply(var_identifier, select_variables))
+  xset <- unique(xset)
 
   ### drop variables with NA
   if (drop_NA_tags == TRUE){
@@ -69,14 +73,27 @@ saeplus_selectmodel <- function(dt,
   dt <- cbind(yvar, xset)
   dt <- setDT(dt)
 
+  if(method == "LASSO"){
+    lasso.reg <-  hdm::rlasso(yvar ~ . , data = dt, post=TRUE)
+    coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
+  }
+
+  if(method == "GLMNET"){
+    lasso.reg <-  cv.glmnet(as.matrix(x=xset),y=yvar, data = dt, family="gaussian",relax=TRUE)
+    coefs <- as.data.frame(as.matrix(coef(lasso.reg, s="lambda.min")))
+    coefs$index <- coefs > 0
+  }
+
+  # # Lasso regression
+  # #lasso.reg <-  hdm::rlasso(yvar ~ . , data = dt, post=TRUE)
+  # lasso.reg <-  cv.glmnet(as.matrix(x=xset),y=yvar, data = dt, family="gaussian",relax=TRUE)
+  # #coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
+  # coefs <- as.data.frame(as.matrix(coef(lasso.reg, s="lambda.min")))
+  # coefs$index <- coefs > 0
 
 
-  # Lasso regression
-  lasso.reg <-  hdm::rlasso(yvar ~ . , data = dt, post=TRUE)
-  coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
 
-
-  return(lasso.reg)
+  return(coefs)
 
 
 
