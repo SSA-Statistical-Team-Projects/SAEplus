@@ -294,6 +294,8 @@ gin_master.dt <- sf::st_join(gin_master.dt, gin_masterpoly.dt[,c("rwi", "geometr
 gin_mastercentroid.dt <- sf::st_centroid(gin_masterpoly.dt)
 gin_mastercentroid.dt <- st_as_sf(gin_mastercentroid.dt, agr = "constant", crs = 4326)
 ginshp <- st_as_sf(ginshp, agr = "constant", crs = 4326)
+ginshp <- sf::st_make_valid(ginshp)
+ginshp <- sf::st_make_valid(ginshp)
 gin_mastercentroid.dt <- sf::st_join(gin_mastercentroid.dt, ginshp)
 
 
