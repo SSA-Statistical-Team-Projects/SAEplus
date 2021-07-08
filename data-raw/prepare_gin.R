@@ -315,9 +315,7 @@ gin_mastercentroid.dt[, Faranah := ifelse(ADM1_NAME == "Faranah", 1, 0)]
 gin_mastercentroid.dt[, Mamou := ifelse(ADM1_NAME == "Mamou", 1, 0)]
 
 idvars <- c("bld_", "_2018", "_2019",
-            "rwi", "Conakry", "Kankan", "Nzerekore",
-            "Faranah", "Labe", "Mamou", "Kindia", "Boke",
-            "coverfraction")
+            "rwi", "coverfraction")
 
 mult_grepl <- function(ids = idvars,
                        dt = gin_mastercentroid.dt){
