@@ -55,11 +55,16 @@ ginemdi_modelbm <- saeplus_calibratepovrate(pop_dt = gin_hhcensus.dt,
 ## rescale popweights before imputation
 #
 ### figure out what the NAs are and assign them names
-#
-ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
+
+# ginemdi_model2 <- emdi_ebp2(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
+#                             smp_data = as.data.frame(gin_hhsurvey.dt), smp_domains = "ADM3_CODE", threshold = -0.448955,
+#                             L = 100, transformation = "no", na.rm = TRUE, smp_weight = "spopweight", B = 100,
+#                             pop_weight = "ind_estimate", cpus = 30, MSE = TRUE)
+
+ginemdi_model2 <- emdi::ebp(fixed = gin_model, pop_data = as.data.frame(gin_hhcensus.dt), pop_domains = "ADM3_CODE",
                             smp_data = as.data.frame(gin_hhsurvey.dt), smp_domains = "ADM3_CODE", threshold = -0.448955,
-                            L = 100, transformation = "no", na.rm = TRUE, smp_weight = "spopweight", B = 100,
-                            pop_weight = "ind_estimate", cpus = 30, MSE = TRUE)
+                            L = 100, transformation = "no", na.rm = TRUE, weights = "popweight", B = 100,
+                            cpus = 30, MSE = TRUE)
 
 saveRDS(ginemdi_model2, "data/ginemdi_model2.RDS")
 #
@@ -125,7 +130,8 @@ tm_shape(povgrid.dt) +
 
 tmap_save(tm = figure1, filename = "data/gin_povmap1.pdf")
 
-save(ginemdi_model2, gridhh_count.dt, gin_master.dt, gin_benchmark, povgrid.dt,
+save(ginemdi_model2, gridhh_count.dt, gin_master.dt,
+     gin_benchmark, povgrid.dt, test, test2,
      file = "data/ginspace.RData")
 
 
