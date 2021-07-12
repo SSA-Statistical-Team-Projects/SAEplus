@@ -13,8 +13,9 @@ gin_master.dt <- as.data.table(gin_master.dt)
 
 gin_master.dt[, poor := ifelse(pcexp < 5006362, 1, 0)]
 gin_master.dt[, povrate := weighted.mean(x = poor, w = popweight), by = "id"]
+gin_master.dt[, sumpopweight := sum(popweight, na.rm = TRUE), by = "id"]
 
-add.dt <- unique(gin_master.dt[,c("id", "povrate"),with=F])
+add.dt <- unique(gin_master.dt[,c("id", "povrate", "sumpopweight"),with=F])
 
 ## include poverty rates in the masterpolygon set and begin estimating models
 gin_masterpoly.dt <- add.dt[gin_masterpoly.dt, on = "id"]
@@ -42,28 +43,42 @@ selected.vars <- gsub("`", "", selected.vars)
 gin_hhsurvey.dt <-
 gin_mastercentroid.dt[is.na(povrate) == FALSE,
                       c(selected.vars, "povrate",
-                        "ADM3_CODE", "population"), with = F]
+                        "ADM3_CODE", "sumpopweight"), with = F]
 
 gin_hhcensus.dt <-
   gin_mastercentroid.dt[!(population == 0),
                         c(selected.vars,
-                          "ADM3_CODE", "population"), with = F]
+                          "ADM3_CODE"), with = F]
 
 
-ginemdi_model2 <- emdi_ebp2(fixed = gin_model,
-                            pop_data = as.data.frame(na.omit(gin_hhcensus.dt)),
-                            pop_domains = "ADM3_CODE",
-                            smp_data = as.data.frame(na.omit(gin_hhsurvey.dt)),
-                            smp_domains = "ADM3_CODE",
-                            threshold = 0,
-                            L = 100,
-                            transformation = "no",
-                            na.rm = TRUE,
-                            smp_weight = "population",
-                            B = 100,
-                            pop_weight = "population",
-                            cpus = 30,
-                            MSE = TRUE)
+# ginemdi_model2 <- emdi_ebp2(fixed = gin_model,
+#                             pop_data = as.data.frame(na.omit(gin_hhcensus.dt)),
+#                             pop_domains = "ADM3_CODE",
+#                             smp_data = as.data.frame(na.omit(gin_hhsurvey.dt)),
+#                             smp_domains = "ADM3_CODE",
+#                             threshold = 0,
+#                             L = 100,
+#                             transformation = "no",
+#                             na.rm = TRUE,
+#                             smp_weight = "population",
+#                             B = 100,
+#                             pop_weight = "population",
+#                             cpus = 30,
+#                             MSE = TRUE)
+
+ginemdi_samodel <- emdi::ebp(fixed = gin_model,
+                             pop_data = as.data.frame(gin_hhcensus.dt),
+                             pop_domains = "ADM3_CODE",
+                             smp_data = as.data.frame(gin_hhsurvey.dt),
+                             smp_domains = "ADM3_CODE",
+                             threshold = 0,
+                             L = 100,
+                             transformation = "no",
+                             na.rm = TRUE,
+                             weights = "sumpopweight",
+                             B = 100,
+                             cpus = 30,
+                             MSE = FALSE)
 
 saveRDS(ginemdi_model2, "data/ginemdi_subarea.RDS")
 
