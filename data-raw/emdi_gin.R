@@ -3,8 +3,8 @@ devtools::load_all()
 library(nlme)
 library(emdi)
 
-gin_hhcensus.dt <- readRDS("data/gin_hhcensus.RDS")
-gin_hhsurvey.dt <- readRDS("data/gin_hhsurvey.RDS")
+# gin_hhcensus.dt <- readRDS("data/gin_hhcensus.RDS")
+# gin_hhsurvey.dt <- readRDS("data/gin_hhsurvey.RDS")
 
 #selected.vars <- readRDS("data/gin_selectedvars.RDS")
 # selected.vars <- selected.vars[!grepl("count_secondary_link", selected.vars)]

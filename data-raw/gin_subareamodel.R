@@ -78,7 +78,7 @@ ginemdi_samodel <- emdi::ebp(fixed = gin_model,
                              weights = "sumpopweight",
                              B = 100,
                              cpus = 30,
-                             MSE = FALSE)
+                             MSE = TRUE)
 
 saveRDS(ginemdi_model2, "data/ginemdi_subarea.RDS")
 
