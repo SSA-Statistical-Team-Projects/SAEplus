@@ -51,7 +51,7 @@ saeplus_selectmodel <- function(dt,
   }
 
   ## Normalize y
-  yvar <- bestNormalize::orderNorm(yvar)$x.t
+  yvar <- orderNorm(yvar)$x.t
 
   ## replace missing observations with 0
   replace_missings <- function(X){
