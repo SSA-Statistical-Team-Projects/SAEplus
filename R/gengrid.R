@@ -15,7 +15,11 @@
 #'
 #' @export
 #'
-#' @import data.table sf raster dplyr spex exactextractr tmap rgeos rgdal
+#' @import data.table sf tmap
+#'
+#' @importFrom raster raster extent crop mask
+#' @importFrom spex polygonize
+#' @importFrom exactextractr exact_extract
 
 
 gengrid <- function(dsn = "data-raw",

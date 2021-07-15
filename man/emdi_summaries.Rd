@@ -4,7 +4,7 @@
 \alias{summary.ebp}
 \title{Summarizes an EMDI EBP Object}
 \usage{
-summary.ebp(object, ...)
+\method{summary}{ebp}(object, ...)
 }
 \description{
 Summarizes an EMDI EBP Object

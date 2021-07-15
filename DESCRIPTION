@@ -33,16 +33,9 @@ Imports:
     exactextractr,
     tmap,
     rgdal,
-    lwgeom,
     osmextract,
     dtplyr,
     haven,
-    tidygraph,
-    igraph,
     tibble,
     ggplot2,
-    units,
-    rgrass7,
-    link2GI,
-    nabor
 ByteCompile: true

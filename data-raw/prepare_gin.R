@@ -174,8 +174,8 @@ devtools::load_all()
 #' data.table::setnames(ginmp.dt, labs, varrelabs)
 #' data.table::setnames(ginmp.dt, "NA_pointcount", "unclassified_pointcount")
 
-####GINenvironment.RData is saved at this point
-load("data/GINenvironment.RData")
+####GINenvironment.RData is saved at this point (the data has been moved to)
+load("D:/Ify/Guinea_SAE/GINenvironment.RData")
 
 ginosm.dt <- ginmp.dt[ginline.dt, on = c("id")]
 

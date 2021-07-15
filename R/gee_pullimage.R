@@ -16,7 +16,8 @@
 #'
 #' @return shapefiles to local drive
 #'
-#' @import rgee reticulate googledrive gargle
+#' @import rgee reticulate
+#' @importFrom googledrive drive_deauth
 #'
 #' @export
 
@@ -32,7 +33,7 @@ gee_pullimage <- function(email = "ifeanyi.edochie@gmail.com",
                           ldrive_dsn = "data/cmr_impervious"){
 
   ee_Initialize(email = email)
-  googledrive::drive_deauth()
+  drive_deauth()
 
   agebs <- ee$FeatureCollection(gee_polygons)
 

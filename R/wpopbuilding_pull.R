@@ -10,7 +10,8 @@
 #'
 #' @export
 #'
-#' @import data.table RCurl
+#' @import data.table
+#' @importFrom RCurl getURL
 
 wpopbuilding_pull <- function(iso = "BEN",
                               wpversion = "v2.0",

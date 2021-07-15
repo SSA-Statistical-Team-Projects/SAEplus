@@ -121,7 +121,7 @@ tmap_save(tm = figure1, filename = "data/gin_povmap1.pdf")
 
 save(ginemdi_model2, gridhh_count.dt, gin_master.dt,
      gin_benchmark, povgrid.dt, test, test2,
-     file = "data/ginspace.RData")
+     file = "D:/Ify/Guinea_SAE/ginspace.RData")
 
 
 ##########################################################################################################################
@@ -197,7 +197,7 @@ figure1 <-
 tmap_save(tm = figure1, filename = "data/gin_ncpovmap1.pdf")
 
 save(ginemdi_ncmodel2, gridhh_count.dt, gin_master.dt, gin_ncbenchmark, ncpovgrid.dt,
-     file = "data/nc_ginspace.RData")
+     file = "D:/Ify/Guinea_SAE/nc_ginspace.RData")
 
 
 

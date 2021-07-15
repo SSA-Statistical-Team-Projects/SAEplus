@@ -8,8 +8,7 @@
 #' @export
 #'
 #' @import remotes countrycode rhdx stringr
-
-
+#'
 
 hdx_pull <- function(iso = "BEN",
                      identifier = "Relative wealth indicator",

@@ -11,6 +11,9 @@
 #' norm value obtained from the normalization process is the converted value
 #' The interpolation method uses the 'pcexp' vector as given and then uses a linear interpolation method to estimate a conversion
 #' The limsup method takes the converted value of the greatest welfare value below the poverty line
+#'
+#' @importFrom bestNormalize orderNorm
+#' @import data.table
 
 saeplus_ordernormpl <- function(npl_value = 5006362 ,
                                 pcexp = hh.dt$pcexp,

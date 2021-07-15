@@ -86,3 +86,15 @@ saveRDS(ginemdi_model2, "data/ginemdi_subarea.RDS")
 save(gin_model, gin_hhcensus.dt, gin_hhsurvey.dt, ginemdi_model2, file = "data/gin_subareaobjs.RData")
 
 
+
+
+
+
+
+
+
+
+
+
+
+

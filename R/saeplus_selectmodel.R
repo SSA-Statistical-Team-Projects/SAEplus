@@ -11,8 +11,8 @@
 #'
 #' @export
 #'
-#' @import data.table sf haven bestNormalize hdm dplyr tidyr glmnet BBmisc
-#'
+#' @import data.table hdm
+#' @importFrom bestNormalize orderNorm
 #'
 
 saeplus_selectmodel <- function(dt,

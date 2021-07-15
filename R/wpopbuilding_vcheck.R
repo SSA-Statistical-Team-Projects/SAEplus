@@ -9,6 +9,7 @@
 #' @return a data.table object with list and versions of building data
 #'
 #' @import data.table
+#' @importFrom RCurl getURL
 #' @export
 
 wpopbuilding_vcheck <- function(){

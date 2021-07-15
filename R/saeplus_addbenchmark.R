@@ -10,7 +10,7 @@
 #' (usually the output of the function saeplus_calibratepovrate())
 #' @param bm_unitid the id variable within the bm_obj object argument
 #'
-#'
+#' @import data.table
 #'
 
 

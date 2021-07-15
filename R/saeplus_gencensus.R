@@ -7,6 +7,8 @@
 #' @param hhsize string for the name of the average household size variable
 #' @param popsize string for the name of the population size for each polygon
 #' @param poly_id string for the polygon id variable to be used for expanding poly_dt
+#'
+#' @import data.table
 
 
 saeplus_gencensus <- function(poly_dt = polyest,

@@ -8,7 +8,8 @@
 #'
 #' @return one shapefiles for each of lines, points and/or multipolygon pulls specified as TRUE
 #'
-#' @import osmextract
+#' @importFrom osmextract oe_get
+#'
 #'
 #' @export
 
@@ -21,7 +22,7 @@ osm_datapull <- function(country = "Cameroon",
 
   if (lines == TRUE){
 
-    osm_lines <- osmextract::oe_get(country, stringsAsFactors = TRUE)
+    osm_lines <- oe_get(country, stringsAsFactors = TRUE)
     file <- paste(country, "osmlines", sep = "_")
     save (osm_lines, file = paste(ldrive, file, sep = "/"))
 
@@ -29,7 +30,7 @@ osm_datapull <- function(country = "Cameroon",
 
   if(points == TRUE){
 
-    osm_points <- osmextract::oe_get(country, layer="points", stringsAsFactors = FALSE)
+    osm_points <- oe_get(country, layer="points", stringsAsFactors = FALSE)
     file <- paste(country, "osmpoints", sep = "_")
     save (osm_points, file = paste(ldrive, file, sep = "/"))
 
@@ -37,7 +38,7 @@ osm_datapull <- function(country = "Cameroon",
 
   if(multipolygon == TRUE) {
 
-    osm_mp <- osmextract::oe_get(country, layer="multipolygons", stringsAsFactors = TRUE)
+    osm_mp <- oe_get(country, layer="multipolygons", stringsAsFactors = TRUE)
     file <- paste(country, "osmmp", sep = "_")
     save (osm_mp, file = paste(ldrive, file, sep = "/"))
 
