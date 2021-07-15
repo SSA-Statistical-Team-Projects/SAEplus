@@ -44,11 +44,11 @@ summary.ebp <- function(object, ...) {
     transform_method <- NULL
   }
 
-  skewness_res <- moments::skewness(residuals(object$model$model, level = 0, type = "pearson"))
-  kurtosis_res <- moments::kurtosis(residuals(object$model$model, level = 0, type = "pearson"))
+  skewness_res <- skewness(residuals(object$model$model, level = 0, type = "pearson"))
+  kurtosis_res <- kurtosis(residuals(object$model$model, level = 0, type = "pearson"))
 
-  skewness_ran <- moments::skewness(ranef(object$model$model)$'(Intercept)')
-  kurtosis_ran <- moments::kurtosis(ranef(object$model$model)$'(Intercept)')
+  skewness_ran <- skewness(ranef(object$model$model)$'(Intercept)')
+  kurtosis_ran <- kurtosis(ranef(object$model$model)$'(Intercept)')
 
   if (length(residuals(object$model$model, level = 0, type = "pearson")) > 3 &
       length(residuals(object$model$model, level = 0, type = "pearson")) < 5000) {

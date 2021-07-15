@@ -72,7 +72,7 @@ saeplus_selectmodel <- function(dt,
 
 
   # Lasso regression
-  lasso.reg <-  hdm::rlasso(yvar ~ . , data = dt, post=TRUE)
+  lasso.reg <-  rlasso(yvar ~ . , data = dt, post=TRUE)
   coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
 
 

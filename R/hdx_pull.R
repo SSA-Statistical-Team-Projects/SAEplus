@@ -7,7 +7,7 @@
 #'
 #' @export
 #'
-#' @import remotes countrycode rhdx stringr
+#' @import remotes countrycode stringr
 #'
 
 hdx_pull <- function(iso = "BEN",
