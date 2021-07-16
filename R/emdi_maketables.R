@@ -4,7 +4,7 @@
 #' @param docx if TRUE, the tables will be outputted straight to Microsoft Word (Ensure Java installation on your system to use
 #' this option)
 #'
-#' @import openxlsx
+
 
 
 

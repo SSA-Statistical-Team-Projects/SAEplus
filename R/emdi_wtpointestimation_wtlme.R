@@ -146,11 +146,11 @@ model_par <- function(framework,
     )
   } else {
     # fixed parameters
-    betas <- nlme::fixed.effects(mixed_model)
+    betas <- fixed.effects(mixed_model)
     # Estimated error variance
     sigmae2est<-mixed_model$sigma^2
     # VarCorr(fit2) is the estimated random error variance
-    sigmau2est <- as.numeric(nlme::VarCorr(mixed_model)[1,1])
+    sigmau2est <- as.numeric(VarCorr(mixed_model)[1,1])
 
     # Calculations needed for pseudo EB
 

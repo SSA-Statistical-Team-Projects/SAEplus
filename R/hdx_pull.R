@@ -7,7 +7,8 @@
 #'
 #' @export
 #'
-#' @import remotes countrycode stringr
+#' @import countrycode
+#'
 #'
 
 hdx_pull <- function(iso = "BEN",
@@ -15,7 +16,7 @@ hdx_pull <- function(iso = "BEN",
                      location_folder = NULL){
 
 
-  remotes::install_github("dickoa/rhdx")
+  install_github("dickoa/rhdx")
   rhdx::set_rhdx_config(hdx_site = "prod")
 
   ## Search all dataset with rwi
@@ -42,7 +43,7 @@ hdx_pull <- function(iso = "BEN",
 
 
   ### check if the country is in the list
-  country <- countrycode::countrycode(iso, origin = "iso3c", destination = "country.name.en")
+  country <- countrycode(iso, origin = "iso3c", destination = "country.name.en")
 
   if((country %in% list_country) == FALSE){
 

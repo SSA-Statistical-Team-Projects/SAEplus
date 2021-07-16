@@ -81,7 +81,6 @@
 #' @importFrom openxlsx createWorkbook createStyle freezePane
 #' @importFrom openxlsx addWorksheet writeData saveWorkbook
 #' @importFrom openxlsx addStyle writeDataTable setColWidths
-#' @import openxlsx
 #'
 
 
@@ -96,9 +95,9 @@ emdi_writeexcel <- function(object,
                    file = file,
                    split = split)
 
-  wb <- openxlsx::createWorkbook()
+  wb <- createWorkbook()
 
-  headlines_cs <- openxlsx::createStyle(fontColour     = "#ffffff",
+  headlines_cs <- createStyle(fontColour     = "#ffffff",
                                         halign         = "center",
                                         valign         = "center",
                                         fgFill         = NULL,

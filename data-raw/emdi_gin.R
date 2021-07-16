@@ -1,6 +1,5 @@
 devtools::load_all()
 
-library(nlme)
 library(emdi)
 
 # gin_hhcensus.dt <- readRDS("data/gin_hhcensus.RDS")

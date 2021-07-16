@@ -9,7 +9,6 @@
 #' @param censusgrid grid ID variable in hhcensus_dt
 #'
 #'
-#' @importFrom data.table data.table as.data.table
 #'
 
 saeplus_regtable <- function(ebp_obj = ginemdi_model2,

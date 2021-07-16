@@ -12,7 +12,6 @@
 #' The interpolation method uses the 'pcexp' vector as given and then uses a linear interpolation method to estimate a conversion
 #' The limsup method takes the converted value of the greatest welfare value below the poverty line
 #'
-#' @importFrom bestNormalize orderNorm
 #' @import data.table
 
 saeplus_ordernormpl <- function(npl_value = 5006362 ,
@@ -21,7 +20,7 @@ saeplus_ordernormpl <- function(npl_value = 5006362 ,
 
   if(sum(grepl("inclusion", method)) == 1){
     pcexp <- c(pcexp, npl_value)
-    ordered_pcexp <- orderNorm(pcexp)
+    ordered_pcexp <- bestNormalize::orderNorm(pcexp)
 
     ordered_pcexp <- as.data.table(cbind(ordered_pcexp$x, ordered_pcexp$x.t))
 
@@ -31,7 +30,7 @@ saeplus_ordernormpl <- function(npl_value = 5006362 ,
 
   if(sum(grepl("interpolation", method)) == 1){
     ordered_pcexp <- pcexp[order(pcexp)]
-    ordered_pcexp <- orderNorm(ordered_pcexp)
+    ordered_pcexp <- bestNormalize::orderNorm(ordered_pcexp)
 
     ordered_pcexp <- as.data.table(cbind(ordered_pcexp$x, ordered_pcexp$x.t))
     ordered_pcexp <- na.omit(ordered_pcexp)

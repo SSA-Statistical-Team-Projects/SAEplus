@@ -11,8 +11,8 @@
 #'
 #' @export
 #'
-#' @import data.table hdm
-#' @importFrom bestNormalize orderNorm
+#' @import data.table
+#'
 #'
 
 saeplus_selectmodel <- function(dt,
@@ -72,7 +72,7 @@ saeplus_selectmodel <- function(dt,
 
 
   # Lasso regression
-  lasso.reg <-  rlasso(yvar ~ . , data = dt, post=TRUE)
+  lasso.reg <-  hdm::rlasso(yvar ~ . , data = dt, post=TRUE)
   coefs <- lasso.reg$beta[lasso.reg$index==TRUE]
 
 

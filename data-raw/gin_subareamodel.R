@@ -1,7 +1,6 @@
 source("data-raw/prepare_gin.R")
 
 library(emdi)
-library(nlme)
 
 #### this script will be used to create the sub-area level model for Guinea
 gin_master.dt <- st_as_sf(gin_master.dt, agr = "constant", crs = 4326)

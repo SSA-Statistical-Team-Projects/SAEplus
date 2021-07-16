@@ -48,7 +48,7 @@ parametric_bootstrap <- function(framework,
       parallel::clusterSetRNGStream()
     }
     parallelMap::parallelLibrary("nlme")
-    parallelMap::parallelLibrary("emdi")
+    # parallelMap::parallelLibrary("emdi")
     mses <- simplify2array(parallelMap::parallelLapply(
       xs              = seq_len(B),
       fun             = mse_estim_wrapper,

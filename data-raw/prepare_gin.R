@@ -518,7 +518,7 @@ gin_hhcensus.dt[,ADM1_CODE := as.integer(substr(ADM1_CODE, 4, nchar(ADM1_CODE)))
 # gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM2_CODE) == FALSE,]
 # gin_hhsurvey.dt <- gin_hhsurvey.dt[is.na(ADM1_CODE) == FALSE,]
 
-gin_hhsurvey.dt[,pcexp := bestNormalize::orderNorm(pcexp)$x.t]
+gin_hhsurvey.dt[,pcexp := orderNorm(pcexp)$x.t]
 
 
 

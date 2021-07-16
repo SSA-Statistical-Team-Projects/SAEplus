@@ -14,8 +14,6 @@
 
 wpopbuilding_vcheck <- function(){
 
-  requireNamespace("data.table", quietly = TRUE)
-
   url <- "ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/"
 
   #construct the link to the world pop website with the building links
