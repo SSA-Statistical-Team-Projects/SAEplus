@@ -1,6 +1,6 @@
 #devtools::load_all()
 setwd("D:/Ify/Git")
-library(emdi)
+#library(emdi)
 library(data.table)
 
 gin_hhcensus.dt <- readRDS("data/gin_hhcensus.RDS")

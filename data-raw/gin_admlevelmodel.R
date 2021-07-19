@@ -67,7 +67,7 @@ gin_direct <- sae::direct(y = poor,
                           data = as.data.frame(gin_master.dt))
 gin_direct$variance <- gin_direct$SD^2
 
-gin_areacombine.dt <- emdi::combine_data(pop_data = as.data.frame(gin_areacensus.dt),
+gin_areacombine.dt <- combine_data(pop_data = as.data.frame(gin_areacensus.dt),
                                          pop_domains = "ADM3_CODE",
                                          smp_data = as.data.frame(gin_direct),
                                          smp_domains = "Domain")
