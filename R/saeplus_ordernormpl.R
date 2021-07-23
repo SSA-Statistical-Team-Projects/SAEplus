@@ -14,7 +14,7 @@
 #'
 #' @import data.table
 
-saeplus_ordernormpl <- function(npl_value = 5006362 ,
+saeplus_ordernormpl <- function(npl_value = 5006362,
                                 pcexp = hh.dt$pcexp,
                                 method = c("inclusion", "interpolation", "limsup")){
 
@@ -68,7 +68,7 @@ saeplus_ordernormpl <- function(npl_value = 5006362 ,
     if(sum(grepl("limsup", method)) == 1){
 
       ordered_pcexp <- pcexp[order(pcexp)]
-      ordered_pcexp <- orderNorm(ordered_pcexp)
+      ordered_pcexp <- bestNormalize::orderNorm(ordered_pcexp)
 
       ordered_pcexp <- as.data.table(cbind(ordered_pcexp$x, ordered_pcexp$x.t))
       ordered_pcexp <- na.omit(ordered_pcexp)

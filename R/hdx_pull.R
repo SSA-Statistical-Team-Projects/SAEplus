@@ -16,7 +16,7 @@ hdx_pull <- function(iso = "BEN",
                      location_folder = NULL){
 
 
-  install_github("dickoa/rhdx")
+  devtools::install_github("dickoa/rhdx")
   rhdx::set_rhdx_config(hdx_site = "prod")
 
   ## Search all dataset with rwi

@@ -15,9 +15,9 @@
 #'
 #' @export
 #'
-#' @import data.table sf tmap
-#'
-#' @importFrom raster raster extent crop mask
+#' @import data.table tmap
+#' @importFrom raster raster
+#' @importFrom raster extent crop mask
 #' @importFrom spex polygonize
 #' @importFrom exactextractr exact_extract
 

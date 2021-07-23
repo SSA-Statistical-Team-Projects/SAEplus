@@ -11,7 +11,7 @@
 #'
 #' @export
 #'
-#' @import data.table sf dtplyr tidyr
+#' @import data.table dtplyr tidyr
 
 
 osm_processmp <- function(shapefile_path = "data/cmr_polypop_boundary.shp",

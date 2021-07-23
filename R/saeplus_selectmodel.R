@@ -13,7 +13,6 @@
 #'
 #' @import data.table
 #'
-#'
 
 saeplus_selectmodel <- function(dt,
                                 outcomevar = "pcexp",
@@ -51,7 +50,7 @@ saeplus_selectmodel <- function(dt,
   }
 
   ## Normalize y
-  yvar <- orderNorm(yvar)$x.t
+  yvar <- bestNormalize::orderNorm(yvar)$x.t
 
   ## replace missing observations with 0
   replace_missings <- function(X){
