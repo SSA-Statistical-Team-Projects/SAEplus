@@ -1,0 +1,138 @@
+---
+title: "What is SAEplus?"
+output: rmarkdown::html_vignette
+description: > 
+  What is SAEplus? What is the basic philosophy behind it? 
+  How is it pulling and processing data before and after Small Area Estimation?  
+vignette: >
+  %\VignetteIndexEntry{data_pulling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 6, tibble.print_max = 6)
+```
+
+
+## Introduction
+
+This vignette provides the basic information on the use of SAEplus for users. The purpose of SAEplus is to create a one-stop-shop for pulling, cleaning and preparing data for use within small area estimation as well as create post-estimation tables and poverty maps for report writing. Some of the tools (functions) created towards also being generalized for other areas. While small area estimation is extensively used for poverty analysis, it may also be useful for other topic areas as well. 
+
+## Underlying Philosophy
+
+The basic philosophy behind creating the SAEplus functions is to create functional wrappers on existing R functions that are accessible to those new to R. In addition, other functionality has been produced to carry out data cleaning. The package also plays well with the [EMDI R package](https://cran.r-project.org/web/packages/emdi/index.html). 
+
+
+## The SAEplus Process
+
+### Process Overview
+
+In general, the SAEplus functions span the following tasks: data pulling, data cleaning and preparation and post-SAE functions
+
+| SAEPlus Functions             |             Usage                                                           |
+|-------------------------------|-----------------------------------------------------------------------------|
+| gengrid                       | Creates a grid system from raster and shapefile running a raster with grid  |
+|                               | statistics                                                                  |  
+|                               |                                                                             |
+| gee_datapull                  | Pulls geospatial image collections from Google Earth Engine into shapefiles |
+|                               |                                                                             |
+| gee_pullimage                 | Pulls geospatial images from Google Earth Engine into shapefiles            |
+|                               |                                                                             |
+| hdx_pull                      | Pulls geospatial from the UN's Humanitarian Data Exchange server            |
+|                               |                                                                             |
+| wpopbuilding_check            | Checks whether country contains building data in World Pop data             |                            
+|                               |                                                                             |
+| wpopbuilding_pull             | Pulls the building data for the countries that have World Pop data          |
+|                               |                                                                             |
+| osm_datapull                  | Pulls geospatial open street map data on roads and other visible amenities  |
+|                               |                                                                             |
+| osm_processpoints             | Cleans and prepares point count data obtained via osm_datapull()            |
+|                               |                                                                             |
+| osm_processmp                 | Cleans and prepares multipolygon data indicators obtained via               |
+|                               | osm_datapull()                                                              |
+|                               |                                                                             |
+| osm_processlines              | Cleans and prepares road network from osm_pull and uses this for analysis   |
+|                               |                                                                             |
+| saeplus_gencensus             | Generates a synthetic census from grid level data to be used for            |
+|                               | small area estimation                                                       |
+|                               |                                                                             |
+| saeplus_hhestpoly             | Compute any indicator from grid level geospatial data for any/no groups     |
+|                               |                                                                             |
+| saeplus_ordernormpl           | Convert outcome indicator in its order norm transformation                  |
+|                               |                                                                             |
+| saeplus_selectmodel           | Perform model selection prior to SAE model estimation                       |
+|                               |                                                                             |
+| saeplus_calibratepovrate      | Post EMDI estimation function for benchmarking poverty rates                |
+|                               |                                                                             |
+| saeplus_addbenchmark          | Post benchmarking function for processing calibrated results                |
+|                               |                                                                             |
+| saeplus_ebpreports            | Creates post-estimation model diagnostic reports based on EMDI::EBP results |
+|                               |                                                                             |
+| saeplus_makesumtable          | Creates summary table from household level data to be used in reports       |
+|                               |                                                                             |
+| saeplus_gboost (To do!)       | Empirical Best Predictor that uses the gradient boosting algorithm to select|
+|                               | estimates                                                                   |
+
+## How to start with SAEplus
+
+- Install the R and RStudio. Get the latest version of both software
+
+- Install devtools by running the following command : `install.packages("devtools")`
+
+- Install SAEplus (from github). Run the following command: `devtools::install_github("SSA-Statistical-Team-Projects/SAEplus")`
+
+- The package is dependent in part of the RGEE Google Earth Engine package. This requires a python and anaconda/miniconda installation. Follow the instructions [here](http://www.css.cornell.edu/faculty/dgr2/_static/files/R_PDF/ex_rgee.pdf) to get set up.
+
+## Data Storage
+
+The data is currently stored on local machines and housed on [github](https://github.com/SSA-Statistical-Team-Projects/S2S-Imputation-WAEMU). However, to improve the efficiency of our work, we will be migrating to store the data on the CWAPOV WB internal server (\\cwapov\cwapov). This will make it easier to integrate our work on the server as well. 
+There are sample scripts within our [github](https://github.com/SSA-Statistical-Team-Projects/S2S-Imputation-WAEMU) page here. 
+
+
+## Future to do
+
+1. Complete saeplus_gboost() function 
+
+2. Create system for efficient reading of data from CWAPOV server for different types of data
+
+3. Complete internal vignette for STCs to learn how to use SAEplus to pull and process data showing our to use it with EMDI
+
+
+## Lessons Learnt
+
+- SAEplus is flexible enough to be used for much more than poverty grid mapping.
+
+- We need to work with OSM experts like those on the GOST to figure out what exactly we are obtaining from the osm_datapull as we may potentially we sitting on a goldmine
+
+- Testing our work will be extremely important and as we get more projects and we will have more time to make our functions more generalisable. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -17,7 +17,7 @@
 #'
 #' @import data.table tmap
 #' @importFrom raster raster
-#' @importFrom raster extent crop mask
+#' @importFrom raster mask
 #' @importFrom spex polygonize
 #' @importFrom exactextractr exact_extract
 
@@ -52,20 +52,20 @@ gengrid <- function(dsn = "data-raw",
     resolution <- grid_size/111
     base_raster <- raster(xmn= -180, ymn= -90, xmx = 180, ymx = 90,
                                   resolution = resolution, crs = crs)
-    extent_shp <- extent(shp)
-    base_raster <- crop(base_raster, extent_shp) ##we only care about base raster as long as it within shapefile
+    base_raster <- crop(base_raster, shp) ##we only care about base raster as long as it within shapefile
     base_raster[is.na(base_raster)] <- 0
     base_raster <- mask(base_raster, shp)
 
     #change raster to polygon
     br_poly <- polygonize(base_raster)
     class(br_poly)
-    br_poly <- br_poly %>% rename(id = layer)
+    br_poly <- br_poly %>% dplyr::rename(id = layer)
     br_poly$id <- seq(1:dim(br_poly)[1])
 
     #now compute zonal statistics of population
     zonal_stats <- exact_extract(pop, br_poly, stats) %>% as.data.table()
     names(zonal_stats) <- stats
+    br_poly <- as.data.table(br_poly)
     br_poly <- cbind(br_poly,zonal_stats)
 
     if(drop_Zero == T){
@@ -73,10 +73,9 @@ gengrid <- function(dsn = "data-raw",
     }
   } else {
 
-    extent_shp <- extent(shp)
-
     zonal_stats <- exact_extract(pop, shp, stats) %>% as.data.table()
     names(zonal_stats) <- stats
+    br_poly <- as.data.table(br_poly)
     br_poly <- cbind(shp, zonal_stats)
 
     if(drop_Zero == T) {
@@ -93,18 +92,25 @@ gengrid <- function(dsn = "data-raw",
             palette="PuBu")  +
     tm_borders(col="black", lwd=0, alpha = 0)
 
-  br_dt <- as.data.table(br_poly[,stats])
+
+
 
   ## if a feature name is provided, relabel the variable name in the data to show this
   if(is.null(featname) == FALSE){
     names(br_poly)[names(br_poly) == stats] <- featname
+
+    return(list(total_popsize = sum(br_poly[, featname, with=F]),
+                polygon_dt = br_poly,
+                summary_stats = summary(br_poly),
+                mymap))
+
   }
 
-
-  return(list(total_popsize = sum(br_dt[, stats, with=F]),
+  return(list(total_popsize = sum(br_poly[, stats, with=F]),
               polygon_dt = br_poly,
-              summary_stats = summary(br_dt),
+              summary_stats = summary(br_poly),
               mymap))
+
 
 }
 

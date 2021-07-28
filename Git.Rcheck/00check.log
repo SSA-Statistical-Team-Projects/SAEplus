@@ -10,10 +10,6 @@
 * checking package dependencies ... OK
 * checking if this is a source package ... NOTE
 Found the following apparent object files/libraries:
-  renv/library/R-3.6/x86_64-w64-mingw32/BBmisc/libs/i386/BBmisc.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/BBmisc/libs/x64/BBmisc.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/HLMdiag/libs/i386/HLMdiag.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/HLMdiag/libs/x64/HLMdiag.dll
   renv/library/R-3.6/x86_64-w64-mingw32/LambertW/libs/i386/LambertW.dll
   renv/library/R-3.6/x86_64-w64-mingw32/LambertW/libs/x64/LambertW.dll
   renv/library/R-3.6/x86_64-w64-mingw32/PROJ/libs/i386/PROJ.dll
@@ -22,7 +18,6 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/RCurl/libs/x64/RCurl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/libs/i386/Rcpp.dll
   renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/libs/x64/Rcpp.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/libs/x64/RcppArmadillo.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/lib/i386/tbb.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/lib/i386/tbbmalloc.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/lib/i386/tbbmalloc_proxy.dll
@@ -57,8 +52,6 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/curl/libs/x64/curl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/data.table/libs/i386/datatable.dll
   renv/library/R-3.6/x86_64-w64-mingw32/data.table/libs/x64/datatable.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/deldir/libs/i386/deldir.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/deldir/libs/x64/deldir.dll
   renv/library/R-3.6/x86_64-w64-mingw32/diffobj/libs/i386/diffobj.dll
   renv/library/R-3.6/x86_64-w64-mingw32/diffobj/libs/x64/diffobj.dll
   renv/library/R-3.6/x86_64-w64-mingw32/digest/libs/i386/digest.dll
@@ -70,8 +63,6 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/ellipsis/libs/x64/ellipsis.dll
   renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/libs/i386/exactextractr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/libs/x64/exactextractr.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/expm/libs/i386/expm.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/expm/libs/x64/expm.dll
   renv/library/R-3.6/x86_64-w64-mingw32/fansi/libs/x64/fansi.dll
   renv/library/R-3.6/x86_64-w64-mingw32/farver/libs/i386/farver.dll
   renv/library/R-3.6/x86_64-w64-mingw32/farver/libs/x64/farver.dll
@@ -87,14 +78,11 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/geometry/libs/x64/geometry.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gert/libs/i386/gert.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gert/libs/x64/gert.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/ggrepel/libs/i386/ggrepel.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/ggrepel/libs/x64/ggrepel.dll
   renv/library/R-3.6/x86_64-w64-mingw32/glmnet/libs/x64/glmnet.dll
   renv/library/R-3.6/x86_64-w64-mingw32/glue/libs/i386/glue.dll
   renv/library/R-3.6/x86_64-w64-mingw32/glue/libs/x64/glue.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gower/libs/i386/gower.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gower/libs/x64/gower.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/gtools/libs/x64/gtools.dll
   renv/library/R-3.6/x86_64-w64-mingw32/haven/libs/i386/haven.dll
   renv/library/R-3.6/x86_64-w64-mingw32/haven/libs/x64/haven.dll
   renv/library/R-3.6/x86_64-w64-mingw32/htmltools/libs/i386/htmltools.dll
@@ -124,11 +112,8 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/markdown/libs/x64/markdown.dll
   renv/library/R-3.6/x86_64-w64-mingw32/mime/libs/i386/mime.dll
   renv/library/R-3.6/x86_64-w64-mingw32/mime/libs/x64/mime.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/mnormt/libs/i386/mnormt.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/mnormt/libs/x64/mnormt.dll
   renv/library/R-3.6/x86_64-w64-mingw32/openssl/libs/i386/openssl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/openssl/libs/x64/openssl.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/openxlsx/libs/x64/openxlsx.dll
   renv/library/R-3.6/x86_64-w64-mingw32/plyr/libs/i386/plyr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/plyr/libs/x64/plyr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/png/libs/i386/png.dll
@@ -152,7 +137,6 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/raster/libs/x64/raster.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readr/libs/i386/readr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readr/libs/x64/readr.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/readstata13/libs/x64/readstata13.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readxl/libs/i386/readxl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readxl/libs/x64/readxl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/reshape2/libs/i386/reshape2.dll
@@ -166,13 +150,10 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/roxygen2/libs/i386/roxygen2.dll
   renv/library/R-3.6/x86_64-w64-mingw32/roxygen2/libs/x64/roxygen2.dll
   renv/library/R-3.6/x86_64-w64-mingw32/s2/libs/x64/s2.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/saeRobust/libs/i386/saeRobust.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/saeRobust/libs/x64/saeRobust.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sf/libs/x64/sf.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sfheaders/libs/x64/sfheaders.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sp/libs/i386/sp.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sp/libs/x64/sp.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/spdep/libs/x64/spdep.dll
   renv/library/R-3.6/x86_64-w64-mingw32/stringi/libs/x64/stringi.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sys/libs/i386/sys.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sys/libs/x64/sys.dll
@@ -181,8 +162,6 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/tibble/libs/x64/tibble.dll
   renv/library/R-3.6/x86_64-w64-mingw32/tidyr/libs/i386/tidyr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/tidyr/libs/x64/tidyr.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/tmvnsim/libs/i386/tmvnsim.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/tmvnsim/libs/x64/tmvnsim.dll
   renv/library/R-3.6/x86_64-w64-mingw32/triebeard/libs/i386/triebeard.dll
   renv/library/R-3.6/x86_64-w64-mingw32/triebeard/libs/x64/triebeard.dll
   renv/library/R-3.6/x86_64-w64-mingw32/units/libs/x64/units.dll
@@ -202,7 +181,7 @@ Found the following apparent object files/libraries:
   renv/library/R-3.6/x86_64-w64-mingw32/zip/libs/x64/zip.dll
 Object files/libraries should not be included in a source package.
 
-Subdirectory 'renv/library/R-3.6/x86_64-w64-mingw32/BBmisc' seems to contain an installed version of the package.
+Subdirectory 'renv/library/R-3.6/x86_64-w64-mingw32/BH' seems to contain an installed version of the package.
 * checking if there is a namespace ... OK
 * checking for executable files ... WARNING
 Found the following executable files:
@@ -243,6 +222,7 @@ Found the following executable files:
   .git/objects/19/baee77e475b34b0d55184271bf77e5a7e5350e
   .git/objects/19/f2d775b3fc24e57a3028b86e08e0557d376153
   .git/objects/1a/8733514614528c45202005464d6c0114c9c5e5
+  .git/objects/1a/f24fe592c26bda8cc247eac5fe7b7d1300ac4e
   .git/objects/1a/f4b91c26e47bf449059b01ea2d51072b9ab2ad
   .git/objects/1b/bc2e6e5eb362b3f70051870613ff4d55f0c365
   .git/objects/1d/bbe804349a49c8079a7bdc00d9d3317fb601d6
@@ -254,6 +234,7 @@ Found the following executable files:
   .git/objects/21/785d13f39b2f68aa209f861665ee3210a551c5
   .git/objects/21/859f454179525d0139c0e4541f31ac9e31726b
   .git/objects/21/9d643c884e43e689aa4c80d9046dd12d10d729
+  .git/objects/21/c57cd9bccb3ba42648ecab26ce3dc5464cd4a7
   .git/objects/22/41737b81d645935d3b95ba5103b092dc062dc2
   .git/objects/22/d2ae38f5424743a753979c69ea7f9b6b6f8e40
   .git/objects/23/298e0269ee9c80484bcf09b7f5230011916171
@@ -270,6 +251,8 @@ Found the following executable files:
   .git/objects/2b/1f370e4538c28253e07bdb3140e4eba14f06b1
   .git/objects/2b/74976b6a6c3cb78c06dc892e736c141cc02c7a
   .git/objects/2b/92de883969a2a82772d575add8836c92473287
+  .git/objects/2b/e5b7b387371c47e7b1e1fb3c03705d5dc631da
+  .git/objects/2c/2549bead8b7df4b134a58bc4f845d31787d890
   .git/objects/2c/b7a0eca4b269ed40348bb1cab4ce2177d85d31
   .git/objects/2d/cd649d6945583b095f656ff2b5d140643c783d
   .git/objects/2d/e78983c080185f5eb283776e93940dd350057b
@@ -387,6 +370,8 @@ Found the following executable files:
   .git/objects/83/ea769f79fc3ad934bbc8b5f81f7fad42707270
   .git/objects/83/f14f2c5c7c56b7a51a00557f39ee5ad36c4e4b
   .git/objects/84/24c1aaaeeea3010ec1234c9936f53e6a39f927
+  .git/objects/85/395878181403a2e53d53faa784639fde886be5
+  .git/objects/85/79e61584ac58f8fd9b7fa0be511d3e12fe044b
   .git/objects/85/7fbe5986996636f5a76aa2740b31302eb3ccf9
   .git/objects/87/0b7881558994366908d4fc80036366eee6f655
   .git/objects/87/284e128a1066ba09dd797f26d68d9b83c093f1
@@ -405,9 +390,11 @@ Found the following executable files:
   .git/objects/91/419bdac308706b1598924b9f7295dab8417dac
   .git/objects/94/dfa592279295074382d1456eb6134c2df470fb
   .git/objects/95/764833319037ff1fa4a9890b154cd8c3d006c9
+  .git/objects/96/861e461a5750954e6119d1b64939074fea1af9
   .git/objects/96/9804cbf6b472d4bd6474f4636e168205dd3217
   .git/objects/97/780f195af4eeebc90def46aa577140bf26a332
   .git/objects/97/9d213ba1f6d9a4bb34c8a3f24b5f7a5ee10979
+  .git/objects/97/c7bfdeb87d60a1e51f97d02db7abe28d7509c8
   .git/objects/97/dfedb0c949e838ffd2809c67a304eb63f57385
   .git/objects/99/3406ff284e6d4ac61380d2a24be74d06097138
   .git/objects/99/abc457a6e3f7ea7cc86a7dbd1fda5d3bba27fd
@@ -425,6 +412,7 @@ Found the following executable files:
   .git/objects/ac/a0c69de2c4a77bc243bb9a690456837e4abb93
   .git/objects/ac/bdec8260a01417a951f1010f4140bbf9f8640f
   .git/objects/ae/48a97b13775a2e7ae94f60fd4a53c5294d7c5f
+  .git/objects/ae/fec54703826589256a3d309fcd7032e9c2719e
   .git/objects/af/650bce2de271b009a1d1a2e7f7400c298cf7da
   .git/objects/b0/6c7f109aad66c2b33cbc732d0bd25e9c919d8f
   .git/objects/b0/73983d76fc2b49809b5729772b455f67a45cec
@@ -435,6 +423,7 @@ Found the following executable files:
   .git/objects/b7/44b3ae643b164d57f689b31643528f7943cf65
   .git/objects/b8/3550383b70e5d9cd5a3cb2bca428696645b111
   .git/objects/b8/5591127d733ef2453cbe7311f27866e05fa79f
+  .git/objects/b8/6f065c9b5c8ac660402dcd6f722af7e8882492
   .git/objects/b8/82ab1fe2b9db87f4a04c5ec8c0454bfdf80115
   .git/objects/ba/e83e9d5ea9688efe46377ee546660173328cef
   .git/objects/bb/70105bf78e1f5381af9b033b16e20e5a284b6e
@@ -466,9 +455,11 @@ Found the following executable files:
   .git/objects/cc/656c6639b9f38d6e27ac0aa5de2a30a2511371
   .git/objects/cc/9cb71891203815882a1d275825f01a3818320b
   .git/objects/cc/b4a6c2e18d4f7867b5af708eb8a37d3a2fbd72
+  .git/objects/cd/34f56efddb063b6986fa4e84b33c4c334a126d
   .git/objects/cf/8c5780cd692d60de28c08ed4da4c4610d778c5
   .git/objects/d0/c4b430294490bdda2261bac489000ce961d62a
   .git/objects/d0/e7adad28af638266df560deb3e40210a855f1e
+  .git/objects/d2/1e8a318608c33ce9441397aed20e4fc1e60b0e
   .git/objects/d2/4e4198ec77320a93040d638a8b0a3608c5bae6
   .git/objects/d2/63301ce69eed66c9049871d088ce4699e39c45
   .git/objects/d3/540f7e3306a9816a20af734a73b7f5c73c2e28
@@ -489,6 +480,7 @@ Found the following executable files:
   .git/objects/e1/015e793427be3a6d2c24cbda80b1a357335d5a
   .git/objects/e1/328c2d483ee69a4a34cf672285f922887ad752
   .git/objects/e2/eda87f2293eb0c1f846cb27080bd72bff03bfa
+  .git/objects/e3/90793f15e09909ef2d59893ae35bba7836d077
   .git/objects/e4/10077246b05d30a1c5117b44e280c8707ead76
   .git/objects/e4/29c8f45d1c1eddb12e0c04dce699403d07a19c
   .git/objects/e4/38eba0118842b336e98c683b663162bc654ff1
@@ -511,6 +503,7 @@ Found the following executable files:
   .git/objects/f0/4484c7b60f0a489c7a8a9a4bb2a994f17f4c96
   .git/objects/f0/47d16efa8d3b16fa5ff1f0055f82b3336c9131
   .git/objects/f0/a3a4b4b8d806970a0cc63de0122bf87616a335
+  .git/objects/f2/a56051b83e8bd86421ce856b863fd1a8441c87
   .git/objects/f4/3aa62774ab03398bc5aca4b1ec4605aef1438d
   .git/objects/f4/e2641ee55af1c86acb0235b3af91d310f4b42b
   .git/objects/f5/3e5d5eab439ef40b34d0d0a2a3e93516aa2be4
@@ -532,20 +525,14 @@ Found the following executable files:
   .git/objects/fe/ed8cbea61b88d21f88cc413d34ba22773c16a1
   .git/objects/ff/02d1545a793da961ca04bb5418f39c0c50c57a
   .git/objects/ff/e8ddbe2b0cb6049df00aa9220b0d013a5186fd
-  renv/library/R-3.6/x86_64-w64-mingw32/BBmisc/libs/i386/BBmisc.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/BBmisc/libs/x64/BBmisc.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/HLMdiag/libs/i386/HLMdiag.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/HLMdiag/libs/x64/HLMdiag.dll
   renv/library/R-3.6/x86_64-w64-mingw32/LambertW/libs/i386/LambertW.dll
   renv/library/R-3.6/x86_64-w64-mingw32/LambertW/libs/x64/LambertW.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/MuMIn/help/MuMIn.rdb
   renv/library/R-3.6/x86_64-w64-mingw32/PROJ/libs/i386/PROJ.dll
   renv/library/R-3.6/x86_64-w64-mingw32/PROJ/libs/x64/PROJ.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RCurl/libs/i386/RCurl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RCurl/libs/x64/RCurl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/libs/i386/Rcpp.dll
   renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/libs/x64/Rcpp.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/libs/x64/RcppArmadillo.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/lib/i386/tbb.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/lib/i386/tbbmalloc.dll
   renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/lib/i386/tbbmalloc_proxy.dll
@@ -582,8 +569,6 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/curl/libs/x64/curl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/data.table/libs/i386/datatable.dll
   renv/library/R-3.6/x86_64-w64-mingw32/data.table/libs/x64/datatable.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/deldir/libs/i386/deldir.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/deldir/libs/x64/deldir.dll
   renv/library/R-3.6/x86_64-w64-mingw32/diffobj/libs/i386/diffobj.dll
   renv/library/R-3.6/x86_64-w64-mingw32/diffobj/libs/x64/diffobj.dll
   renv/library/R-3.6/x86_64-w64-mingw32/digest/help/digest.rdb
@@ -596,8 +581,6 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/ellipsis/libs/x64/ellipsis.dll
   renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/libs/i386/exactextractr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/libs/x64/exactextractr.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/expm/libs/i386/expm.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/expm/libs/x64/expm.dll
   renv/library/R-3.6/x86_64-w64-mingw32/fansi/libs/x64/fansi.dll
   renv/library/R-3.6/x86_64-w64-mingw32/farver/libs/i386/farver.dll
   renv/library/R-3.6/x86_64-w64-mingw32/farver/libs/x64/farver.dll
@@ -613,14 +596,11 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/geometry/libs/x64/geometry.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gert/libs/i386/gert.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gert/libs/x64/gert.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/ggrepel/libs/i386/ggrepel.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/ggrepel/libs/x64/ggrepel.dll
   renv/library/R-3.6/x86_64-w64-mingw32/glmnet/libs/x64/glmnet.dll
   renv/library/R-3.6/x86_64-w64-mingw32/glue/libs/i386/glue.dll
   renv/library/R-3.6/x86_64-w64-mingw32/glue/libs/x64/glue.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gower/libs/i386/gower.dll
   renv/library/R-3.6/x86_64-w64-mingw32/gower/libs/x64/gower.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/gtools/libs/x64/gtools.dll
   renv/library/R-3.6/x86_64-w64-mingw32/haven/libs/i386/haven.dll
   renv/library/R-3.6/x86_64-w64-mingw32/haven/libs/x64/haven.dll
   renv/library/R-3.6/x86_64-w64-mingw32/htmltools/libs/i386/htmltools.dll
@@ -650,12 +630,8 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/markdown/libs/x64/markdown.dll
   renv/library/R-3.6/x86_64-w64-mingw32/mime/libs/i386/mime.dll
   renv/library/R-3.6/x86_64-w64-mingw32/mime/libs/x64/mime.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/mnormt/libs/i386/mnormt.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/mnormt/libs/x64/mnormt.dll
   renv/library/R-3.6/x86_64-w64-mingw32/openssl/libs/i386/openssl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/openssl/libs/x64/openssl.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/openxlsx/libs/x64/openxlsx.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/operator.tools/R/operator.tools.rdb
   renv/library/R-3.6/x86_64-w64-mingw32/plyr/libs/i386/plyr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/plyr/libs/x64/plyr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/png/libs/i386/png.dll
@@ -691,7 +667,6 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/raster/libs/x64/raster.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readr/libs/i386/readr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readr/libs/x64/readr.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/readstata13/libs/x64/readstata13.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readxl/libs/i386/readxl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/readxl/libs/x64/readxl.dll
   renv/library/R-3.6/x86_64-w64-mingw32/reshape2/libs/i386/reshape2.dll
@@ -705,13 +680,10 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/roxygen2/libs/i386/roxygen2.dll
   renv/library/R-3.6/x86_64-w64-mingw32/roxygen2/libs/x64/roxygen2.dll
   renv/library/R-3.6/x86_64-w64-mingw32/s2/libs/x64/s2.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/saeRobust/libs/i386/saeRobust.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/saeRobust/libs/x64/saeRobust.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sf/libs/x64/sf.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sfheaders/libs/x64/sfheaders.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sp/libs/i386/sp.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sp/libs/x64/sp.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/spdep/libs/x64/spdep.dll
   renv/library/R-3.6/x86_64-w64-mingw32/stringi/libs/x64/stringi.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sys/libs/i386/sys.dll
   renv/library/R-3.6/x86_64-w64-mingw32/sys/libs/x64/sys.dll
@@ -720,8 +692,6 @@ Found the following executable files:
   renv/library/R-3.6/x86_64-w64-mingw32/tibble/libs/x64/tibble.dll
   renv/library/R-3.6/x86_64-w64-mingw32/tidyr/libs/i386/tidyr.dll
   renv/library/R-3.6/x86_64-w64-mingw32/tidyr/libs/x64/tidyr.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/tmvnsim/libs/i386/tmvnsim.dll
-  renv/library/R-3.6/x86_64-w64-mingw32/tmvnsim/libs/x64/tmvnsim.dll
   renv/library/R-3.6/x86_64-w64-mingw32/triebeard/libs/i386/triebeard.dll
   renv/library/R-3.6/x86_64-w64-mingw32/triebeard/libs/x64/triebeard.dll
   renv/library/R-3.6/x86_64-w64-mingw32/units/libs/x64/units.dll
@@ -751,6 +721,7 @@ Found the following hidden files and directories:
   .Rprofile
   .gitignore
   renv/.gitignore
+  vignettes/.gitignore
   .Rproj.user
   .git
   renv/staging/1/.renv-backup-checkmate18d060c52c2b
@@ -5351,299 +5322,6 @@ Found the following non-portable file paths:
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/tinytest/testRcppModule/man/Rcpp_modules_examples.Rd
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/tinytest/testRcppModule/man/testRcppModule-package.Rd
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/Rcpp/tinytest/testRcppPackage/man/testRcppPackage-package.Rd
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/RcppArmadilloConfigGenerated.h.in
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/RcppArmadilloExtensions/fixprob.h
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/RcppArmadilloExtensions/rmultinom.h
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/BaseCube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/CubeToMatOp_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/CubeToMatOp_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/GenSpecialiser.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/GlueCube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SizeCube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpMat_iterators_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpSubview_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpSubview_col_list_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpSubview_col_list_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpSubview_iterators_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpSubview_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpValProxy_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/SpValProxy_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arma_ostream_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arma_ostream_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arma_rel_comparators.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arma_rng_cxx11.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arma_rng_cxx98.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arma_static_check.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/arrayops_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/compiler_check.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/compiler_setup.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/compiler_setup_post.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/cond_rel_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/diagview_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/eGlueCube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/eGlueCube_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/eglue_core_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/eglue_core_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/eop_core_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/fn_approx_equal.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/fn_find_unique.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/fn_inplace_strans.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/fn_inplace_trans.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/fn_log_normpdf.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_affmul_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_affmul_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_atan2_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_atan2_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_conv_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_conv_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_cor_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_cov_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_cross_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_cross_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_hist_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_hist_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_histc_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_histc_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_hypot_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_hypot_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_intersect_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_intersect_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_join_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_join_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_kron_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_kron_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_max_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_min_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_mixed_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_mixed_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_mvnrnd_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_mvnrnd_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_polyfit_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_polyfit_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_polyval_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_polyval_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_quantile_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_quantile_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_relational_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_relational_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_solve_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_solve_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_times_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_times_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_toeplitz_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_toeplitz_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_trapz_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/glue_trapz_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/gmm_diag_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/gmm_full_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/gmm_misc_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/include_superlu.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/injector_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/mtGlueCube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/mtGlueCube_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/mtOpCube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/mtSpGlue_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/mul_gemm_mixed.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_DenseGenMatProd_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_DenseGenMatProd_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_DoubleShiftQR_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_DoubleShiftQR_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_EigsSelect.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_GenEigsSolver_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_GenEigsSolver_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SortEigenvalue.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SparseGenMatProd_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SparseGenMatProd_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SparseGenRealShiftSolve_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SparseGenRealShiftSolve_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SymEigsShiftSolver_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SymEigsShiftSolver_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SymEigsSolver_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_SymEigsSolver_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_TridiagEigen_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_TridiagEigen_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_UpperHessenbergEigen_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_UpperHessenbergEigen_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_UpperHessenbergQR_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_UpperHessenbergQR_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/newarp_cx_attrib.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_chi2rnd_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_chi2rnd_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_clamp_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_cumprod_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_cumprod_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_cumsum_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_cumsum_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_cx_scalar_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_cx_scalar_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_diagmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_diagmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_diagvec_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_diagvec_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_dotext_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_dotext_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_expmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_expmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_find_unique_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_find_unique_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_htrans_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_htrans_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_index_max_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_index_max_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_index_min_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_index_min_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_log_det_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_log_det_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_logmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_logmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_median_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_median_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_nonzeros_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_nonzeros_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_normalise_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_normalise_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_orth_null_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_orth_null_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_powmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_powmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_princomp_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_princomp_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_range_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_relational_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_relational_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_repelem_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_repelem_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_repmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_repmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_reshape_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_reshape_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_resize_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_resize_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_reverse_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_reverse_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_roots_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_shift_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_shuffle_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_shuffle_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sort_index_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sort_index_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sp_minus_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sp_minus_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sp_plus_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sp_plus_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sqrtmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_sqrtmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_stddev_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_stddev_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_strans_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_strans_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_symmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_symmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_toeplitz_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_toeplitz_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_trimat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_trimat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_unique_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_unique_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_vectorise_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_vectorise_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_wishrnd_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/op_wishrnd_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_cube_div.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_cube_minus.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_cube_plus.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_cube_relational.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_cube_schur.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_cube_times.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_minus.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_ostream.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_relational.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_schur.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/operator_times.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/podarray_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/running_stat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/running_stat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/running_stat_vec_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/running_stat_vec_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/sp_auxlib_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/sp_auxlib_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spdiagview_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spdiagview_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_join_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_join_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_kron_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_kron_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_max_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_max_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_merge_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_merge_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_min_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_min_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_minus_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_minus_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_plus_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_plus_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_relational_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_relational_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_schur_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_schur_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_times_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spglue_times_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_diagmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_diagmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_htrans_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_htrans_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_max_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_mean_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_mean_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_min_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_misc_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_misc_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_norm_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_norm_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_normalise_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_normalise_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_repmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_repmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_reverse_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_reverse_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_strans_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_strans_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_sum_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_symmat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_symmat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_trimat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_trimat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_var_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_vectorise_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/spop_vectorise_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_cube_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_cube_each_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_cube_each_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_cube_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_cube_slices_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_cube_slices_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_each_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_each_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_elem1_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_elem1_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_elem2_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_elem2_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_field_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/subview_field_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/translate_arpack.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/translate_atlas.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/translate_blas.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/translate_lapack.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/translate_superlu.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/typedef_elem_check.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/typedef_mat_fixed.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/wall_clock_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/wall_clock_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/xtrans_mat_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/xtrans_mat_meat.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/xvec_htrans_bones.hpp
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppArmadillo/include/armadillo_bits/xvec_htrans_meat.hpp
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/include/tbb/internal/_concurrent_queue_impl.h
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/include/tbb/internal/_concurrent_skip_list_impl.h
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/RcppParallel/include/tbb/internal/_concurrent_unordered_impl.h
@@ -5701,8 +5379,6 @@ Found the following non-portable file paths:
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/sao_miguel/clc2018_v2020_20u1.tif.vat.dbf
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/sao_miguel/gpw_v411_2020_density_2020.tif
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/exactextractr/sao_miguel/gpw_v411_2020_land_area_2020.tif
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/gdata/perl/Spreadsheet/ParseExcel/SaveParser/Workbook.pm
-  SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/gdata/perl/Spreadsheet/ParseExcel/SaveParser/Worksheet.pm
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/geojsonsf/include/geojsonsf/geojson/geojson_properties.hpp
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/geojsonsf/include/geojsonsf/geojson/geojson_validate.hpp
   SAEplus/renv/library/R-3.6/x86_64-w64-mingw32/geojsonsf/include/geojsonsf/geojson/writers/write_geojson.hpp
