@@ -16,6 +16,8 @@
 #' @param excl_outsample whether or not outsample grids should be excluded in the benchmarking exercise
 #'
 #' @import data.table
+#'
+#' @export
 
 
 saeplus_calibratepovrate <- function(hh_dt = hh.dt,

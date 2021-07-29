@@ -13,6 +13,8 @@
 #' The limsup method takes the converted value of the greatest welfare value below the poverty line
 #'
 #' @import data.table
+#'
+#' @export
 
 saeplus_ordernormpl <- function(npl_value = 5006362,
                                 pcexp = hh.dt$pcexp,

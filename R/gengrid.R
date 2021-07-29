@@ -20,6 +20,7 @@
 #' @importFrom raster mask
 #' @importFrom spex polygonize
 #' @importFrom exactextractr exact_extract
+#' @importMethodsFrom raster extent
 
 
 gengrid <- function(dsn = "data-raw",

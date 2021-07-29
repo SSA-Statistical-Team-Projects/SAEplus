@@ -8,7 +8,7 @@
 #' @param samplegrid grid ID variable in hhsample_dt
 #' @param censusgrid grid ID variable in hhcensus_dt
 #'
-#'
+#' @export
 #'
 
 saeplus_regtable <- function(ebp_obj = ginemdi_model2,

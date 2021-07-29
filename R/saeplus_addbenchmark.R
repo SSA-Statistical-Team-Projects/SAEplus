@@ -12,6 +12,8 @@
 #'
 #' @import data.table
 #'
+#' @export
+#'
 
 
 saeplus_addbenchmark <- function(ebp_obj = ginemdi_model2,

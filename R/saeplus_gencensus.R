@@ -9,6 +9,8 @@
 #' @param poly_id string for the polygon id variable to be used for expanding poly_dt
 #'
 #' @import data.table
+#'
+#' @export
 
 
 saeplus_gencensus <- function(poly_dt = polyest,

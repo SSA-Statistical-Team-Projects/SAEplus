@@ -14,6 +14,8 @@
 #' @return data.table/data.frame object with grid level estimates
 #'
 #' @import stats
+#'
+#' @export
 
 
 saeplus_hhestpoly <- function(geo_dt,

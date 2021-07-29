@@ -13,6 +13,7 @@
 #'
 #' @return a table
 #'
+#' @export
 
 
 
