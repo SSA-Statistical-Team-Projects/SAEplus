@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @import data.table tmap
-#' @importFrom raster raster
+#' @importFrom raster raster crop
 #' @importFrom raster mask
 #' @importFrom spex polygonize
 #' @importFrom exactextractr exact_extract
