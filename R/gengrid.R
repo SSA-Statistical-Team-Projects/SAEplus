@@ -1,7 +1,7 @@
 #' Polygonize a raster and compute zonal statistics at polygon and full shape-file level
 #'
 #' @param dsn stands for data source name (see sf::st_read documentation for more information)
-#' @param layer layer name (see sf::st_read documentation for more information), will also accept object
+#' @param layer layer name (see sf::st_read documentation for more information), will also accept object of class "sf"
 #' @param stats zonal statistics to be estimated
 #' @param featname the feature that the zonal statistic is computed for
 #' @param raster_tif raster file with tif extension
@@ -34,14 +34,14 @@ gengrid <- function(dsn = "data-raw",
                     drop_Zero = T
                     ){
 
-  if (exists(layer) == FALSE){
+  if (is.character(layer) == TRUE){
     shp <- st_read(dsn = dsn,
                    layer = layer)
   } else {
     shp <- layer
   }
 
-  if (exists(layer) == FALSE){
+  if (is.character(raster_tif) == TRUE){
     pop <- raster(paste(dsn, raster_tif, sep = "/"))
   } else {
     pop <- raster_tif
@@ -85,32 +85,19 @@ gengrid <- function(dsn = "data-raw",
 
   }
 
-  mymap <- tm_shape(br_poly) +
-    tm_fill(stats,
-            title = raster_tif,
-            style="quantile",
-            legend.reverse = TRUE,
-            palette="PuBu")  +
-    tm_borders(col="black", lwd=0, alpha = 0)
-
-
-
-
   ## if a feature name is provided, relabel the variable name in the data to show this
   if(is.null(featname) == FALSE){
     names(br_poly)[names(br_poly) == stats] <- featname
 
     return(list(total_popsize = sum(br_poly[, featname, with=F]),
                 polygon_dt = br_poly,
-                summary_stats = summary(br_poly),
-                mymap))
+                summary_stats = summary(br_poly)))
 
   }
 
   return(list(total_popsize = sum(br_poly[, stats, with=F]),
               polygon_dt = br_poly,
-              summary_stats = summary(br_poly),
-              mymap))
+              summary_stats = summary(br_poly)))
 
 
 }

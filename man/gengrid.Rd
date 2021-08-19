@@ -19,7 +19,7 @@ gengrid(
 \arguments{
 \item{dsn}{stands for data source name (see sf::st_read documentation for more information)}
 
-\item{layer}{layer name (see sf::st_read documentation for more information), will also accept object}
+\item{layer}{layer name (see sf::st_read documentation for more information), will also accept object of class "sf"}
 
 \item{stats}{zonal statistics to be estimated}
 
