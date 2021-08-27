@@ -4,8 +4,8 @@ Title: What the Package Does (Title Case)
 Version: 0.1.0
 Author: person("Ifeanyi", "Edochie", email = "iedochie@worldbank.org", role = c("aut", "cre"))
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: This package is developed to pull geospatial data from other sources into R to make readily
-  available to World Bank staff
+Description: This package is developed to pull geospatial data from other sources for analytical project work. 
+  It also contains functionality for small area estimation and related post-estimation analysis.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
