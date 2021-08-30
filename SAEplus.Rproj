@@ -18,3 +18,7 @@ StripTrailingWhitespace: Yes
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
+
+PythonType: system
+PythonVersion: 3.8.2
+PythonPath: C:/Python38-32/python.exe
