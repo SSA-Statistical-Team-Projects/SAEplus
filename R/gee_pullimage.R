@@ -31,7 +31,10 @@ gee_pullimage <- function(email = "ifeanyi.edochie@gmail.com",
                           gdrive_folder = "/SAEplus",
                           ldrive_dsn = "data/cmr_impervious"){
 
-  ee_Initialize(email = email)
+  ee_users()
+  options(gargle_oauth_email = email)
+
+  ee_Initialize()
   #drive_deauth()
 
   agebs <- ee$FeatureCollection(gee_polygons)
@@ -42,7 +45,7 @@ gee_pullimage <- function(email = "ifeanyi.edochie@gmail.com",
   s5p_agebs <- s5p_collect$reduceRegions(
     collection = agebs,
     reducer = ee$Reducer$mean(),
-    scale = 30
+    scale = scale
   )
 
   task <- ee_table_to_drive(

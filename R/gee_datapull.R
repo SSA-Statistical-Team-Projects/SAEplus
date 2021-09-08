@@ -37,13 +37,13 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_stat = "mean",
                          gdrive_folder = "/SAEplus",
                          ldrive_dsn = "data/cmr_nighttimelight",
-                         gee_crs = 'EPSG:4326'){
+                         gee_crs = "EPSG:4326"){
 
 
-  # ee_users()
-  #
-  # options(gargle_oauth_email = email)
-  ee_Initialize(email = email)
+  ee_users()
+
+  options(gargle_oauth_email = email)
+  ee_Initialize()
 
   agebs <- ee$FeatureCollection(gee_polygons)
   agebs_boundary <- ee$FeatureCollection(gee_boundary)
@@ -103,17 +103,20 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
   }  else {return("gee_stat must be specified as sum or mean, please specify accordingly")}
 
 
-  task <- ee_table_to_drive(
+  task_drive <- ee_table_to_drive(
     collection = s5p_agebs,
     description = gee_desc,
     folder = gdrive_folder,
     fileFormat = "SHP"
   )
 
-  task$start()
+  task_drive$start()
 
-  ee_monitoring(task)
+  ee_monitoring(task_drive)
 
-  return(ee_drive_to_local(task = task, dsn = ldrive_dsn))
+  task_local <- ee_drive_to_local(
+    task = task_drive,
+    dsn = ldrive_dsn
+  )
 
 }

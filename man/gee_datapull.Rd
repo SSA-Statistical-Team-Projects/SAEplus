@@ -16,8 +16,7 @@ gee_datapull(
   gee_desc = "nighttimelight_cmr",
   gee_stat = "mean",
   gdrive_folder = "/SAEplus",
-  ldrive_dsn = "data/cmr_nighttimelight",
-  gee_crs = "EPSG:4326"
+  ldrive_dsn = "data/cmr_nighttimelight"
 )
 }
 \arguments{
@@ -45,9 +44,9 @@ see (https://developers.google.com/earth-engine/datasets/) for full name}
 
 \item{ldrive_dsn}{Full file path (including shapefile name) for local storage of resulting shapefile}
 
-\item{gee_crs}{Set CRS}
-
 \item{gee_image}{if TRUE, an image rather than an image collection is expected (FALSE by default)}
+
+\item{gee_crs}{Set CRS}
 }
 \value{
 shapefiles to local drive
