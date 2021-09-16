@@ -74,10 +74,12 @@ gengrid <- function(dsn = "data-raw",
     }
   } else {
 
+
     zonal_stats <- exact_extract(pop, shp, stats) %>% as.data.table()
     names(zonal_stats) <- stats
+    br_poly <- shp
     br_poly <- as.data.table(br_poly)
-    br_poly <- cbind(shp, zonal_stats)
+    br_poly <- cbind(br_poly, zonal_stats)
 
     if(drop_Zero == T) {
       br_poly[br_poly[[stats]] != 0,]

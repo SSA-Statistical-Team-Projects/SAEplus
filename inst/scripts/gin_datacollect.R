@@ -1,3 +1,7 @@
+library(foreach)
+library(doParallel)
+
+
 ### pull in base country-level boundary files from remote source
 ###### starting with GUINEA
 
@@ -76,7 +80,7 @@ SAEplus::gee_datapull(email = "ifeanyi.edochie@gmail.com",
                                     "moss-coverfraction"),
                       gee_dataname = "COPERNICUS/Landcover/100m/Proba-V-C3/Global",
                       gee_desc = "GIN_LC_2018JulSep",
-                      ldrive_dsn = "tests/testdata")
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
 
 SAEplus::gee_datapull(email = "ifeanyi.edochie@gmail.com",
                       gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
@@ -89,17 +93,17 @@ SAEplus::gee_datapull(email = "ifeanyi.edochie@gmail.com",
                       gee_datestart = "2019-04-01",
                       gee_dateend = "2019-06-30",
                       gee_desc = "GIN_LC_2019AprJun",
-                      ldrive_dsn = "tests/testdata")
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
 
 
 
 ## pull the data on impervious surface
-SAEplus::gee_pullimage(email = "dasalm20@gmail.com",
-                       gee_polygons = "users/dasalm20/gin_poppoly",
+SAEplus::gee_pullimage(email = "ifeanyi.edochie@gmail.com",
+                       gee_polygons = "users/ifeanyiedochie/gin_poppoly",
                        gee_band = "change_year_index",
                        gee_dataname = "Tsinghua/FROM-GLC/GAIA/v10",
                        gee_desc = "GIN_IS_2018JulSep",
-                       ldrive_dsn = "InputData/GIN_IS_2018JulSep")
+                       ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
 
 
 
@@ -112,21 +116,178 @@ SAEplus::gee_datapull(gee_boundary = "users/ifeanyiedochie/sous_prefectures_vali
                       gee_band = c("CO_column_number_density", "H2O_column_number_density",
                                    "cloud_height"),
                       gee_dataname = "COPERNICUS/S5P/NRTI/L3_CO",
+                      gee_datestart = "2019-04-01",
+                      gee_dateend = "2019-06-30",
+                      gee_desc = "GIN_CO_2019AprJun",
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE",
+                      gee_crs = "EPSG:4326")
+
+# pull some precipitation data as well
+SAEplus::gee_datapull(gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
+                      gee_polygons = "users/ifeanyiedochie/gin_poppoly",
+                      gee_band = c("total_precipitation"),
+                      gee_dataname = "ECMWF/ERA5/DAILY",
                       gee_datestart = "2018-07-01",
                       gee_dateend = "2018-09-30",
-                      gee_desc = "GIN_CO_2018JulSep",
-                      ldrive_dsn = "GIN_2021/GIN_CO_2018JulSep",
-                      gee_crs = "WGS84")
+                      gee_desc = "GIN_PP_2018JulSep",
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE",
+                      gee_crs = "EPSG:4326")
+
+SAEplus::gee_datapull(gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
+                      gee_polygons = "users/ifeanyiedochie/gin_poppoly",
+                      gee_band = c("total_precipitation"),
+                      gee_dataname = "ECMWF/ERA5/DAILY",
+                      gee_datestart = "2019-04-01",
+                      gee_dateend = "2019-06-30",
+                      gee_desc = "GIN_PP_2019AprJun",
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE",
+                      gee_crs = "EPSG:4326")
+
+## add some drought data as well
+SAEplus::gee_datapull(gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
+                      gee_polygons = "users/ifeanyiedochie/gin_poppoly",
+                      gee_band = c("pdsi", "z"),
+                      gee_dataname = "GRIDMET/DROUGHT",
+                      gee_datestart = "2018-07-01",
+                      gee_dateend = "2018-09-30",
+                      gee_desc = "GIN_drought_2018JulSep",
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE",
+                      gee_crs = "EPSG:4326")
+
+SAEplus::gee_datapull(gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
+                      gee_polygons = "users/ifeanyiedochie/gin_poppoly",
+                      gee_band = c("pdsi", "z"),
+                      gee_dataname = "GRIDMET/DROUGHT",
+                      gee_datestart = "2019-04-01",
+                      gee_dateend = "2019-06-30",
+                      gee_desc = "GIN_drought_2019AprJun",
+                      ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE",
+                      gee_crs = "EPSG:4326")
 
 
+#######################################################################################################
 
-##name the ntl indicator real quick
-ginntl_julsep.dt <- sf::st_read(dsn = "InputData", layer = "GIN_NTL_2018JulSep_2021_04_08_12_56_31")
-ginntl_aprjun.dt <- sf::st_read(dsn = "InputData", layer = "GIN_NTL_2019AprJun_2021_04_08_12_50_58")
+## pull in the building data
 
-names(ginntl_aprjun.dt)[names(ginntl_aprjun.dt) == "mean"] <- "mean_ntlaprjun19"
-names(ginntl_julsep.dt)[names(ginntl_julsep.dt) == "mean"] <- "mean_ntljulsep18"
+wpopbuilding_pull(iso = "GIN", wpversion = "v2.0",
+                  ldrive_dsn = "D:/Ify/Guinea_SAE")
 
-ginno2_julsep.dt <- sf::st_read(dsn = "InputData", layer = "GIN_NO2_2018JulSep")
-names(ginno2_julsep.dt)[names(ginno2_julsep.dt) == "mean"] <- "mean_no2julsep18"
+## pull in the electricity data
+gin.elect <- gengrid(dsn = "tests/testdata",
+                     layer = "gin_poppoly",
+                     raster_tif = "GIN_Electricity_2018.tif",
+                     grid_shp = F,
+                     featname="elect_cons",
+                     drop_Zero=F)
+
+## pull building data
+#### writing a simple function to pull data from a set of tif files using gengrid() and then combining
+#### the columns
+
+gin_buildingtifs <- list.files(path = "tests/testdata", pattern = "GIN_buildings")
+
+gin_building.dt <- mult_gengrid(tif_namelist = gin_buildingtifs,
+                                location = "tests/testdata",
+                                feature_name = c("count", "cv_length",
+                                                 "imagery_year", "mean_length",
+                                                 "total_length", "cv_area",
+                                                 "density", "mean_area",
+                                                 "total_area", "urban"),
+                                parallel = T,
+                                numCores = length(gin_buildingtifs))
+
+
+## combine all extracted columns into one data.frame/data.table object
+multi_merge_DT <- function(sf1, sf2){
+
+  obj <- sf1[sf2, on = c("id", "population")]
+
+  return(obj)
+
+}
+
+bld_polygon.dt <- list()
+
+for (i in seq_along(gin_building.dt)){
+
+  bld_polygon.dt[i] <- gin_building.dt[[i]]["polygon_dt"]
+}
+
+###remove geometry column from all but one polygon_dt
+remove_varfromdtlist <- function(list_dt = bld_polygon.dt,
+                                 varname = "geometry"){
+
+
+  for (i in 1:(length(list_dt)-1)){
+
+    selected_names <- colnames(list_dt[[i]])[!(colnames(list_dt[[i]]) %in% varname)]
+    list_dt[[i]] <- list_dt[[i]][,selected_names, with = F]
+  }
+
+  return(list_dt)
+}
+
+bld_polygon.dt <- remove_varfromdtlist()
+
+rm(gin_building.dt) ##remove the gin_building.dt object
+
+bld_polygon.dt <- Reduce(multi_merge_DT, bld_polygon.dt) ##combine all building data
+
+geopolycensus_dt <- bld_polygon.dt ## rename bld_polygon.dt to a name that will hold all geospatial data
+
+rm(bld_polygon.dt) ## remove the bld_polygon.dt object after renaming it
+
+## include the GEE data and electricty data into the geopolycensus.dt
+geopolycensus_dt <- gin.elect$polygon_dt[,c("id", "elect_cons")][geopolycensus_dt, on = "id"] ## add electricity
+
+#### function to read the set of GEE shapefiles and return a list of datasets
+
+
+readmerge_gee <- function(folder = "//cwapov/cwapov/GIN/GEO/GEE", ##folder location
+                          identifier = "GIN_"){ ##identifiable
+
+  gee_dt <- list.files(path = folder, pattern = identifier)
+  drop_chr <- function(x){
+    x <- substr(x, start = 1, stop = nchar(x) - 4)
+    return(x)
+  }
+
+  gee_dt <- unique(unlist(lapply(gee_dt, drop_chr)))
+
+  st_readlist <- function(X){
+
+    obj <- sf::st_read(dsn = folder, layer = X)
+    obj <- as.data.table(obj)
+    colnames(obj)[colnames(obj) %in% "mean"] <- X
+    return(obj)
+
+  }
+
+  gee_dt <- lapply(gee_dt, st_readlist)
+
+  return(gee_dt)
+
+}
+
+gee_dt <- readmerge_gee() ##run readmerge_gee to combine the pulled GEE data
+
+##remove geometry from the gee_dt list for all but one so that we dont have duplicates after merge
+gee_dt <- remove_varfromdtlist(list_dt = gee_dt)
+
+#join gee data using rbindlist
+gee_dt <- do.call(cbind, gee_dt)
+
+gee_dt <- gee_dt[ , which( !duplicated( t( gee_dt ) ) ), with = FALSE ]
+
+geopolycensus_dt <- gee_dt[geopolycensus_dt, on = c("id", "population")]
+
+## include electricity data to geopolycensus
+geopolycensus_dt <- gin.elect$polygon_dt[geopolycensus_dt, on = c("id", "population")]
+
+## clean up the global environment
+rm(gee_dt)
+rm(gin.elect)
+
+## write the data to file
+saveRDS(geopolycensus_dt, file = "tests/testdata/gin_geopolycensus.RDS")
 

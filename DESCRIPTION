@@ -38,6 +38,10 @@ Imports:
     haven,
     tibble,
     ggplot2,
+    doParallel,
+    foreach,
+    parallelMap,
+    parallel
 ByteCompile: true
 Suggests: 
     rmarkdown,
