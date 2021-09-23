@@ -14,13 +14,13 @@
 
 wpopbuilding_vcheck <- function(){
 
-  url <- "ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/"
+  building_link <- "https://data.worldpop.org/repo/wopr/_MULT/buildings/"
 
   #construct the link to the world pop website with the building links
   #list the file names present on the specific version sub-website for world pop building
-  find_sublinks <- function(url = "ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/"){
+  find_sublinks <- function(url = building_link){
 
-    versions <- RCurl::getURL(url = url,
+    versions <- RCurl::getURL(url = building_link,
                               ftp.use.epsv = FALSE,
                               dirlistonly = TRUE)
     versions <- strsplit(versions, "\r\n")
@@ -35,7 +35,7 @@ wpopbuilding_vcheck <- function(){
   find_blddt <- function(versions){
 
     ##construct link
-    suburl <- paste("ftp://ftp.worldpop.org/repo/wopr/_MULT/buildings/", versions, "", sep = "/")
+    suburl <- paste(building_link, versions, "", sep = "/")
 
     filenames <- find_sublinks(url = suburl)
     filenames <- data.table::as.data.table(filenames)
