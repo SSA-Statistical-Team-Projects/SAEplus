@@ -4,20 +4,14 @@
 \alias{saeplus_selectmodel}
 \title{Select Model for Small Area Estimation}
 \usage{
-saeplus_selectmodel(
-  dt,
-  outcomevar = "pcexp",
-  var_identifier = c("roaddensity_", "count_", "length_", "_pointcount", "bld_",
-    "_2018", "_2019"),
-  drop_NA_tags = TRUE
-)
+saeplus_selectmodel(dt, outcomevar, xvars, drop_NA_tags = TRUE)
 }
 \arguments{
 \item{dt}{object of class data.table or data.frame}
 
 \item{outcomevar}{character vector of size 1 naming the outcome variable}
 
-\item{var_identifier}{a character vector of common tags}
+\item{xvars}{the set of explanatory variables to be selected from}
 
 \item{drop_NA_tags}{if TRUE, variable names with "NA" in the names are dropped}
 }

@@ -1,0 +1,6 @@
+List of to dos:
+
+- Forking the EMDI package and including a function to do perform estimate EBP using xgboost
+- Update the function with a procedure for checking the admin boundary shapefile
+  - The function should look at all the admin levels passed as variable names within function argument
+- Fix the functions that pull in data from WorldPop. The links needs to be updated

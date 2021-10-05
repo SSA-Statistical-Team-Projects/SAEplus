@@ -41,7 +41,9 @@ Imports:
     doParallel,
     foreach,
     parallelMap,
-    parallel
+    parallel,
+    bestNormalize,
+    hdm
 ByteCompile: true
 Suggests: 
     rmarkdown,
