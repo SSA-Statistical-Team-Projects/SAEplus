@@ -13,7 +13,7 @@
 #' @param hhsize a household size variable within the hhsurvey_dt object
 #' @param adminshp_dt an object of class sf, data.table and/or data.frame containing administrative
 #' level boundaries with multipolygons/polygons geometries
-#' @param admin_id a character string representing a column vector in hhsurvey_dt for the admin level at which
+#' @param target_id a character string representing an integer column vector for the admin level at which
 #' small area estimates will be computed for the poverty map
 #' @param geopolycensus_dt an object of class sf, data.table and/or data.frame containing polygon/multipolygon
 #' geometries and geospatial indicators
@@ -33,17 +33,20 @@
 #' @param weight the weight variable
 #' @param create_dummy if TRUE, a dummy variable will be created if dummy_var is specified.
 #' @param dummy_var a list of variables from which a dummies will be created for each level.
+#' @param ... include any set of arguments available within emdi::ebp() function as you see fit.
+#' @param ncpu the number of CPUs for parallelizing the small area estimation algorithm
+#' @param result_dir local folder directory where all tables and charts will be stored. If result_dir is not
+#' specified, the default is the result of getwd()
 
 
 saeplus_modelunitlevel <- function(hhsurvey_dt,
-                                   hhsurvey_lat,
-                                   hhsurvey_lon,
                                    hhid_var,
                                    hhsize,
                                    adminshp_dt,
-                                   hhgeocodes_dt = NULL,
+                                   target_id,
                                    geopolycensus_dt,
                                    geopopvar,
+                                   geopoly_id = "id",
                                    crs_set = rep(4326, 3),
                                    agr_set = rep("constant", 3),
                                    cand_vars,
@@ -51,34 +54,10 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
                                    wgt_vartype = "hh",
                                    weight,
                                    create_dummy = TRUE,
-                                   dummy_var){
-
-  ## some basic cleaning to start off
-  ### drop any extra geometry variables created in the merging process
-
-  drop_extramergevars(dt = geopolycensus_dt)
-
-  hhsurvey_dt <- sf::st_as_sf(hhsurvey_dt,
-                              agr = agr_set[1],
-                              coords = c(hhsurvey_lat, hhsurvey_lon),
-                              crs = crs_set[1])
-
-  geopolycensus_dt <- sf::st_as_sf(geopolycensus_dt, crs = crs_set[3], agr = agr_set[3])
-
-  hhsurvey_dt <- sf::st_join(hhsurvey_dt, geopolycensus_dt)
-
-  #### make some quick additions to the hhsurvey_dt
-  ###### including the adminshp_dt data
-  hhsurvey_dt <- st_join(hhsurvey_dt, adminshp_dt)
-
-  #### drop duplicated observations
-  hhsurvey_dt <- hhsurvey_dt[!duplicated(hhsurvey_dt[,hhid_var]),]
-
-  hhsurvey_dt <- as.data.table(hhsurvey_dt)
-
-
-  ### create admin one level dummies
-  hhsurvey_dt <- saeplus_dummify(dt = hhsurvey_dt, var = dummy_var)
+                                   dummy_var,
+                                   ...,
+                                   ncpu = 30,
+                                   result_dir){
 
 
   ### now we are ready create a synthetic census
@@ -88,27 +67,27 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
                                        hh_dt = hhsurvey_dt,
                                        shp_dt = adminshp_dt) ##ind_estimate is the household size estimated
 
-  grid_hhcount.dt <- grid_hhcount.dt[!duplicated(grid_hhcount.dt[,geopoly_id]),] ##drop duplicated IDs
-
+  ##drop duplicated IDs
   grid_hhcount.dt <- as.data.table(grid_hhcount.dt)
+  grid_hhcount.dt <- grid_hhcount.dt[!(duplicated(get(geopoly_id))),]
 
-  geopolycensus_dt <- grid_hhcount.dt[,c(geopoly_id, "ind_estimate")][geopolycensus_dt, on = "id"]
+  geopolycensus_dt <- grid_hhcount.dt[,c(geopoly_id, "ind_estimate"),with=F][geopolycensus_dt, on = geopoly_id]
 
   rm(grid_hhcount.dt) ##clean up the environment a little by removing the grid_hhcount.dt since we dont need it anymore
 
   hhcensus_dt <- saeplus_gencensus(poly_dt = geopolycensus_dt)
 
   ## finally, let's include admin area information into the polygon census data
-  geocentcensus_dt <- sf::st_centroid(sf::st_as_sf(geopolycensus_dt[,c(geopoly_id, "geometry")],
+  geocentcensus_dt <- sf::st_centroid(sf::st_as_sf(geopolycensus_dt[,c(geopoly_id, "geometry"),with = F],
                                                    agr = agr_set[3],
                                                    crs = crs_set[3]))
 
   adminshp_dt <- sf::st_as_sf(adminshp_dt, agr = agr_set[2], crs = agr_set[2])
 
   geocentcensus_dt <- st_join(geocentcensus_dt, adminshp_dt)
-  geocentcensus_dt <- geocentcensus_dt[!duplicated(geocentcensus_dt[,geopoly_id]),]
 
   geocentcensus_dt <- as.data.table(geocentcensus_dt)
+  geocentcensus_dt <- geocentcensus_dt[!(duplicated(get(geopoly_id))),]
 
   hhcensus_dt <- geocentcensus_dt[hhcensus_dt, on = geopoly_id]
 
@@ -127,7 +106,7 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
   ###### create population weights
   if (wgt_vartype == "hh") {
 
-    hhsurvey_dt[, popweight := hhsize * weight]
+    hhsurvey_dt[, popweight := get(hhsize) * get(weight)]
 
   } else if (wgt_vartype == "pop") {
 
@@ -144,19 +123,77 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
   hhsurvey_dt[,pcexp := orderNorm(pcexp)$x.t]
 
   ###### build the unit level model
-  vars <- c(selected_vars, outcome_var, admin_id)
+  vars <- c(selected_vars, outcome_var, target_id)
   emdi_model <- emdi::ebp(fixed = unit_model,
                           pop_data = as.data.frame(gin_hhcensus.dt[,vars, with = F]),
-                          pop_domains = admin_id,
+                          pop_domains = target_id,
                           smp_data = as.data.frame(gin_hhsurvey.dt[,vars, with = F]),
-                          smp_domains = admin_id,
+                          smp_domains = target_id,
                           threshold = pline,
                           L = 100,
                           transformation = "no",
                           na.rm = TRUE,
                           weights = "popweight",
                           B = 100,
-                          cpus = 30,
+                          cpus = ncpu,
                           MSE = TRUE)
 
+
+  write.excel(emdi_model,
+              file = paste(result_dir, "emdi_basicmodel.xlsx", sep = "/"),
+              indicator = "all",
+              MSE = TRUE,
+              CV = TRUE)
+
+
+  #### benchmark poverty estimates
+  gin_benchmark <- saeplus_calibratepovrate(pop_dt = hhcensus_dt,
+                                            hh_dt = hhsurvey_dt,
+                                            weight = "popweight",
+                                            povline = pline,
+                                            pop_var = "ind_estimate")
+  #### create actual poverty map
+  ## include the benchmarked results
+  replace.dt <- gin_benchmark[,c(target_id, "BM_Head_Count")]
+
+  setnames(replace.dt, colnames(replace.dt), c("Domain", "BM_Head_Count"))
+
+  replace.dt[, Domain := as.factor(Domain)]
+
+  emdi_model$ind <- left_join(emdi_model$ind, replace.dt, by = "Domain")
+
+  emdi_model$ind$BM_Head_Count[is.na(emdi_model$ind$BM_Head_Count)] <-
+    emdi_model$ind$Head_Count[is.na(emdi_model$ind$BM_Head_Count)] ##replacing NAs in BM_Head_Count with Head_Count
+
+  emdi_model$ind$Head_Count <- NULL
+  colnames(emdi_model$ind)[colnames(emdi_model$ind) %in% "BM_Head_Count"] <- "Head_Count"
+
+  #### create the file with the EMDI estimates
+  write.excel(emdi_model,
+              file = paste(result_dir, "emdi_bmmodel.xlsx"),
+              indicator = "all",
+              MSE = TRUE,
+              CV = TRUE)
+
+  ### create the plot for the poverty grid
+  geo.dt <- as.data.table(adminshp_dt)
+
+  povgrid.dt <- as.data.table(emdi_model$ind)
+  setnames(povgrid.dt, "Domain", target_id)
+  povgrid.dt[,get(target_id) := as.integer(as.character(get(target_id)))]
+
+  povgrid.dt <- geo.dt[povgrid.dt, on = target_id]
+  povgrid.dt <- povgrid.dt[is.na(Head_Count) == "FALSE",]
+
+
+  povgrid.dt <- st_as_sf(povgrid.dt, agr = "constant", crs = 4326)
+
+  figure1 <-
+    tm_shape(povgrid.dt) +
+    tm_polygons("Head_Count", title = "Headcount Rates") +
+    tm_layout(title = "Headcount Poverty Rates",
+              title.size = 1.1,
+              title.position = c("center", "top"))
+
+  tmap_save(tm = figure1, filename = paste(result_dir, "povmap1.pdf", sep = "/"))
 }

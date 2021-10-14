@@ -24,12 +24,15 @@ saeplus_hhestpoly <- function(geo_dt,
                               admin_var = "ADM3_CODE",
                               ind_var = "hhsize",
                               weight_var = "hhweight",
-                              FUN = "weighted.mean"){
+                              FUN = "weighted.mean",
+                              crs = 4326,
+                              agr = "constant"){
 
   ## first aggregate variable at the admin_var level within hh_dt
-  hh_dt <- setDT(hh_dt)
-  shp_dt <- setDT(shp_dt)
+  hh_dt <- as.data.table(hh_dt)
+  shp_dt <- as.data.table(shp_dt)
   ind_estimate_dt <- hh_dt[, do.call(FUN, list(get(ind_var), get(weight_var))), by = get(admin_var)]
+
 
   colnames(ind_estimate_dt) <- c(admin_var, "ind_estimate")
 
@@ -40,8 +43,8 @@ saeplus_hhestpoly <- function(geo_dt,
 
   ### first make sure both geospatial objects are the correct crs specifications
 
-  ind_estimate_dt <- st_as_sf(ind_estimate_dt, crs = 4326, agr = "constant")
-  geo_dt <- st_as_sf(geo_dt, crs = 4326, agr = "constant")
+  ind_estimate_dt <- st_as_sf(ind_estimate_dt, crs = crs, agr = agr)
+  geo_dt <- st_as_sf(geo_dt, crs = crs, agr = agr)
 
   centroid_dt <- st_centroid(geo_dt)
 
