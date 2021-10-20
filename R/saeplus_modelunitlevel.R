@@ -10,7 +10,7 @@
 #' @param hhsurvey_lat the latitude variable within the hh_dt object
 #' @param hhsurvey_lon the longitude variable within the hh_dt object
 #' @param hhid_var the household ID variable from the hhsurvey_dt object
-#' @param hhsize a household size variable within the hhsurvey_dt object
+#' @param size_hh an integer/numeric for household size variable within the hhsurvey_dt object
 #' @param adminshp_dt an object of class sf, data.table and/or data.frame containing administrative
 #' level boundaries with multipolygons/polygons geometries
 #' @param target_id a character string representing an integer column vector for the admin level at which
@@ -27,21 +27,27 @@
 #' in the same order as the crs_set.
 #' @param cand_vars a character vector of candidate explanatory variables to be included in the model
 #' selection process
-#' @param outcome_var the dependent variable for small area estimation (typically household per capita expenditure)
+#' @param cons_var the dependent variable for small area estimation (typically household per capita consumption)
 #' @param wgt_vartype a character string representing the weighting type. The options could be "hh", "pop" i.e.
 #' households vs population weights.
-#' @param weight the weight variable
+#' @param weight a numeric/integer weight variable
 #' @param create_dummy if TRUE, a dummy variable will be created if dummy_var is specified.
 #' @param dummy_var a list of variables from which a dummies will be created for each level.
 #' @param ... include any set of arguments available within emdi::ebp() function as you see fit.
 #' @param ncpu the number of CPUs for parallelizing the small area estimation algorithm
+#' @param pline the national poverty line
+#' @param pline_transform select an order norm transformation method. There are three options. The default
+#' inclusion_line" option adds the poverty line value stipulated to the vector of welfare vector
+#' provided. The order norm value obtained from the normalization process is the converted value.
+#' The "interpolation_line" option applies a linear interpolation to outcome_var to estimate a conversion
+#' The "limsup_line" option takes the converted value of the greatest welfare value below the poverty line
 #' @param result_dir local folder directory where all tables and charts will be stored. If result_dir is not
 #' specified, the default is the result of getwd()
 
 
 saeplus_modelunitlevel <- function(hhsurvey_dt,
                                    hhid_var,
-                                   hhsize,
+                                   size_hh,
                                    adminshp_dt,
                                    target_id,
                                    geopolycensus_dt,
@@ -50,15 +56,16 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
                                    crs_set = rep(4326, 3),
                                    agr_set = rep("constant", 3),
                                    cand_vars,
-                                   outcome_var,
+                                   cons_var,
                                    wgt_vartype = "hh",
                                    weight,
                                    create_dummy = TRUE,
                                    dummy_var,
                                    ...,
                                    ncpu = 30,
+                                   pline = 5006362,
+                                   pline_transform = "inclusion_line",
                                    result_dir){
-
 
   ### now we are ready create a synthetic census
   ##### first compute average number of households in each grid
@@ -99,37 +106,45 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
   }
   selected_vars <- SAEplus::saeplus_selectmodel(dt = hhsurvey_dt,
                                                 xvars = cand_vars,
-                                                outcomevar = outcome_var)
+                                                outcomevar = cons_var)
 
   selected_vars <- names(selected_vars$index[selected_vars$index == TRUE])
 
   ###### create population weights
+
   if (wgt_vartype == "hh") {
 
-    hhsurvey_dt[, popweight := get(hhsize) * get(weight)]
+    hhsurvey_dt[, popweight := get(size_hh) * get(weight)]
 
   } else if (wgt_vartype == "pop") {
 
-    hhsurvey_dt[, popweight := weight]
+    hhsurvey_dt[, popweight := get(weight)]
 
   }
 
   ###### now put together the EMDI model
   unit_model <- paste(selected_vars, collapse = " + ")
-  unit_model <- as.formula(paste(outcome_var, unit_model, sep = " ~ "))
+  unit_model <- as.formula(paste(cons_var, unit_model, sep = " ~ "))
 
   ###### transform the outcome variable to the order norm
-  pline <- saeplus_ordernormpl(pcexp = hhsurvey_dt[,pcexp])
-  hhsurvey_dt[,pcexp := orderNorm(pcexp)$x.t]
+  pline <- saeplus_ordernormpl(pcexp = hhsurvey_dt[,get(cons_var)],
+                               npl_value = pline)
+  hhsurvey_dt[,pcexp := orderNorm(get(cons_var))$x.t]
 
   ###### build the unit level model
-  vars <- c(selected_vars, outcome_var, target_id)
+  vars <- c(selected_vars, "pcexp", target_id)
+  census_vars <- vars[!(vars %in% "pcexp")]
+
+  message("Data Prep and Model Selection complete. \n\n")
+
+  message("The imputation process is being initiated ...\n\n")
+
   emdi_model <- emdi::ebp(fixed = unit_model,
-                          pop_data = as.data.frame(gin_hhcensus.dt[,vars, with = F]),
+                          pop_data = as.data.frame(hhcensus_dt[,census_vars, with = F]),
                           pop_domains = target_id,
-                          smp_data = as.data.frame(gin_hhsurvey.dt[,vars, with = F]),
+                          smp_data = as.data.frame(hhsurvey_dt[,vars, with = F]),
                           smp_domains = target_id,
-                          threshold = pline,
+                          threshold = pline[[pline_transform]],
                           L = 100,
                           transformation = "no",
                           na.rm = TRUE,

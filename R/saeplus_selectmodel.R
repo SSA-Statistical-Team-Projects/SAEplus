@@ -42,7 +42,8 @@ saeplus_selectmodel <- function(dt,
   # xset <- unlist(lapply(var_identifier, select_variables))
 
   xset <- xvars
-  yvar <- dt[,get(outcomevar)]
+  yvar <- dt[, as.numeric(get(outcomevar))]
+
   ### drop variables with NA
   if (drop_NA_tags == TRUE){
 

@@ -48,7 +48,7 @@ colnames(clean_obj$geopolygon_census)[!(colnames(clean_obj$geopolygon_census) %i
 
 gin_modelresults <-
   saeplus_modelunitlevel(hhsurvey_dt = clean_obj$survey_data,
-                         hhid_var = "hhid", hhsize = "hhsize",
+                         hhid_var = "hhid", size_hh = "hhsize",
                          adminshp_dt = clean_obj$adminshp_data,
                          target_id = "ADM3_CODE",
                          geopolycensus_dt = clean_obj$geopolygon_census,
@@ -56,7 +56,7 @@ gin_modelresults <-
                          crs_set = rep(4326, 3),
                          agr_set = rep("constant", 3),
                          cand_vars = modelvars,
-                         outcome_var = "pcexp",
+                         cons_var = "pcexp",
                          wgt_vartype = "hh",
                          weight = "hhweight",
                          create_dummy = FALSE)
