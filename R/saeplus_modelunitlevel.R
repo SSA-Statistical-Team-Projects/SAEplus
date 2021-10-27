@@ -20,7 +20,7 @@
 #' @param geopoly_id a string/character variable representing the polygon ID within geopolycensus_dt
 #' @param geopopvar a character string for the population count variable name in the geopolycensus_dt
 #' @param crs_set an integer list of the coordinate reference systems for of the aforementioned objects
-#' i.e. the CRS for hh_dt, adminshp_dt and geopolycensus_dt in this order
+#' i.e. the CRS for hhsurvey_dt, adminshp_dt and geopolycensus_dt in this order
 #' @param agr_set a character/string list representing attribute-geometry-relationships specified for each
 #' non-geometry attribute column and how it relates to the geometry, and can have one of following values
 #' "constant", "aggregate" and "identity". The default is constant. See details for more. The AGR will listed
@@ -65,7 +65,7 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
                                    ncpu = 30,
                                    pline = 5006362,
                                    pline_transform = "inclusion_line",
-                                   result_dir){
+                                   result_dir = getwd()){
 
   ### now we are ready create a synthetic census
   ##### first compute average number of households in each grid
@@ -132,8 +132,9 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
   hhsurvey_dt[,pcexp := orderNorm(get(cons_var))$x.t]
 
   ###### build the unit level model
-  vars <- c(selected_vars, "pcexp", target_id)
-  census_vars <- vars[!(vars %in% "pcexp")]
+  vars <- c(selected_vars, "pcexp", target_id, "popweight")
+  census_vars <- vars[!(vars %in% c("pcexp", "popweight"))]
+  census_vars <- c(census_vars, geopopvar)
 
   message("Data Prep and Model Selection complete. \n\n")
 
@@ -185,7 +186,7 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
 
   #### create the file with the EMDI estimates
   write.excel(emdi_model,
-              file = paste(result_dir, "emdi_bmmodel.xlsx"),
+              file = paste(result_dir, "emdi_bmmodel.xlsx", sep = "/"),
               indicator = "all",
               MSE = TRUE,
               CV = TRUE)
@@ -201,7 +202,7 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
   povgrid.dt <- povgrid.dt[is.na(Head_Count) == "FALSE",]
 
 
-  povgrid.dt <- st_as_sf(povgrid.dt, agr = "constant", crs = 4326)
+  povgrid.dt <- st_as_sf(povgrid.dt, agr = agr_set[1], crs = crs_set[1])
 
   figure1 <-
     tm_shape(povgrid.dt) +
