@@ -16,6 +16,8 @@ hhsurvey_dt <- as.data.table(readstata13::read.dta13("tests/testdata/ehcvm_welfa
 ## include the shapefile with admin level definitions
 shapefile_dt <- sf::st_read(dsn = "tests/testdata",
                             layer = "sous_prefectures_valid")
+shapefile_dt <- as.data.table(shapefile_dt)
+shapefile_dt[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
 
 ## now we use the saeplus_prepdata() to clean up the data before they can be used to prep the unit model
 clean_obj <-
@@ -28,7 +30,6 @@ clean_obj <-
                    geosurvey_mergevars = c("vague", "grappe"),
                    geopolycensus_dt = geopolycensus_dt)
 
-clean_obj$survey_data[ADM1_NAME == "Labe\r\n", ADM1_NAME := "Labe"]
 
 clean_obj$survey_data[is.na(ADM1_NAME) == TRUE & prefecture == "CONAKRY",
             c("ADM1_NAME", "ADM1_CODE", "ADM2_NAME", "ADM2_CODE", "ADM3_NAME", "ADM3_CODE") :=
@@ -39,12 +40,14 @@ clean_obj$survey_data[is.na(ADM1_NAME) == TRUE & prefecture == "MANDIANA",
               list("Kankan", 4, "Mandiana", 4004, "Koundianakoro", 400407)]
 
 
-clean_obj$survey_data <- saeplus_dummify(dt = clean_obj$survey_data, var = "ADM1_NAME")
-
 ## now we are ready to go into the saeplus_modelunitlevel()
 modelvars <-
 colnames(clean_obj$geopolygon_census)[!(colnames(clean_obj$geopolygon_census) %in%
                                           c("id", "imagery_year", "population", "geometry"))]
+
+modelvars <- c(modelvars, c("Boke", "Kindia", "Conakry", "Mamou", "Faranah",
+                            "Nzerekore", "Kankan", "Labe"))
+
 
 gin_modelresults <-
   saeplus_modelunitlevel(hhsurvey_dt = clean_obj$survey_data,
@@ -53,12 +56,15 @@ gin_modelresults <-
                          target_id = "ADM3_CODE",
                          geopolycensus_dt = clean_obj$geopolygon_census,
                          geopopvar = "population",
+                         dummy_var = "ADM1_NAME",
+                         tid_aggregate = TRUE,
                          crs_set = rep(4326, 3),
                          agr_set = rep("constant", 3),
                          cand_vars = modelvars,
                          cons_var = "pcexp",
                          wgt_vartype = "hh",
                          weight = "hhweight",
-                         create_dummy = FALSE)
+                         create_dummy = TRUE,
+                         aggregate_id = "ADM1_CODE")
 
 

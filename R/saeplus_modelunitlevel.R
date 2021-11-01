@@ -31,8 +31,11 @@
 #' @param wgt_vartype a character string representing the weighting type. The options could be "hh", "pop" i.e.
 #' households vs population weights.
 #' @param weight a numeric/integer weight variable
-#' @param create_dummy if TRUE, a dummy variable will be created if dummy_var is specified.
+#' @param create_dummy if TRUE, a dummy variable will be created if dummy_var is specified. Variable must be from
+#' adminshp_dt
 #' @param dummy_var a list of variables from which a dummies will be created for each level.
+#' @param aggregate_id if argument is not NULL, all cand_vars will be aggregated at the admin level specified as
+#' the aggregate_id argument
 #' @param ... include any set of arguments available within emdi::ebp() function as you see fit.
 #' @param ncpu the number of CPUs for parallelizing the small area estimation algorithm
 #' @param pline the national poverty line
@@ -61,6 +64,7 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
                                    weight,
                                    create_dummy = TRUE,
                                    dummy_var,
+                                   aggregate_id,
                                    ...,
                                    ncpu = 30,
                                    pline = 5006362,
@@ -85,25 +89,80 @@ saeplus_modelunitlevel <- function(hhsurvey_dt,
   hhcensus_dt <- saeplus_gencensus(poly_dt = geopolycensus_dt)
 
   ## finally, let's include admin area information into the polygon census data
-  geocentcensus_dt <- sf::st_centroid(sf::st_as_sf(geopolycensus_dt[,c(geopoly_id, "geometry"),with = F],
+  geocentcensus_dt <- sf::st_centroid(sf::st_as_sf(geopolycensus_dt,
                                                    agr = agr_set[3],
                                                    crs = crs_set[3]))
-
-  adminshp_dt <- sf::st_as_sf(adminshp_dt, agr = agr_set[2], crs = agr_set[2])
+  adminshp_dt <- sf::st_as_sf(adminshp_dt, agr = agr_set[2], crs = crs_set[2])
 
   geocentcensus_dt <- st_join(geocentcensus_dt, adminshp_dt)
+
 
   geocentcensus_dt <- as.data.table(geocentcensus_dt)
   geocentcensus_dt <- geocentcensus_dt[!(duplicated(get(geopoly_id))),]
 
-  hhcensus_dt <- geocentcensus_dt[hhcensus_dt, on = geopoly_id]
+  ## include admin data in the hhcensus_dt data
+  admin_vars <- colnames(adminshp_dt)
+  admin_vars <- admin_vars[!(admin_vars %in% "geometry")]
 
-  ###### ALL THE DATA IS PREPPED NOW WE ARE READY FOR MODEL SELECTION
+
+  hhcensus_dt <- as.data.table(geocentcensus_dt[,c(admin_vars, geopoly_id), with = F])[hhcensus_dt,
+                                                                                       on = geopoly_id]
+
   if (create_dummy == TRUE) {
 
-    cand_vars <- c(cand_vars, unique(hhsurvey_dt[, get(dummy_var), with = F]))
+    orig_names <- colnames(hhsurvey_dt) #what is the original set of variables
+    add_dt <- saeplus_dummify(dt = hhsurvey_dt, var = dummy_var) #create new binary dummies
+    hhsurvey_dt <- cbind(hhsurvey_dt, add_dt)
+    final_names <- colnames(hhsurvey_dt) #what is the new set of all variables
+    new_names <- final_names[!(final_names %in% orig_names)] #find the dummy variables created
+    cand_vars <- c(cand_vars, new_names) #add them to cand_vars
+
+    add_dt <- saeplus_dummify(dt = geocentcensus_dt, var = dummy_var)
+    geocentcensus_dt <- cbind(geocentcensus_dt, add_dt) ##include in the geo centroid census data
+    add_dt <- saeplus_dummify(dt = hhcensus_dt, var = dummy_var) ##create same dummy in hhcensus_dt
+
+    hhcensus_dt <- cbind(hhcensus_dt, add_dt) ##include dummified variables in the hhcensus_dt
 
   }
+
+
+  if (is.null(aggregate_id) == FALSE) {
+
+    append_to_names <- function(X = cand_vars){ #quick function to append string to a variable name
+
+      varset <- paste(X, target_id, sep = "_")
+      return(varset)
+
+    }
+
+    tid_vars <- unlist(lapply(cand_vars, append_to_names)) #apply above function to list of names
+
+    ## now sum up the values for both sample and population
+    geocentcensus_dt[, (tid_vars) := lapply(.SD, weighted.mean, w = get(geopopvar)),
+                     by = aggregate_id,
+                     .SDcols = cand_vars]
+
+    ## merge these into sample
+    hhsurvey_dt <- sf::st_as_sf(hhsurvey_dt, agr = agr_set[1], crs = crs_set[1])
+    geocentcensus_dt <- st_as_sf(geocentcensus_dt, agr = agr_set[3], crs = crs_set[3])
+
+    add_dt <- geocentcensus_dt[,c(tid_vars, geopoly_id)]
+
+    hhsurvey_dt <- st_join(hhsurvey_dt, add_dt)
+
+
+    cand_vars <- c(cand_vars, tid_vars)
+    add_dt <- as.data.table(add_dt)
+    hhcensus_dt <- add_dt[hhcensus_dt, on = geopoly_id]
+
+  }
+
+
+
+  ###### ALL THE DATA IS PREPPED NOW WE ARE READY FOR MODEL SELECTION
+
+  hhsurvey_dt <- as.data.table(hhsurvey_dt)
+  hhcensus_dt <- as.data.table(hhcensus_dt)
   selected_vars <- SAEplus::saeplus_selectmodel(dt = hhsurvey_dt,
                                                 xvars = cand_vars,
                                                 outcomevar = cons_var)

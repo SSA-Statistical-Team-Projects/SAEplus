@@ -140,8 +140,8 @@ saeplus_prepdata <- function(hhsurvey_dt,
   hhsurvey_dt <- as.data.table(hhsurvey_dt)
 
   ### create admin one level dummies
-  hhsurvey_dt <- saeplus_dummify(dt = hhsurvey_dt, var = adminvars[1])
-
+  add_dt <- saeplus_dummify(dt = hhsurvey_dt, var = adminvars[1])
+  hhsurvey_dt <- cbind(hhsurvey_dt, add_dt)
 
   results <- list(hhsurvey_dt,
                   geopolycensus_dt,

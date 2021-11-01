@@ -12,11 +12,18 @@ saeplus_dummify <- function(dt, var){
 
   levels <- dt[,unique(get(var))]
 
-  for (i in seq_along(levels)){
 
-    dt[,c(levels[i]) := ifelse(get(var) == levels[i], 1, 0)]
+  create_dummy <- function(X){
+
+    bin_col <- dt[,ifelse(get(var) == X, 1, 0)]
+    return(bin_col)
 
   }
 
-  return(dt)
+  results <- lapply(levels, create_dummy)
+  results <- as.data.table(do.call(cbind, results))
+  colnames(results) <- levels
+
+  return(results)
+
 }
