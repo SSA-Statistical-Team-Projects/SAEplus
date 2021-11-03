@@ -5,6 +5,7 @@
 #'
 #' @param hhsurvey_dt an object of class "sf" and "data.table/data.frame" representing the household unit level data with
 #' welfare variable
+#' @param size_hh an integer/numeric for household size variable within the hhsurvey_dt object
 #' @param geopolycensus_dt an object of class sf, data.table and/or data.frame containing polygon/multipolygon
 #' geometries and geospatial indicators
 #' @param geopoly_id a string/character variable representing the polygon ID within geopolycensus_dt
@@ -26,6 +27,7 @@
 saeplus_modelsubarea <- function(hhsurvey_dt,
                                  geopolycensus_dt,
                                  geopoly_id,
+                                 size_hh,
                                  geopopvar,
                                  wgt_vartype,
                                  weight,
@@ -33,7 +35,7 @@ saeplus_modelsubarea <- function(hhsurvey_dt,
                                  pline,
                                  cand_vars){
 
-  hhsurvey_dt <- st_join(hhsurvey_dt, geopolycensus_dt[,c(geopoly_id, geopopvar)])
+  #hhsurvey_dt <- st_join(hhsurvey_dt, geopolycensus_dt[,c(geopoly_id, geopopvar)])
 
   ### compute poverty areas by polygon ID
   hhsurvey_dt <- as.data.table(hhsurvey_dt)
@@ -55,7 +57,7 @@ saeplus_modelsubarea <- function(hhsurvey_dt,
   hhsurvey_dt[, povrate := weighted.mean(x = poor, w = popweight), by = geopoly_id]
   hhsurvey_dt[, sumpopweight := sum(popweight, na.rm = TRUE), by = geopoly_id]
 
-  add.dt <- unique(gin_master.dt[,c(geopoly_id, "povrate", "sumpopweight"),with=F])
+  add.dt <- unique(hhsurvey_dt[,c(geopoly_id, "povrate", "sumpopweight"),with=F])
 
   ## include poverty rates in the masterpolygon set and begin estimating models
   geopolycensus_dt <- add.dt[geopolycensus_dt, on = geopoly_id]
