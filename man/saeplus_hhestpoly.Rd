@@ -11,7 +11,9 @@ saeplus_hhestpoly(
   admin_var = "ADM3_CODE",
   ind_var = "hhsize",
   weight_var = "hhweight",
-  FUN = "weighted.mean"
+  FUN = "weighted.mean",
+  crs = 4326,
+  agr = "constant"
 )
 }
 \arguments{

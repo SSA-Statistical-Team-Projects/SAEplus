@@ -6,45 +6,51 @@
 \usage{
 saeplus_modelunitlevel(
   hhsurvey_dt,
-  hhsurvey_lat,
-  hhsurvey_lon,
   hhid_var,
-  hhsize,
+  size_hh,
   adminshp_dt,
-  hhgeocodes_dt = NULL,
+  target_id,
   geopolycensus_dt,
   geopopvar,
+  geopoly_id = "id",
   crs_set = rep(4326, 3),
   agr_set = rep("constant", 3),
   cand_vars,
-  outcome_var,
+  cons_var,
   wgt_vartype = "hh",
   weight,
   create_dummy = TRUE,
-  dummy_var
+  dummy_var,
+  aggregate_id,
+  ...,
+  ncpu = 30,
+  pline = 5006362,
+  pline_transform = "inclusion_line",
+  result_dir = getwd()
 )
 }
 \arguments{
 \item{hhsurvey_dt}{object of class data.frame/data.table corresponding to household survey data (unit level data)}
 
-\item{hhsurvey_lat}{the latitude variable within the hh_dt object}
-
-\item{hhsurvey_lon}{the longitude variable within the hh_dt object}
-
 \item{hhid_var}{the household ID variable from the hhsurvey_dt object}
 
-\item{hhsize}{a household size variable within the hhsurvey_dt object}
+\item{size_hh}{an integer/numeric for household size variable within the hhsurvey_dt object}
 
 \item{adminshp_dt}{an object of class sf, data.table and/or data.frame containing administrative
 level boundaries with multipolygons/polygons geometries}
+
+\item{target_id}{a character string representing an integer column vector for the admin level at which
+small area estimates will be computed for the poverty map}
 
 \item{geopolycensus_dt}{an object of class sf, data.table and/or data.frame containing polygon/multipolygon
 geometries and geospatial indicators}
 
 \item{geopopvar}{a character string for the population count variable name in the geopolycensus_dt}
 
+\item{geopoly_id}{a string/character variable representing the polygon ID within geopolycensus_dt}
+
 \item{crs_set}{an integer list of the coordinate reference systems for of the aforementioned objects
-i.e. the CRS for hh_dt, adminshp_dt and geopolycensus_dt in this order}
+i.e. the CRS for hhsurvey_dt, adminshp_dt and geopolycensus_dt in this order}
 
 \item{agr_set}{a character/string list representing attribute-geometry-relationships specified for each
 non-geometry attribute column and how it relates to the geometry, and can have one of following values
@@ -54,21 +60,39 @@ in the same order as the crs_set.}
 \item{cand_vars}{a character vector of candidate explanatory variables to be included in the model
 selection process}
 
-\item{outcome_var}{the dependent variable for small area estimation (typically household per capita expenditure)}
+\item{cons_var}{the dependent variable for small area estimation (typically household per capita consumption)}
 
 \item{wgt_vartype}{a character string representing the weighting type. The options could be "hh", "pop" i.e.
 households vs population weights.}
 
-\item{weight}{the weight variable}
+\item{weight}{a numeric/integer weight variable}
 
-\item{create_dummy}{if TRUE, a dummy variable will be created if dummy_var is specified.}
+\item{create_dummy}{if TRUE, a dummy variable will be created if dummy_var is specified. Variable must be from
+adminshp_dt}
 
 \item{dummy_var}{a list of variables from which a dummies will be created for each level.}
 
-\item{admin_id}{a character string representing a column vector in hhsurvey_dt for the admin level at which
-small area estimates will be computed for the poverty map}
+\item{aggregate_id}{if argument is not NULL, all cand_vars will be aggregated at the admin level specified as
+the aggregate_id argument}
 
-\item{geopoly_id}{a string/character variable representing the polygon ID within geopolycensus_dt}
+\item{...}{include any set of arguments available within emdi::ebp() function as you see fit.}
+
+\item{ncpu}{the number of CPUs for parallelizing the small area estimation algorithm}
+
+\item{pline}{the national poverty line}
+
+\item{pline_transform}{select an order norm transformation method. There are three options. The default
+inclusion_line" option adds the poverty line value stipulated to the vector of welfare vector
+provided. The order norm value obtained from the normalization process is the converted value.
+The "interpolation_line" option applies a linear interpolation to outcome_var to estimate a conversion
+The "limsup_line" option takes the converted value of the greatest welfare value below the poverty line}
+
+\item{result_dir}{local folder directory where all tables and charts will be stored. If result_dir is not
+specified, the default is the result of getwd()}
+
+\item{hhsurvey_lat}{the latitude variable within the hh_dt object}
+
+\item{hhsurvey_lon}{the longitude variable within the hh_dt object}
 }
 \description{
 This function prepares remote sensing data for imputation by checking the admin level shapefiles for geometric

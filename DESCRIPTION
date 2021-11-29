@@ -43,7 +43,9 @@ Imports:
     parallelMap,
     parallel,
     bestNormalize,
-    hdm
+    hdm,
+    sp,
+    rgeos
 ByteCompile: true
 Suggests: 
     rmarkdown,

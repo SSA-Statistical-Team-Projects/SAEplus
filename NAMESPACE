@@ -3,6 +3,7 @@
 export(gee_datapull)
 export(gee_pullimage)
 export(gengrid)
+export(gengrid2)
 export(hdx_pull)
 export(osm_cleanprocess)
 export(osm_datapull)
