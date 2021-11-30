@@ -1,111 +1,67 @@
-#' Polygonize a raster and compute zonal statistics at polygon and full shape-file level
+#' Another function to create a gridified shapefile
 #'
-#' @param dsn stands for data source name (see sf::st_read documentation for more information)
-#' @param layer layer name (see sf::st_read documentation for more information), will also accept object of class "sf"
-#' @param stats zonal statistics to be estimated
-#' @param featname the feature that the zonal statistic is computed for
-#' @param raster_tif raster file with tif extension
-#' @param grid_shp if TRUE, a grid system will be created for the shapefile (shp), grid_size must be specified
-#' @param grid_size the diagonal length of the polygon in km
-#' @param crs the co-ordinate reference system to be used
-#' @param drop_zero if TRUE, gengrid will keep only zonal statistics that are different from zero
+#' This function takes in only a shapefile and creates a square or hexagon polygon grid based on a specified
+#' grid size
 #'
-#' @return list object aggregated zonal statistic, polygon data and summary statistics on polygon data
-#' @examples
-#'
-#' @export
-#'
-#' @import data.table tmap
-#' @importFrom raster raster crop crs
-#' @importFrom raster mask
-#' @importFrom spex polygonize
-#' @importFrom exactextractr exact_extract
-#' @importMethodsFrom raster extent
+#' @param shp_dt an object of class 'sf' or 'sfc'
+#' @param shp_dsn character; the local directory folder in which the shapefile is location. Must be specified
+#' when shp_dt is not specified.
+#' @param shp_layer character; the layer name for the shapefile. Must be specified with shp_dsn when shp_dt is not
+#' specified
+#' @param grid_size numeric of length 1; representing the desired size of the grid
+#' @param sqr logical; if TRUE, a square grid is created. If FALSE, a hexagonal polygon grid is created
 
 
-gengrid2 <- function(dsn = "data-raw",
-                    layer = "gadm36_CMR_0",
-                    stats = "sum",
-                    featname = "population",
-                    raster_tif = "cmr_ppp_2020_UNadj_constrained.tif",
-                    grid_shp = T,
-                    grid_size = 1,
-                    drop_Zero = T
-){
+gengrid2 <- function(shp_dt,
+                     grid_size,
+                     sqr = TRUE) {
 
-  if (is.character(layer) == TRUE){
-    shp <- st_read(dsn = dsn,
-                   layer = layer)
-  } else {
-    shp <- layer
-  }
+  if(is.null(shp_dt) == TRUE) {
 
-  if (is.character(raster_tif) == TRUE){
-    pop <- raster(paste(dsn, raster_tif, sep = "/"))
-  } else {
-    pop <- raster_tif
-  }
-
-  crs_pop <- raster::crs(pop)
-
-  if (grid_shp == T) {
-
-    ## create the appropriate coordinate reference system
-    shp <- shp %>%
-            st_transform(4328)
-
-    grid_system <- st_make_grid(x = shp, cellsize = c(grid_size, grid_size), square = TRUE) %>%
-      st_sf()
-
-    grid_system$id <- 1:nrow(grid_system)
-    grid_system <- grid_system %>% st_transform(crs_pop)
-    ### extract raster values into the grid system
-    zonal_stats <- exact_extract(pop, grid_system, stats) %>% as.data.table()
-    names(zonal_stats) <- stats
-    grid_system <- as.data.table(grid_system)
-    grid_system <- cbind(grid_system, zonal_stats)
-
-    if(drop_Zero == T) {
-      grid_system[grid_system[[stats]] != 0,]
-    }
+    shp_dt <- sf::st_read(dsn = shp_dsn,
+                          layer = shp_layer)
 
   }
 
-  ## if a feature name is provided, relabel the variable name in the data to show this
-  if(is.null(featname) == FALSE){
-    names(grid_system)[names(grid_system) == stats] <- featname
 
-    return(list(total_popsize = sum(grid_system[, featname, with=F]),
-                polygon_dt = grid_system,
-                summary_stats = summary(grid_system)))
+  ## now we are ready to grid our district shapefile
+  if (sqr == TRUE) {
+
+  grid_system <- sf::st_make_grid(x = shp_dt,
+                                  cellsize = c(grid_size, grid_size),
+                                  square = sqr) %>%
+    sf::st_sf()
+
+  } else if (sqr == FALSE) {
+
+  grid_system <- sf::st_make_grid(x = shp_dt,
+                                  cellsize = grid_size,
+                                  square = sqr) %>%
+    sf::st_sf()
+
 
   }
 
-  return(list(total_popsize = sum(grid_system[, stats, with=F]),
-              polygon_dt = grid_system,
-              summary_stats = summary(grid_system)))
 
+  ## the process creates squares with parts outside the GMB area so we should take the intersection
+  ## of the shapefile with our newly created grid
+  grid_system <- sf::st_intersection(grid_system, shp_dt)
+
+  grid_system$poly_area <- sf::st_area(grid_system) ##compute area of each square
+
+  summary(grid_system$poly_area) ## summary statistics show that are mostly 0.04sqkm with few exceptions
+
+  ### check that the total area of all squares in the grid_system and the total area of the original
+  ### shapefile are roughly similar (its like comparing a riemann sum to the actual area under the curve)
+  shp_dt$poly_area <- sf::st_area(shp_dt)
+  shp_dt$poly_area <- units::set_units(shp_dt$poly_area, "km^2") ##convert to square km from sqm
+
+  ##ensuring the geometry is validly created
+  grid_system <- st_make_valid(grid_system)
+
+  ## return results
+
+  return(list(gridded_dt = grid_system,
+              shapefile = shp_dt))
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
