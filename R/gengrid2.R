@@ -1,4 +1,4 @@
-#' Another function to create a gridified shapefile
+#' Another function to create a gridified shapefile and extract a raster if specified
 #'
 #' This function takes in only a shapefile and creates a square or hexagon polygon grid based on a specified
 #' grid size
@@ -10,11 +10,22 @@
 #' specified
 #' @param grid_size numeric of length 1; representing the desired size of the grid
 #' @param sqr logical; if TRUE, a square grid is created. If FALSE, a hexagonal polygon grid is created
+#' @param pop_raster raster; full file path of a raster object
+#' @param raster_path character; if pop_raster is not specified but raster is to read in from file. raster_path is
+#' the full name of the raster (including filepath)
+#' @param extract_name character of length 1; the name of the indicator to be extracted from the raster
+#' @param raster_function function to be applied in extracting raster into created grids
 
 
 gengrid2 <- function(shp_dt,
+                     shp_dsn,
+                     shp_layer,
                      grid_size,
-                     sqr = TRUE) {
+                     sqr = TRUE,
+                     pop_raster,
+                     raster_path,
+                     extract_name,
+                     raster_function = "sum") {
 
   if(is.null(shp_dt) == TRUE) {
 
@@ -48,20 +59,33 @@ gengrid2 <- function(shp_dt,
   grid_system <- sf::st_intersection(grid_system, shp_dt)
 
   grid_system$poly_area <- sf::st_area(grid_system) ##compute area of each square
+  grid_system$poly_area <- units::set_units(grid_system$poly_area, "km^2")
 
   summary(grid_system$poly_area) ## summary statistics show that are mostly 0.04sqkm with few exceptions
-
-  ### check that the total area of all squares in the grid_system and the total area of the original
-  ### shapefile are roughly similar (its like comparing a riemann sum to the actual area under the curve)
-  shp_dt$poly_area <- sf::st_area(shp_dt)
-  shp_dt$poly_area <- units::set_units(shp_dt$poly_area, "km^2") ##convert to square km from sqm
 
   ##ensuring the geometry is validly created
   grid_system <- st_make_valid(grid_system)
 
+  ##extract population raster into the data
+  ### read in the raster file
+  if(is.null(raster_path) == FALSE) {
+    pop_raster <- raster::raster(raster_path)
+    }
+
+  pop_raster <- raster::projectRaster(from = pop_raster,
+                                      crs = raster::crs(shp_dt))
+
+  ### extract value into the grid system
+  zonal_stats <- exactextractr::exact_extract(x = pop_raster,
+                                              y = grid_system,
+                                              fun = raster_function) %>% data.table()
+
+  colnames(zonal_stats) <- extract_name
+
+  grid_system <- cbind(grid_system, zonal_stats)
+
   ## return results
 
-  return(list(gridded_dt = grid_system,
-              shapefile = shp_dt))
+  return(grid_system)
 
 }

@@ -40,10 +40,10 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_crs = "EPSG:4326"){
 
 
-  ee_users()
+  #ee_users()
 
-  options(gargle_oauth_email = email)
-  ee_Initialize()
+  #options(gargle_oauth_email = email)
+  ee_Initialize(user = email)
 
   agebs <- ee$FeatureCollection(gee_polygons)
   agebs_boundary <- ee$FeatureCollection(gee_boundary)
@@ -79,7 +79,8 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
       collection = agebs,
       reducer = ee$Reducer$stdDev(),
       scale = scale,
-      crs = gee_crs
+      crs = gee_crs,
+      maxPixels = 1e13
     )
   } else if(gee_stat == "median"){
     s5p_median <- s5p_collect$median()

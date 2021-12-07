@@ -2,45 +2,43 @@
 % Please edit documentation in R/gengrid2.R
 \name{gengrid2}
 \alias{gengrid2}
-\title{Polygonize a raster and compute zonal statistics at polygon and full shape-file level}
+\title{Another function to create a gridified shapefile and extract a raster if specified}
 \usage{
 gengrid2(
-  dsn = "data-raw",
-  layer = "gadm36_CMR_0",
-  stats = "sum",
-  featname = "population",
-  raster_tif = "cmr_ppp_2020_UNadj_constrained.tif",
-  grid_shp = T,
-  grid_size = 1,
-  crs = "+proj=longlat +datum=WGS84 +no_defs",
-  drop_Zero = T
+  shp_dt,
+  shp_dsn,
+  shp_layer,
+  grid_size,
+  sqr = TRUE,
+  pop_raster,
+  raster_path,
+  extract_name,
+  raster_function = "sum"
 )
 }
 \arguments{
-\item{dsn}{stands for data source name (see sf::st_read documentation for more information)}
+\item{shp_dt}{an object of class 'sf' or 'sfc'}
 
-\item{layer}{layer name (see sf::st_read documentation for more information), will also accept object of class "sf"}
+\item{shp_dsn}{character; the local directory folder in which the shapefile is location. Must be specified
+when shp_dt is not specified.}
 
-\item{stats}{zonal statistics to be estimated}
+\item{shp_layer}{character; the layer name for the shapefile. Must be specified with shp_dsn when shp_dt is not
+specified}
 
-\item{featname}{the feature that the zonal statistic is computed for}
+\item{grid_size}{numeric of length 1; representing the desired size of the grid}
 
-\item{raster_tif}{raster file with tif extension}
+\item{sqr}{logical; if TRUE, a square grid is created. If FALSE, a hexagonal polygon grid is created}
 
-\item{grid_shp}{if TRUE, a grid system will be created for the shapefile (shp), grid_size must be specified}
+\item{pop_raster}{raster; full file path of a raster object}
 
-\item{grid_size}{the diagonal length of the polygon in km}
+\item{raster_path}{character; if pop_raster is not specified but raster is to read in from file. raster_path is
+the full name of the raster (including filepath)}
 
-\item{crs}{the co-ordinate reference system to be used}
+\item{extract_name}{character of length 1; the name of the indicator to be extracted from the raster}
 
-\item{drop_zero}{if TRUE, gengrid will keep only zonal statistics that are different from zero}
-}
-\value{
-list object aggregated zonal statistic, polygon data and summary statistics on polygon data
+\item{raster_function}{function to be applied in extracting raster into created grids}
 }
 \description{
-Polygonize a raster and compute zonal statistics at polygon and full shape-file level
-}
-\examples{
-
+This function takes in only a shapefile and creates a square or hexagon polygon grid based on a specified
+grid size
 }

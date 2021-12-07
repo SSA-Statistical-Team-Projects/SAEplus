@@ -19,6 +19,6 @@ BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
 
-PythonType: conda
-PythonVersion: 3.6.5
-PythonPath: C:/Users/wb559885/AppData/Local/r-miniconda/envs/r-reticulate/python.exe
+PythonType: system
+PythonVersion: 3.8.2
+PythonPath: C:/python38-32/python.exe
