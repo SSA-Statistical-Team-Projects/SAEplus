@@ -5,7 +5,7 @@
 \title{Another function to create a gridified shapefile and extract a raster if specified}
 \usage{
 gengrid2(
-  shp_dt,
+  shp_dt = NULL,
   shp_dsn,
   shp_layer,
   grid_size,
@@ -25,11 +25,11 @@ when shp_dt is not specified.}
 \item{shp_layer}{character; the layer name for the shapefile. Must be specified with shp_dsn when shp_dt is not
 specified}
 
-\item{grid_size}{numeric of length 1; representing the desired size of the grid}
+\item{grid_size}{numeric of length 1; representing the desired size of the grid in meters}
 
 \item{sqr}{logical; if TRUE, a square grid is created. If FALSE, a hexagonal polygon grid is created}
 
-\item{pop_raster}{raster; full file path of a raster object}
+\item{pop_raster}{raster; an object of class 'raster'}
 
 \item{raster_path}{character; if pop_raster is not specified but raster is to read in from file. raster_path is
 the full name of the raster (including filepath)}
