@@ -2,17 +2,40 @@ library(foreach)
 library(doParallel)
 
 
+
 ### pull in base country-level boundary files from remote source
 ###### starting with GUINEA
 
 ## first carve up guinea country shapefile provided by PE into polygon grids
-gin.grid <- gengrid(dsn = "tests/testdata",
-                    layer = "sous_prefectures",
-                    raster_tif = "gin_ppp_2020_UNadj_constrained.tif",
-                    grid_shp=T,
-                    featname="population",
-                    drop_Zero=F)
+# gin.grid <- gengrid(dsn = "tests/testdata",
+#                     layer = "sous_prefectures",
+#                     raster_tif = "gin_ppp_2020_UNadj_constrained.tif",
+#                     grid_shp=T,
+#                     featname="population",
+#                     drop_Zero=F)
 
+gin_shp <- sf::st_read(dsn = "//cwapov/cwapov/GIN/GEO/Boundaries",
+                       layer = "sous_prefectures")
+
+sf_use_s2(FALSE)
+gin_shp$area <- st_area(gin_shp)
+gin_shp$area <- set_units(gin_shp$area, "km^2")
+
+
+crs_dt <- rgdal::make_EPSG()
+gin_shp <- st_transform(gin_shp,
+                        crs = crs_dt$prj4[crs_dt$code == 3974])
+
+gin_shp$area <- st_area(gin_shp)
+gin_shp$area <- set_units(gin_shp$area, "km^2")
+
+
+gin_raster <- raster("//cwapov/cwapov/GIN/GEO/Population/gin_ppp_2020_UNadj_constrained.tif")
+
+gin_grid <- gengrid2(shp_dt = gin_shp,
+                     grid_size = 1000,
+                     pop_raster = gin_raster,
+                     extract_name = "population")
 
 sf::st_write(obj = gin.grid$polygon_dt, dsn = "tests/testdata", layer = "gin_poppoly",
              driver = "ESRI Shapefile", append = FALSE)

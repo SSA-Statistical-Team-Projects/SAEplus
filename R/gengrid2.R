@@ -17,7 +17,10 @@
 #' @param raster_function function to be applied in extracting raster into created grids
 #'
 #' @importFrom raster raster
+#' @importFrom raster cellStats
 #' @importFrom units set_units
+#'
+#' @export
 
 
 gengrid2 <- function(shp_dt = NULL,
@@ -26,7 +29,7 @@ gengrid2 <- function(shp_dt = NULL,
                      grid_size,
                      sqr = TRUE,
                      pop_raster,
-                     raster_path,
+                     raster_path = NULL,
                      extract_name,
                      raster_function = "sum") {
 
@@ -41,6 +44,7 @@ gengrid2 <- function(shp_dt = NULL,
 
 
   ## now we are ready to grid our district shapefile
+  print("Initiating shape object tesselation")
   if (sqr == TRUE) {
 
   grid_system <- st_make_grid(x = shp_dt,
@@ -57,19 +61,82 @@ gengrid2 <- function(shp_dt = NULL,
 
 
   }
-
-
-  ## the process creates squares with parts outside the GMB area so we should take the intersection
+  print("Tesselation complete for shapefile extent, ensuring validity of shapefile ...")
+  ## the process creates squares with parts outside the area so we should take the intersection
   ## of the shapefile with our newly created grid
-  grid_system <- st_intersection(grid_system, shp_dt)
+
+  ## to avoid failures we need to make sure geometries are valid
+  shp_checklist <- st_is_valid(shp_dt)
+
+  while(sum(shp_checklist) != length(shp_checklist)){
+
+    shp_dt <- st_make_valid(shp_dt)
+    shp_checklist <- st_is_valid(shp_dt)
+
+  }
+  print("Intersecting tesselation object with shapefile ...")
+
+  ## figure out which grids belong within the shapefile
+  grid_system$poly_id <- 1:nrow(grid_system)
+  add_dt <- grid_system
+  cent_grid <- st_centroid(grid_system)
+
+  grid_system <- st_join(cent_grid, shp_dt, left = F)
+  grid_system$geometry <- NULL ##drop centroid geometry
+
+  grid_system <- merge(grid_system, add_dt, by = "poly_id") ##merge in the polygon geometry
+
+  grid_system <- st_as_sf(grid_system, agr = "constant", crs = st_crs(add_dt))
+
+  print("The shapefile is fully gridded!!")
+
+  ## make sure all geometries are polygons
+  clean_geometry <- function(geo_dt){
+
+    geo_dt <- geo_dt[st_dimension(geo_dt) == 2,] ##ensure that all geometries are surfaces
+    ##find any other enclosure geometries
+    add_dt <- geo_dt[st_geometry_type(geo_dt) == "GEOMETRYCOLLECTION",]
+    add_dt <- st_collection_extract(add_dt)
+    add_dt <- add_dt[st_dimension(add_dt) == 2,]
+    geo_dt <- geo_dt[!(st_geometry_type(geo_dt) == "GEOMETRYCOLLECTION"),]
+
+    geo_dt <- rbind(geo_dt, add_dt)
+
+
+    return(geo_dt)
+
+  }
+
+  grid_system <- clean_geometry(grid_system)
+
+  grid_system$poly_id <- 1:nrow(grid_system)
 
   grid_system$poly_area <- st_area(grid_system) ##compute area of each square
   grid_system$poly_area <- set_units(grid_system$poly_area, "km^2")
 
-  summary(grid_system$poly_area) ## summary statistics show that are mostly 0.04sqkm with few exceptions
+  grid_system <- grid_system[as.numeric(grid_system$poly_area) > 0,]
 
-  ##ensuring the geometry is validly created
-  grid_system <- st_make_valid(grid_system)
+  print(paste0("The tesselated object represents a total area of ",
+               round(sum(grid_system$poly_area, na.rm = TRUE),2),
+               " km^2"))
+
+  hist(x = grid_system$poly_area,
+       xlab = "Polygon Size (in km^2)")
+
+  print("The plot window should show you a distribution of the polygon sizes")
+
+  # ## join the newly gridded data with the original shapefile
+  # crs_grid <- st_crs(grid_system)
+  #
+  # grid_centroid <- st_centroid(grid_system)
+  # grid_centroid <- st_join(grid_centroid, shp_dt)
+  # grid_centroid <- grid_centroid[!duplicated(grid_centroid$poly_id),]
+  #
+  # grid_centroid <- as.data.table(grid_centroid)
+  # grid_system <- as.data.table(grid_system)
+  # grid_system <- grid_system[,c("poly_id", "geometry")][grid_centroid, on = "poly_id"]
+  #
+  # grid_system <- st_as_sf(grid_system, agr = "constant", crs = crs_grid)
 
 
 
@@ -79,17 +146,30 @@ gengrid2 <- function(shp_dt = NULL,
     pop_raster <- raster(raster_path)
     }
 
+
+
   ### convert crs of shapefile to the crs of the raster
   grid_system <- st_transform(x = grid_system, crs = pop_raster@crs)
+
+  print("Initiating Raster Extraction into the shapefile")
   ### extract value into the grid system
   zonal_stats <- exact_extract(x = pop_raster,
                                y = grid_system,
                                fun = raster_function) %>% data.table()
-
+  print("Raster Extraction Complete")
   colnames(zonal_stats) <- extract_name
 
+  print("Combining zonal statistics with tesselated shapefile object")
   grid_system <- cbind(grid_system, zonal_stats)
 
+  ### show proportion of extracted raster in the grid
+  raster_stat <- raster::cellStats(pop_raster, raster_function)
+  raster_rate <- abs(do.call("sum", list(grid_system[[extract_name]], na.rm = TRUE)) - raster_stat)
+  raster_rate <- (raster_rate/raster_stat)*100
+  print(paste0("There is a ", round(raster_rate, 3),
+               "% difference between the aggregate estimates of the raster and gridded extract"))
+
+  print("Done! Enjoy!")
   ## return results
 
   return(grid_system)

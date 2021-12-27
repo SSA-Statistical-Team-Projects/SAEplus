@@ -45,7 +45,8 @@ Imports:
     bestNormalize,
     hdm,
     sp,
-    rgeos
+    rgeos,
+    units
 ByteCompile: true
 Suggests: 
     rmarkdown,

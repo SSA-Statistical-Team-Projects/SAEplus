@@ -11,7 +11,7 @@ gengrid2(
   grid_size,
   sqr = TRUE,
   pop_raster,
-  raster_path,
+  raster_path = NULL,
   extract_name,
   raster_function = "sum"
 )
