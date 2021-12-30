@@ -33,16 +33,17 @@ In general, the SAEplus functions span the following tasks: data pulling, data c
 
 | SAEPlus Functions             |             Usage                                                           |
 |-------------------------------|-----------------------------------------------------------------------------|
-| gengrid                       | Creates a grid system from raster and shapefile running a raster with grid  |
+| gengrid, gengrid2             | Creates a grid system from raster and shapefile running a raster with grid  |
 |                               | statistics                                                                  |  
 |                               |                                                                             |
-| gee_datapull                  | Pulls geospatial image collections from Google Earth Engine into shapefiles |
-|                               |                                                                             |
+| gee_datapull, gee_datapull2,  | Pulls geospatial image collections from Google Earth Engine into shapefiles |
+| gee_pullbigdata               | with some functionality for optimizing for speed.                           |
+|                               |                                                                             |   
 | gee_pullimage                 | Pulls geospatial images from Google Earth Engine into shapefiles            |
 |                               |                                                                             |
 | hdx_pull                      | Pulls geospatial from the UN's Humanitarian Data Exchange server            |
 |                               |                                                                             |
-| wpopbuilding_check            | Checks whether country contains building data in World Pop data             |                            
+| wpopbuilding_check            | Checks whether country contains building data in World Pop data             |   |                               |                                                                             |
 |                               |                                                                             |
 | wpopbuilding_pull             | Pulls the building data for the countries that have World Pop data          |
 |                               |                                                                             |

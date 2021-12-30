@@ -17,13 +17,13 @@ library(doParallel)
 gin_shp <- sf::st_read(dsn = "//cwapov/cwapov/GIN/GEO/Boundaries",
                        layer = "sous_prefectures")
 
-sf_use_s2(FALSE)
-gin_shp$area <- st_area(gin_shp)
-gin_shp$area <- set_units(gin_shp$area, "km^2")
+sf_use_s2(FALSE) ##important line to ensure flexibility in dealing with odd geometries (ALWAYS USE!)
+gin_shp$area <- st_area(gin_shp) ##compute the area of each polygon
+gin_shp$area <- set_units(gin_shp$area, "km^2") ##convert to sqkm
 
 
-crs_dt <- rgdal::make_EPSG()
-gin_shp <- st_transform(gin_shp,
+crs_dt <- rgdal::make_EPSG() ##the database of recognized coordinate reference systems in R
+gin_shp <- st_transform(gin_shp, ##convert
                         crs = crs_dt$prj4[crs_dt$code == 3974])
 
 gin_shp$area <- st_area(gin_shp)

@@ -74,19 +74,13 @@ gengrid2 <- function(shp_dt = NULL,
     shp_checklist <- st_is_valid(shp_dt)
 
   }
-  print("Intersecting tesselation object with shapefile ...")
+  print("Limiting tesselated object to shapefile area ...")
 
   ## figure out which grids belong within the shapefile
   grid_system$poly_id <- 1:nrow(grid_system)
-  add_dt <- grid_system
-  cent_grid <- st_centroid(grid_system)
+  grid_system <- st_join(grid_system, shp_dt, left = F, largest = TRUE)
 
-  grid_system <- st_join(cent_grid, shp_dt, left = F)
-  grid_system$geometry <- NULL ##drop centroid geometry
-
-  grid_system <- merge(grid_system, add_dt, by = "poly_id") ##merge in the polygon geometry
-
-  grid_system <- st_as_sf(grid_system, agr = "constant", crs = st_crs(add_dt))
+  ## compute area of duplicated grids and assign shp_dt areas
 
   print("The shapefile is fully gridded!!")
 
@@ -109,6 +103,7 @@ gengrid2 <- function(shp_dt = NULL,
 
   grid_system <- clean_geometry(grid_system)
 
+  print("Ensuring geometries are properly fixed")
   grid_system$poly_id <- 1:nrow(grid_system)
 
   grid_system$poly_area <- st_area(grid_system) ##compute area of each square
@@ -124,21 +119,6 @@ gengrid2 <- function(shp_dt = NULL,
        xlab = "Polygon Size (in km^2)")
 
   print("The plot window should show you a distribution of the polygon sizes")
-
-  # ## join the newly gridded data with the original shapefile
-  # crs_grid <- st_crs(grid_system)
-  #
-  # grid_centroid <- st_centroid(grid_system)
-  # grid_centroid <- st_join(grid_centroid, shp_dt)
-  # grid_centroid <- grid_centroid[!duplicated(grid_centroid$poly_id),]
-  #
-  # grid_centroid <- as.data.table(grid_centroid)
-  # grid_system <- as.data.table(grid_system)
-  # grid_system <- grid_system[,c("poly_id", "geometry")][grid_centroid, on = "poly_id"]
-  #
-  # grid_system <- st_as_sf(grid_system, agr = "constant", crs = crs_grid)
-
-
 
   ##extract population raster into the data
   ### read in the raster file
