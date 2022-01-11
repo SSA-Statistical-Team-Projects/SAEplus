@@ -37,60 +37,56 @@ gin_grid <- gengrid2(shp_dt = gin_shp,
                      pop_raster = gin_raster,
                      extract_name = "population")
 
-sf::st_write(obj = gin.grid$polygon_dt, dsn = "tests/testdata", layer = "gin_poppoly",
+sf::st_write(obj = gin_grid[,c("poly_id", "geometry")],
+             dsn = "tests/testdata",
+             layer = "gin_poppoly",
              driver = "ESRI Shapefile", append = FALSE)
 
-## load and clean up the shapefile a little
-gin.base <- sf::st_read(dsn = "tests/testdata",
-                        layer = "sous_prefectures")
-
-gin.base <- sf::st_make_valid(gin.base) #making shapefile valid for use on google earth engine
-gin.base <- gin.base[sf::st_geometry_type(gin.base$geometry) == "MULTIPOLYGON",] #we want all multipolygons
-                                                                                 #in this case
-#gin.base <- rmapshaper::ms_simplify(gin.base)
-gin.base <- sf::st_make_valid(gin.base)
-
-## save the cleaned up shapefile
-sf::st_write(gin.base, dsn = "tests/testdata", layer = "sous_prefectures_valid",
-             driver = "ESRI Shapefile",
-             append = FALSE)
+# ## load and clean up the shapefile a little
+# gin.base <- sf::st_read(dsn = "tests/testdata",
+#                         layer = "sous_prefectures")
+#
+# gin.base <- sf::st_make_valid(gin.base) #making shapefile valid for use on google earth engine
+# gin.base <- gin.base[sf::st_geometry_type(gin.base$geometry) == "MULTIPOLYGON",] #we want all multipolygons
+#                                                                                  #in this case
+# #gin.base <- rmapshaper::ms_simplify(gin.base)
+# gin.base <- sf::st_make_valid(gin.base)
+#
+# ## save the cleaned up shapefile
+# sf::st_write(gin.base, dsn = "tests/testdata", layer = "sous_prefectures_valid",
+#              driver = "ESRI Shapefile",
+#              append = FALSE)
 
 ## pull nighttime lights
 gin.ntl <- SAEplus::gee_datapull(email = "ifeanyi.edochie@gmail.com",
-                                 gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
+                                 gee_boundary = "users/ifeanyiedochie/gin_poppoly",
                                  gee_polygons = "users/ifeanyiedochie/gin_poppoly",
-                                 gee_datestart = "2018-07-01",
-                                 gee_dateend = "2018-09-30",
+                                 gee_datestart = "2017-01-31",
+                                 gee_dateend = "2017-12-31",
                                  gee_desc = "GIN_NTL_2018JulSep",
                                  ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
 
-gin.ntl2 <- SAEplus::gee_datapull(email = "ifeanyi.edochie@gmail.com",
-                                  gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
-                                  gee_polygons = "users/ifeanyiedochie/gin_poppoly",
-                                  gee_datestart = "2019-04-01",
-                                  gee_dateend = "2019-06-30",
-                                  gee_desc = "GIN_NTL_2019AprJun",
-                                  ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
 
 gin.no2 <- gee_datapull(email = "ifeanyi.edochie@gmail.com",
-                        gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
                         gee_polygons = "users/ifeanyiedochie/gin_poppoly",
                         gee_band = "tropospheric_NO2_column_number_density",
                         gee_dataname = "COPERNICUS/S5P/NRTI/L3_NO2",
-                        gee_datestart = "2018-07-01",
-                        gee_dateend = "2018-09-30",
-                        gee_desc = "GIN_NO2_2018JulSep",
-                        ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
+                        gee_datestart = "2018-07-31",
+                        gee_dateend = "2018-08-31",
+                        gee_desc = "GIN_NO2_2018",
+                        ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE",
+                        gee_scale = 1113)
 
-gin.no21 <- gee_datapull(email = "ifeanyi.edochie@gmail.com",
-                         gee_boundary = "users/ifeanyiedochie/sous_prefectures_valid",
-                         gee_polygons = "users/ifeanyiedochie/gin_poppoly",
-                         gee_band = "tropospheric_NO2_column_number_density",
-                         gee_dataname = "COPERNICUS/S5P/NRTI/L3_NO2",
-                         gee_datestart = "2019-04-01",
-                         gee_dateend = "2019-06-30",
-                         gee_desc = "GIN_NO2_2019AprJun",
-                         ldrive_dsn = "//cwapov/cwapov/GIN/GEO/GEE")
+no2_dt <- gee_pullbigdata(shp_dsn = "tests/testdata",
+                          shp_layer = "gin_poppoly",
+                          gee_name = "COPERNICUS/S5P/NRTI/L3_NO2",
+                          gee_datestart = "2018-07-31",
+                          gee_dateend = "2018-08-31",
+                          gee_band = "tropospheric_NO2_column_number_density",
+                          gee_chunksize = 50,
+                          gee_stat = "mean",
+                          gee_scale = 1113)
+
 
 ##pull in the landcover data
 # pull the data on Landcover

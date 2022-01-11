@@ -54,7 +54,7 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
         specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k)) ### round to decimal place
 
         counter <<- counter + 1
-        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " intiatied"))
+        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
         y <- ee_extract(x = gee_map,
                         y = X,
                         fun = ee$Reducer$mean(),
@@ -76,7 +76,7 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
     if (gee_stat %in% "min"){
       extract_chunk <- function(X){
         counter <<- counter + 1
-        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " intiatied"))
+        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
         y <- ee_extract(x = gee_map,
                         y = X,
                         fun = ee$Reducer$min(),
@@ -98,7 +98,7 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
     if (gee_stat %in% "max"){
       extract_chunk <- function(X){
         counter <<- counter + 1
-        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " intiatied"))
+        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
         y <- ee_extract(x = gee_map,
                         y = X,
                         fun = ee$Reducer$max(),
@@ -120,7 +120,7 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
     if (gee_stat %in% "median"){
       extract_chunk <- function(X){
         counter <<- counter + 1
-        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " intiatied"))
+        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
 
         y <- ee_extract(x = gee_map,
                         y = X,
@@ -143,7 +143,7 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
     if (gee_stat %in% "stdDev"){
       extract_chunk <- function(X){
         counter <<- counter + 1
-        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " intiatied"))
+        print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
 
         y <- ee_extract(x = gee_map,
                         y = X,
