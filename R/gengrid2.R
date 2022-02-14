@@ -115,8 +115,10 @@ gengrid2 <- function(shp_dt = NULL,
                round(sum(grid_system$poly_area, na.rm = TRUE),2),
                " km^2"))
 
-  hist(x = grid_system$poly_area,
-       xlab = "Polygon Size (in km^2)")
+  grid_check <- as.numeric(grid_system$poly_area)
+  hist(x = grid_check,
+       xlab = "Polygon Size (in km^2)",
+       main = "Distribution of Polygon Size")
 
   print("The plot window should show you a distribution of the polygon sizes")
 

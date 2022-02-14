@@ -9,7 +9,6 @@
 #' @param ind_var the indicator variable of interest within hh_dt
 #' @param weight_var the weight variable of interest within hh_dt
 #' @param FUN the aggregation function to be applied (currently MUST take ind_var and weight_var)
-#' @param geo_dt_var existing geospatial indicator (such as population) to be used in estimating grid level estimates
 #'
 #' @return data.table/data.frame object with grid level estimates
 #'

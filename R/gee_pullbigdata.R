@@ -30,6 +30,7 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
                             gee_stat = "mean",
                             gee_scale = 1000){
 
+  ee_Initialize()
 
   shp_dt <- st_read(dsn = shp_dsn,
                     layer = shp_layer)
