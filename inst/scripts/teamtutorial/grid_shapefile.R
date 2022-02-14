@@ -79,9 +79,16 @@ unit_model <- ebp(fixed = welfare ~ age,
                   weights = "popweight")
 
 
+### merge the results into shapefile
+shp_dt$regioncode <- unique(survey_dt$regioncode)
+setnames(shp_dt, "regioncode", "Domain")
+shp_dt$Domain <- as.factor(shp_dt$Domain)
+
+shp_dt <- merge(shp_dt, unit_model$ind, by = "Domain")
 
 
-
+tm_shape(shp_dt) +
+  tm_polygons("Head_Count")
 
 
 
