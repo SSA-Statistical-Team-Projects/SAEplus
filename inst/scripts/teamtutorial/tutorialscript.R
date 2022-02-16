@@ -1,38 +1,36 @@
-### reading in the data
+#### load libraries
+library(sf)
+library(rgdal)
+library(SAEplus)
+library(raster)
+library(units)
 
-shp_dt <- readRDS("inst/extdata/maputoshp.RDS") ##load the shapefile
-shp_dt <- st_read(dsn = "",
-                  layer)
-
-pop_raster <- raster("//esapov/esapov/MOZ/GEO/Population/moz_ppp_2020_1km_Aggregated_UNadj.tiff")
-
-### create 1sqkm tesselation
-
-#### first ensure the grid units mch the units of the shapefile coordinate reference system
 sf_use_s2(FALSE)
+### load shapefile/boundaries and survey data
+shp_dt <- st_read(dsn = "inst/extdata", ##load shapefile
+                  layer = "maputo")
 
-shp_dt$area <- st_area(shp_dt) ##lets compute the area of the shapefiles
-shp_dt$area <- units::set_units(shp_dt$area, "km^2")
+survey_dt <- st_read(dsn = "inst/extdata",
+                     layer = "maputosurvey_dt")
+
 
 crs_dt <- rgdal::make_EPSG() ##the database of recognized coordinate reference systems in R
-test <- st_transform(shp_dt, ## test to see if it transforms into a CRS that works
-                       crs = crs_dt$prj4[crs_dt$code == 3974])
 
-test$area <- st_area(test) ##compute the area and lets see if it sums to a number near equal to the original shp_dt
-test$area <- units::set_units(test$area, "km^2") ##change area to km2 and then we can plot
+popn_raster <- raster::raster("//esapov/esapov/MOZ/GEO/Population/moz_ppp_2020_1km_Aggregated_UNadj.tiff")
 
-plot(st_geometry(test))
-plot(st_geometry(shp_dt))
+shp_dt$area <- st_area(x = shp_dt)
+shp_dt$area <- set_units(x = shp_dt$area, "km^2")
 
-shp_dt <- st_transform(shp_dt, ## test to see if it transforms into a CRS that works
-                       crs = crs_dt$prj4[crs_dt$code == 3974])
+shp_dt  <- st_transform(x = shp_dt, ##transform shapefile into a metric projection to preserve area and distance
+                      crs = crs_dt$prj4[crs_dt$code == 3974]) ##this will help you grid in km^2
 
-## create the grid
+
+
+### grid shapefiles
 grid_dt <- gengrid2(shp_dt = shp_dt,
                     grid_size = 1000,
-                    pop_raster = pop_raster,
+                    pop_raster = popn_raster,
                     extract_name = "population")
-
 
 ## save the shapefile
 sf::st_write(obj = grid_dt[,c("poly_id", "geometry")],
@@ -41,6 +39,11 @@ sf::st_write(obj = grid_dt[,c("poly_id", "geometry")],
              driver = "ESRI Shapefile",
              append = FALSE)
 
+
+## pulling data from google earth engine
+ntl_dt <- gee_pullbigdata(shp_dsn = "inst/extdata",
+                          shp_layer = "maputo_grid",
+                          gee_chunksize = 20)
 
 #### estimate unit level model
 ###### load survey data
@@ -90,6 +93,7 @@ shp_dt <- merge(shp_dt, unit_model$ind, by = "Domain")
 
 tm_shape(shp_dt) +
   tm_polygons("Head_Count")
+
 
 
 
