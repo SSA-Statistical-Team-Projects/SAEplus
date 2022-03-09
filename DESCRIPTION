@@ -46,7 +46,8 @@ Imports:
     hdm,
     sp,
     rgeos,
-    units
+    units,
+    rmapshaper
 ByteCompile: true
 Suggests: 
     rmarkdown,

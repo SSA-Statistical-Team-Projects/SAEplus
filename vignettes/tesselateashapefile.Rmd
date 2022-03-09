@@ -1,0 +1,23 @@
+---
+title: "Build a Poverty Map with SAEplus"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tesselateashapefile}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Poverty Mapping is central to the work of the World Bank. The purpose of this package is to create tools that use R functionalities to make this process accessible to beginning users. The poverty mapping process can be summarized as follows: 
+
+- A few prerequisites are needed to begin coding towards a poverty map. A shapefile containing the geometry boundaries for the target areas in which poverty rates will be estimated. A household survey with geocoordinates either at the EA level or at the household level.
+```{r setup}
+library(SAEplus)
+
+```

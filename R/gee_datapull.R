@@ -37,87 +37,87 @@ gee_datapull <- function(email = "ifeanyi.edochie@gmail.com",
                          gee_stat = "mean",
                          gdrive_folder = "/SAEplus",
                          ldrive_dsn = "data/cmr_nighttimelight",
-                         gee_crs = "EPSG:4326"){
+                         gee_crs = "EPSG:4326",
+                         tileScale = 1) {
+  # ee_users()
 
-
-  #ee_users()
-
-  #options(gargle_oauth_email = email)
+  # options(gargle_oauth_email = email)
   ee_Initialize(user = email)
 
   agebs <- ee$FeatureCollection(gee_polygons)
   agebs_boundary <- ee$FeatureCollection(gee_boundary)
 
-  s5p_collect <- ee$ImageCollection(gee_dataname)$
-    filterBounds(agebs_boundary)$
-    filterDate(gee_datestart, gee_dateend)$
-    select(gee_band)
+  s5p_collect <-
+    ee$ImageCollection(gee_dataname)$filterBounds(agebs_boundary)$filterDate(gee_datestart,
+                                                                             gee_dateend)$select(gee_band)
 
   ## compute zonal stats function
-  if(gee_stat == "mean"){
+  if (gee_stat == "mean") {
     s5p_mean <- s5p_collect$mean()
 
     s5p_agebs <- s5p_mean$reduceRegions(
-      collection =  agebs,
-      reducer = ee$Reducer$mean(),
-      scale = scale,
-      crs = gee_crs
+      collection             =  agebs,
+      reducer                = ee$Reducer$mean(),
+      scale                  = scale,
+      crs                    = gee_crs,
+      tileScale              = tileScale
     )
-  } else if(gee_stat == "sum"){
+  } else if (gee_stat == "sum") {
     s5p_sum <- s5p_collect$sum()
 
     s5p_agebs <- s5p_sum$reduceRegions(
-      collection = agebs,
-      reducer = ee$Reducer$sum(),
-      scale = scale,
-      crs = gee_crs
+      collection             = agebs,
+      reducer                = ee$Reducer$sum(),
+      scale                  = scale,
+      crs                    = gee_crs,
+      tileScale              = tileScale
     )
-  } else if(gee_stat == "stdDev"){
+  } else if (gee_stat == "stdDev") {
     s5p_stddev <- s5p_collect$stdDev()
 
     s5p_agebs <- s5p_stddev$reduceRegions(
-      collection = agebs,
-      reducer = ee$Reducer$stdDev(),
-      scale = scale,
-      crs = gee_crs,
-      maxPixels = 1e13
+      collection   = agebs,
+      reducer      = ee$Reducer$stdDev(),
+      scale        = scale,
+      crs          = gee_crs,
+      tileScale    = tileScale
     )
-  } else if(gee_stat == "median"){
+  } else if (gee_stat == "median") {
     s5p_median <- s5p_collect$median()
 
     s5p_agebs <- s5p_median$reduceRegions(
-      collection = agebs,
-      reducer = ee$Reducer$median(),
-      scale = scale,
-      crs = gee_crs
+      collection  = agebs,
+      reducer     = ee$Reducer$median(),
+      scale       = scale,
+      crs         = gee_crs,
+      tileScale   = tileScale
     )
-  } else if(gee_stat == "minMax") {
+  } else if (gee_stat == "minMax") {
     s5p_minmax <- s5p_collect$minMax()
 
     s5p_agebs <- s5p_minmax$reduceRegions(
       collection = agebs,
-      reducer = ee$Reducer$minMax(),
-      scale = scale,
-      crs = gee_crs
+      reducer    = ee$Reducer$minMax(),
+      scale      = scale,
+      crs        = gee_crs,
+      tileScale  = tileScale
     )
-
-  }  else {return("gee_stat must be specified as sum or mean, please specify accordingly")}
+  } else {
+    return("gee_stat must be specified as sum or mean, please specify accordingly")
+  }
 
 
   task_drive <- ee_table_to_drive(
-    collection = s5p_agebs,
+    collection  = s5p_agebs,
     description = gee_desc,
-    folder = gdrive_folder,
-    fileFormat = "SHP"
+    folder      = gdrive_folder,
+    fileFormat  = "SHP"
   )
 
   task_drive$start()
 
   ee_monitoring(task_drive)
 
-  task_local <- ee_drive_to_local(
-    task = task_drive,
-    dsn = ldrive_dsn
-  )
-
+  task_local <- ee_drive_to_local(task = task_drive,
+                                  dsn  = ldrive_dsn)
 }

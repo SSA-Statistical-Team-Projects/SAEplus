@@ -6,23 +6,20 @@
 \usage{
 gee_pullbigdata(
   email = "ifeanyi.edochie@gmail.com",
-  shp_dsn,
-  shp_layer,
+  shp_dt,
   gee_name = "NOAA/VIIRS/DNB/MONTHLY_V1/VCMCFG",
   gee_datestart = "2019-01-01",
   gee_dateend = "2019-12-31",
   gee_band = "avg_rad",
   gee_chunksize = 4000,
   gee_stat = "mean",
-  gee_scale = 1000
+  gee_scale = NULL
 )
 }
 \arguments{
 \item{email}{A GEE authenticated gmail address}
 
-\item{shp_dsn}{character of length 1; the local folder location of the shapefile}
-
-\item{shp_layer}{character of length 1; the name of the file}
+\item{shp_dt}{an sf/dataframe object}
 
 \item{gee_datestart}{The starting date for the specific feature of interest}
 

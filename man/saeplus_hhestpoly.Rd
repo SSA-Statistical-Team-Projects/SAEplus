@@ -30,8 +30,6 @@ saeplus_hhestpoly(
 \item{weight_var}{the weight variable of interest within hh_dt}
 
 \item{FUN}{the aggregation function to be applied (currently MUST take ind_var and weight_var)}
-
-\item{geo_dt_var}{existing geospatial indicator (such as population) to be used in estimating grid level estimates}
 }
 \value{
 data.table/data.frame object with grid level estimates

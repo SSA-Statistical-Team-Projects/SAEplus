@@ -8,12 +8,11 @@
 #'
 
 drop_extramergevars <- function(dt,
-                                string_match = "i\\."){
-
+                                string_match = "i\\.") {
   dt <- as.data.table(dt)
 
   names_drop <- colnames(dt)[grepl(string_match, colnames(dt))]
-  dt[,(names_drop) := NULL]
+  dt[, (names_drop) := NULL]
 
   return(dt)
 }

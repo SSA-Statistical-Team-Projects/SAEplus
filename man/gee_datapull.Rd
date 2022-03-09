@@ -17,7 +17,8 @@ gee_datapull(
   gee_stat = "mean",
   gdrive_folder = "/SAEplus",
   ldrive_dsn = "data/cmr_nighttimelight",
-  gee_crs = "EPSG:4326"
+  gee_crs = "EPSG:4326",
+  tileScale = 1
 )
 }
 \arguments{
