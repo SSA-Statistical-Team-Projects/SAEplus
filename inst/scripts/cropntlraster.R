@@ -27,7 +27,6 @@ africa_shp <- sf::as_Spatial(africa_shp)
 
 ntl_files <- list.files(path = "//esapov/esapov/ALL/Energy",
                         pattern = ".rade9d")
-
 ### parallelize the function
 multraster_cropsave <- function(numCores,
                                 raster_list){
@@ -40,7 +39,7 @@ multraster_cropsave <- function(numCores,
 
     cropped_raster <- raster::crop(x = raster_obj, y = shp_obj) ##crop the raster to the extent of the shapefile
 
-    raster::writeRaster(africantl_raster, filename = paste0(storagefolder, "afr_", names(raster_obj), ".tif"))
+    raster::writeRaster(cropped_raster, filename = paste0(storagefolder, "afr_", names(raster_obj), ".tif"))
 
   }
 
@@ -48,11 +47,13 @@ multraster_cropsave <- function(numCores,
   numCores <- min(numCores, parallel::detectCores())
   parallelMap::parallelLibrary("foreach")
   parallelMap::parallelLibrary("raster")
+  parallelMap::parallelLibrary("sf")
 
   doParallel::registerDoParallel(cores = numCores) ##initiate the number of cores to be used
 
 
-    foreach (i = 1:length(ntl_files)) %dopar% {
+    foreach(i = 1:length(raster_list)) %dopar% {
+
 
       raster_cropsave(rastertocrop = paste0("//esapov/esapov/ALL/Energy/", raster_list[i]),
                       shp_obj = africa_shp,
@@ -62,4 +63,20 @@ multraster_cropsave <- function(numCores,
 
 }
 
-multraster_cropsave(numCores = 32, raster_list = ntl_files)
+multraster_cropsave(numCores = 15, raster_list = ntl_files)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
