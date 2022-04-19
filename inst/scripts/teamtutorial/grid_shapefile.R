@@ -1,8 +1,6 @@
 ### reading in the data
 
 shp_dt <- readRDS("inst/extdata/maputoshp.RDS") ##load the shapefile
-shp_dt <- st_read(dsn = "",
-                  layer)
 
 pop_raster <- raster("//esapov/esapov/MOZ/GEO/Population/moz_ppp_2020_1km_Aggregated_UNadj.tiff")
 

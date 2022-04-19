@@ -72,6 +72,9 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
   #### compute min
   if (gee_stat %in% "min"){
     extract_chunk <- function(X){
+
+      specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k)) ### round to decimal place
+
       counter <<- counter + 1
       print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
       y <- ee_extract(x = gee_map,
@@ -94,6 +97,9 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
   #### compute max
   if (gee_stat %in% "max"){
     extract_chunk <- function(X){
+
+      specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k)) ### round to decimal place
+
       counter <<- counter + 1
       print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
       y <- ee_extract(x = gee_map,
@@ -116,6 +122,9 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
   #### compute median
   if (gee_stat %in% "median"){
     extract_chunk <- function(X){
+
+      specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k)) ### round to decimal place
+
       counter <<- counter + 1
       print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
 
@@ -138,6 +147,9 @@ gee_pullbigdata <- function(email = "ifeanyi.edochie@gmail.com",
 
   #### compute StdDev
   if (gee_stat %in% "stdDev"){
+
+    specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k)) ### round to decimal place
+
     extract_chunk <- function(X){
       counter <<- counter + 1
       print(paste0("GEE Collection query ",counter, " of ", length(shp_list), " initiated"))
