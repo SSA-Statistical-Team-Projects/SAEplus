@@ -73,3 +73,23 @@ mult_gengrid <- function(tif_namelist = gin_buildingtifs, ##names of raw buildin
 
   return(result)
 }
+
+
+
+load_rasters <- function(local_drive,
+                         tif_namelist,
+                         tif_type = ".tif"){
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
