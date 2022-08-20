@@ -1,7 +1,7 @@
-#' This function benchmarks the poverty rates to match survey estimates
+#' Benchmark Small Area Estimates
 #'
-#' This function ensures that the estimated poverty rates obtained from aggregating the predicted small area estimated
-#' matches with the overall poverty rates obtained from the general survey
+#' This function benchmarks the SAE model estimates to match survey estimates at level of chosen level of
+#' representativeness.
 #'
 #' @param hh_dt a household data.frame/data.table object containing area level IDs for which poverty rates were small area
 #' estimated
@@ -20,15 +20,15 @@
 #' @export
 
 
-saeplus_calibratepovrate <- function(hh_dt = hh.dt,
-                                     pop_dt = gin_masterpoly.dt,
-                                     ebp_obj = ginemdi_model2,
-                                     area_id = "ADM3_CODE",
-                                     pop_var = "population",
-                                     harea_id = "ADM1_CODE",
-                                     povline = 5006362,
-                                     welfare = "pcexp",
-                                     weight = "hhweight",
+saeplus_calibratepovrate <- function(hh_dt,
+                                     pop_dt,
+                                     ebp_obj,
+                                     area_id,
+                                     pop_var,
+                                     harea_id,
+                                     povline,
+                                     welfare,
+                                     weight,
                                      excl_outsample = TRUE){
 
   hh_dt <- as.data.table(hh_dt)
@@ -44,8 +44,8 @@ saeplus_calibratepovrate <- function(hh_dt = hh.dt,
     pop_dt <- pop_dt[!(get(area_id) %in% excl_doms),]
   }
   #1. Generate population estimate for each SAE level ID by aggregating across grids
-  # pop_size <- pop_dt[,sum(get(pop_var)),by = get(area_id)]
-  pop_size <- hh_dt[,sum(get(weight)), by = area_id]
+  pop_size <- pop_dt[,sum(get(pop_var), na.rm = TRUE),by = get(area_id)]
+  # pop_size <- hh_dt[,sum(get(weight)), by = area_id]
   setnames(pop_size, colnames(pop_size), c(area_id, "population"))
 
   #### merge in h_area ID and poverty rates from EMDI object
@@ -60,9 +60,9 @@ saeplus_calibratepovrate <- function(hh_dt = hh.dt,
   #   each state. Call these the sae state estimates.
   #         a.	Take the sum of population*poverty rate / total population, by sub-prefecture
   #3. Estimate state level poverty rates
-  pop_size[,harea_popsize := sum(population), by = harea_id]
+  pop_size[,harea_popsize := sum(population, na.rm = TRUE), by = harea_id]
   pop_size[,area_povrate_share := population * Head_Count / harea_popsize]
-  pop_size[,harea_povrate := sum(area_povrate_share), by = harea_id]
+  pop_size[,harea_povrate := sum(area_povrate_share, na.rm = TRUE), by = harea_id]
 
   hh_dt[,povline := ifelse(get(welfare) < povline, 1, 0)]
   harea_povline <- hh_dt[,weighted.mean(povline, get(weight)), by = harea_id]
@@ -77,6 +77,75 @@ saeplus_calibratepovrate <- function(hh_dt = hh.dt,
   pop_size[, bmratio := survey_povrate / harea_povrate]
 
   pop_size[, BM_Head_Count := Head_Count * bmratio]
+
+  return(pop_size)
+
+}
+
+
+saeplus_calibratepovrate2 <- function(hh_dt,
+                                      pop_dt,
+                                      ebp_obj,
+                                      area_id,
+                                      pop_var,
+                                      harea_id,
+                                      povline,
+                                      welfare,
+                                      weight,
+                                      excl_outsample = TRUE){
+
+  hh_dt <- as.data.table(hh_dt)
+  pop_dt <- as.data.table(pop_dt)
+
+  pop_doms <- unique(pop_dt[,get(area_id)])
+  survey_doms <- unique(hh_dt[,get(area_id)])
+
+
+  if(excl_outsample == TRUE){
+
+    excl_doms <- pop_doms[!(pop_doms %in% survey_doms)]
+
+    pop_dt <- pop_dt[!(get(area_id) %in% excl_doms),]
+  }
+  #1. Generate population estimate for each SAE level ID by aggregating across grids
+  pop_size <- pop_dt[,sum(get(pop_var), na.rm = TRUE),by = get(area_id)]
+  # pop_size <- hh_dt[,sum(get(weight)), by = area_id]
+  setnames(pop_size, colnames(pop_size), c(area_id, "population"))
+
+  #### merge in h_area ID and poverty rates from EMDI object
+  pop_size <- pop_dt[,c(area_id, harea_id),with=F][pop_size, on = area_id]
+  pop_size <- unique(pop_size)
+  povrate.dt <- as.data.table(ebp_obj$ind)
+  povrate.dt[,Domain := as.integer(as.character(Domain))]
+  setnames(povrate.dt, "Domain", area_id)
+  pop_size <- povrate.dt[,c(area_id, "Head_Count"),with=F][pop_size, on = area_id]
+
+  #2.	Use these population estimates for each sampled sub-prefecture as weights to generate small area estimates for
+  #   each state. Call these the sae state estimates.
+  #         a.	Take the sum of population*poverty rate / total population, by sub-prefecture
+  #3. Estimate state level poverty rates
+  pop_size[,harea_popsize := sum(population, na.rm = TRUE), by = harea_id]
+  pop_size[,npHead_Count := 1 - Head_Count]
+  pop_size[,area_nprate_share := population * npHead_Count / harea_popsize]
+  pop_size[,harea_nprate := sum(area_nprate_share, na.rm = TRUE), by = harea_id]
+
+  hh_dt[,povline := ifelse(get(welfare) < povline, 1, 0)]
+  harea_povline <- hh_dt[,weighted.mean(povline, get(weight)), by = harea_id]
+  setnames(harea_povline, "V1", "survey_povrate")
+  harea_povline[,survey_nprate := 1 - survey_povrate]
+  harea_povline <- harea_povline[!is.na(harea_id),]
+
+
+  #4.	Divide the vector of state survey estimates by sae estimates to get the benchmarking ratio.
+  #5.	Multiply the point estimates by the benchmarking ratio.
+
+  pop_size <- harea_povline[pop_size, on = harea_id]
+
+  pop_size[, bmratio := survey_nprate / harea_nprate]
+
+  pop_size[, npBM_Head_Count := npHead_Count * bmratio]
+
+  pop_size[, BM_Head_Count := 1 - npBM_Head_Count]
 
   return(pop_size)
 

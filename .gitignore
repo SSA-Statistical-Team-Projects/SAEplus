@@ -16,3 +16,5 @@ data/gin_general_2020.tif
 data/ginspace.RData
 data/gin_hhmenvir.RData
 inst/doc
+
+inst/data/postestimation/hhgeosurvey.csv

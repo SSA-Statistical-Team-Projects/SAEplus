@@ -7,12 +7,15 @@
 <!-- badges: end -->
 
 The goal of SAEplus package is to produce a set of R functions and tools
-to pull remote sensing data as well as other geospatial data from
-platforms such as Google Earth Engine, Open Street Maps, Facebook and
-WorldPop. This package will also provide functions for pre-processing
-these datasets towards small area estimation (SAE). Finally, some of the
-SAE functions within the EMDI package will be updated to speed up the
-SAE process using the data.table package. 
+to pull remote sensing data from platforms such as Google Earth Engine, 
+Open Street Maps, Facebook and WorldPop. The package provides additional 
+functionality to pre-process this data into standard datasets to be used
+for Small Area Estimation (SAE) with the EMDI & EMDIplus R Packages. 
+
+The package produces post-estimation diagnostics from EMDI/EMDIplus result 
+objects. This is useful for reporting writing and generating poverty maps. 
+
+
 
 ## Installation
 

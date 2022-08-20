@@ -14,10 +14,10 @@
 #' @import data.table sf dtplyr
 
 
-osm_processpoints <- function(shapefile_path = "data/cmr_polypop_boundary.shp",
-                              osm_path = "C:/Users/ifean/Documents/WorldBankWork/SAEPlus_Other/Cameroon_osmpoints",
-                              geoid_var = "id",
-                              feature_var = "highway"){
+osm_processpoints <- function(shapefile_path,
+                              osm_path,
+                              geoid_var,
+                              feature_var){
 
   agebs <- sf::st_read(shapefile_path)
   load(osm_path)

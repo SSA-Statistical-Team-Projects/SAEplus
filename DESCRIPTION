@@ -1,6 +1,6 @@
 Package: SAEplus
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Package for Geospatial Analysis & Small Area Estimation Post-Diagnostics
 Version: 0.1.0
 Author: person("Ifeanyi", "Edochie", email = "iedochie@worldbank.org", role = c("aut", "cre"))
 Maintainer: The package maintainer <iedochie@worldbank.org>

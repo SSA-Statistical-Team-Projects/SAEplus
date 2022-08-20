@@ -2,13 +2,17 @@
 #'
 #' @param email A GEE authenticated gmail address
 #' @param shp_dt an sf/dataframe object
-#' @param gee_dataname character of length 1; The specific google earth engine collection dataset name
+#' @param gee_name character of length 1; The specific google earth engine collection dataset name
+#' @param gee_band the name of GEE bandname for the specific dataset of interest
 #' @param gee_datestart The starting date for the specific feature of interest
 #' @param gee_dateend The ending date for the specific feature of interest
 #' @param gee_chunksize an integer; the size of each chunk which the shapefile should be divided into for faster
 #' pulls (GEE collection query aborts after accumulating a chunk size with over 5000 elements i.e.
 #' rows and columns combined)
 #' @param gee_stat the zonal statistic to be estimated. The current options are mean, median, min, max and stdDev
+#' @param gee_scale if set to NULL the native resolution of the dataset is used, otherwise GEE will resample
+#' according to the resolution set
+#'
 #'
 #' @return an object of class data.frame
 #'

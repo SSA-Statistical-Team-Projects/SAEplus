@@ -9,10 +9,14 @@
 #' @param gee_dataname The specific google earth engine collection dataset name (use default as example)
 #' see (https://developers.google.com/earth-engine/datasets/) for full name
 #' @param gee_band The bandname within the gee_dataname selected (see https://developers.google.com/earth-engine/datasets/)
-#' @param scale Used in mean region reduction for zonal statistics
+#' @param gee_scale Used in mean region reduction for zonal statistics
 #' @param gee_desc The name to be used to name output in google drive as well as local drive
 #' @param gdrive_folder Google Drive folder name to be created or uses if already existing to store shapefile output
 #' @param ldrive_dsn Full file path (including shapefile name) for local storage of resulting shapefile
+#' @param gee_datestart the start date from which data should be pulled
+#' @param gee_enddate the end date from which data should be pulled
+#' @param gee_crs the coordinate reference system (CRS) to be assigned to the dataset. If NULL, the shapefile's
+#' CRS is used
 #'
 #' @return shapefiles to local drive
 #'

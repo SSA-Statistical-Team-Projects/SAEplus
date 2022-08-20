@@ -1,4 +1,7 @@
-#' This function creates indicators from OSM lines data in preparation for survey to survey imputation analysis
+#' Create indicators from OSM lines data
+#'
+#' This function cleans and processes the open street maps object pulled from osm_datapull function
+#' to create indicators on the road transportation network such road length and road density
 #'
 #' @param shapefile_path filepath of country/region shapefile with polygons of interest
 #' @param osm_path filepath to open street map lines data (road networks)

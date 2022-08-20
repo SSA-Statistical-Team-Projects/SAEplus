@@ -1,4 +1,7 @@
-#' This function computes the number of points for the multipolygon data based on selected features
+#' Create indicators on features from OSM
+#'
+#' This function counts the number of features such specific amenities or places of interests within the
+#' open street maps dataset
 #'
 #' @param shapefile_path filepath of country/region shapefile with polygons of interest
 #' @param osm_path filepath to open street map lines data (road networks)
