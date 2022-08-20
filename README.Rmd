@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # SAEplus
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/SSA-Statistical-Team-Projects/SAEplus/workflows/R-CMD-check/badge.svg)](https://github.com/SSA-Statistical-Team-Projects/SAEplus/actions)
 <!-- badges: end -->
 
 The goal of SAEplus package is to produce a set of R functions and tools to pull remote sensing data as well as other geospatial data from platforms such as Google Earth Engine, Open Street Maps, Facebook and WorldPop. This package will also provide functions for pre-processing these datasets towards small area estimation (SAE). Finally, some of the SAE functions within the EMDI package will be updated to speed up the SAE process using the data.table package. 
